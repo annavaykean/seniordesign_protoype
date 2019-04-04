@@ -56,3 +56,5 @@ values ('1', 1.278, -1.2909);
 insert into posture (userID, cogX, cogY)
 values ('1', 0.567, -0.897);
 
+insert into posture (userID, cogX, cogY)
+values ('3', 0.001, -0.101)
