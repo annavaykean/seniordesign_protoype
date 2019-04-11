@@ -1,0 +1,17 @@
+//Visualization of NoSQL database for Firebase
+
+//Removing security answer field because
+//Firebase will handle password resets.
+Users
+	>userID
+	>fName
+	>lName
+	>email
+	>password
+
+Posture
+	>postureID
+	>userID
+	>created_at
+	>cogX
+	>cogY
