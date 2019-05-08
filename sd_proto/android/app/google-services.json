@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "834847830401",
+    "firebase_url": "https://sd-proto.firebaseio.com",
+    "project_id": "sd-proto",
+    "storage_bucket": "sd-proto.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:834847830401:android:d1979fe46538865d",
+        "android_client_info": {
+          "package_name": "sdprotog7.sd_proto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "834847830401-fmnnqjbo9ilu48vg5rst11scvvfao6dd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAY9L0oEsQuWUj1Pg4lVfjaG2j7oo_VRPs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "834847830401-fmnnqjbo9ilu48vg5rst11scvvfao6dd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
