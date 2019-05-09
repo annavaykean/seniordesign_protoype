@@ -9,8 +9,8 @@ class SettingsScreen extends StatelessWidget {
         ),
         body: Center(
             child: RaisedButton(
-              child: const Text('Go Home!'),
-              onPressed: () => Navigator.of(context).pushNamed('/WelcomeScreen'),
+              child: const Text('Dashboard'),
+              onPressed: () => Navigator.of(context).pushNamed('/DashboardScreen'),
             )
         )
     );

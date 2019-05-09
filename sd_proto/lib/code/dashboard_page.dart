@@ -5,13 +5,25 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: AppBar(
-          title: const Text('This is a new page!'),
+          title: const Text('This is a home page!'),
         ),
-        body: Center(
-            child: RaisedButton(
-              child: const Text('Show me the settings!'),
-              onPressed: () => Navigator.of(context).pushNamed('/SettingsScreen'),
-            )
+        body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              RaisedButton(
+                child: const Text('Show me the settings page!'),
+                onPressed: () => Navigator.of(context).pushNamed('/SettingsScreen'),
+              ),
+              RaisedButton(
+                child: const Text('Show me the anaylsis page!'),
+                onPressed: () => Navigator.of(context).pushNamed('/AnalysisScreen'),
+              ),
+              RaisedButton(
+                child: const Text('Bluetooth Testing Page'),
+                onPressed: () => Navigator.of(context).pushNamed('/BluetoothTestScreen'),
+              )
+            ]
         )
     );
   }

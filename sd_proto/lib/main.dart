@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'code/dashboard_page.dart';
 import 'code/analysis_page.dart';
 import 'code/settings_page.dart';
+import 'code/bluetooth_test_screen.dart';
 
 void main(){
   runApp(MyApp());
@@ -17,6 +18,8 @@ class MyApp extends StatelessWidget {
         '/WelcomeScreen': (BuildContext context) => new WelcomeScreen(),
         '/DashboardScreen': (BuildContext context) => new DashboardScreen(),
         '/SettingsScreen' : (BuildContext context) => new SettingsScreen(),
+        '/AnalysisScreen' : (BuildContext context) => new AnalysisScreen(),
+        '/BluetoothTestScreen' : (BuildContext context) => new BluetoothTestScreen(),
       }
       );
   }
