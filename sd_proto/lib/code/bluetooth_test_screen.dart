@@ -7,21 +7,37 @@ class BluetoothTestScreen extends StatefulWidget {
   BluetoothState createState() => BluetoothState();
 }
 class BluetoothState extends State<BluetoothTestScreen> {
-  List<Widget> list = new List<Widget>();
-  FlutterBlue flutterBlue = FlutterBlue.instance;
-  StreamSubscription scanner;
-  //Map<DeviceIdentifier, ScanResult> scanResults = new Map();
 
+  FlutterBlue flutterBlue = FlutterBlue.instance;
+
+  //For Scanning
+  StreamSubscription scanner;
   List<BluetoothDevice> deviceList = [];
+
+  //For Device connect / disconnect
   BluetoothDevice device;
   bool connected = false;
-  bool pressed = false; //am I using this?
+  StreamSubscription deviceConnection;
 
   Widget buildRow(var data){
+    final alreadyConnected = connected;
     return ListTile(
       title: Text(
         data.id.toString(),
-      )
+      ),
+      trailing: Icon(
+        Icons.favorite,
+      ),
+      onTap: () {
+        setState(() {
+          if(alreadyConnected) {
+            disconnectFromDevice();
+          }
+          else {
+            connectToDevice(data);
+          }
+        });
+      }
     );
   }
   Widget buildDeviceList(){
@@ -81,20 +97,14 @@ class BluetoothState extends State<BluetoothTestScreen> {
     buildDeviceList();
   }
 
-/*  Widget listDevices() {
-    print('INFO: scanResults length = ' + deviceList.length.toString());
-    for(var i=0;i<deviceList.length; i++){
-      for(var j=0;j<deviceList.length; j++) {
-        if(deviceList.contains())
-      }
-      list.add(new Text(deviceList[i].id.toString()));
-      if(deviceList[i] != null) {
-        print('INFO: SR = ' + deviceList[i].id.toString());
-      }
-    }
-    if(list == null){
-      print('INFO: the list for display is null :(');
-    }
-    return new Row(children: list);
-  }*/
+  disconnectFromDevice() {
+    return null;
+  }
+
+  connectToDevice(BluetoothDevice device) {
+    deviceConnection = flutterBlue.connect(device, timeout: const Duration(seconds: 4)).listen(null);
+    connected = true;
+    print('Connected to ' + device.id.toString());
+    return null;
+  }
 }
