@@ -7,7 +7,7 @@ class BluetoothTestScreen extends StatefulWidget {
   BluetoothState createState() => BluetoothState();
 }
 class BluetoothState extends State<BluetoothTestScreen> {
-
+  List<Widget> list = new List<Widget>();
   FlutterBlue flutterBlue = FlutterBlue.instance;
   StreamSubscription scanner;
   //Map<DeviceIdentifier, ScanResult> scanResults = new Map();
@@ -16,6 +16,25 @@ class BluetoothState extends State<BluetoothTestScreen> {
   BluetoothDevice device;
   bool connected = false;
   bool pressed = false; //am I using this?
+
+  Widget buildRow(var data){
+    return ListTile(
+      title: Text(
+        data.id.toString(),
+      )
+    );
+  }
+  Widget buildDeviceList(){
+    return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      itemBuilder: (context, i) {
+        if(deviceList.length > i) {
+          return buildRow(deviceList[i]);
+        }
+      },
+      shrinkWrap: true,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +48,8 @@ class BluetoothState extends State<BluetoothTestScreen> {
                 child: const Text('Search for devices'),
                 onPressed: () => scanForDevices(),
               ),
-              Flexible (
-                child: Column (
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  listDevices()
-                ]
-              )
+              Container(
+                child: buildDeviceList(),
               )
             ]
         )
@@ -48,7 +61,12 @@ class BluetoothState extends State<BluetoothTestScreen> {
     scanner = flutterBlue.scan(timeout: const Duration(milliseconds: 500)).listen((scanResult) async{
       print('INFO: deviceID = ${scanResult.device.id}');
       setState((){
+        //to prevent lots of results, change the if condition
+        //to see if the device ID matches the id associated with each
+        //piece of hardware
+        if(!deviceList.contains(scanResult.device)) {
           deviceList.add(scanResult.device);
+        }
       });
     }, onDone: stopScanning());
 
@@ -60,13 +78,15 @@ class BluetoothState extends State<BluetoothTestScreen> {
       scanner?.cancel();
       scanner = null;
     }
-    listDevices();
+    buildDeviceList();
   }
 
-  Widget listDevices() {
-    List<Widget> list = new List<Widget>();
+/*  Widget listDevices() {
     print('INFO: scanResults length = ' + deviceList.length.toString());
     for(var i=0;i<deviceList.length; i++){
+      for(var j=0;j<deviceList.length; j++) {
+        if(deviceList.contains())
+      }
       list.add(new Text(deviceList[i].id.toString()));
       if(deviceList[i] != null) {
         print('INFO: SR = ' + deviceList[i].id.toString());
@@ -76,5 +96,5 @@ class BluetoothState extends State<BluetoothTestScreen> {
       print('INFO: the list for display is null :(');
     }
     return new Row(children: list);
-  }
+  }*/
 }
