@@ -10,7 +10,8 @@ class BluetoothState extends State<BluetoothTestScreen> {
 
   FlutterBlue flutterBlue = FlutterBlue.instance;
   StreamSubscription scanner;
-  Map<DeviceIdentifier, ScanResult> scanResults = new Map();
+  //Map<DeviceIdentifier, ScanResult> scanResults = new Map();
+
   List<BluetoothDevice> deviceList = [];
   BluetoothDevice device;
   bool connected = false;
@@ -28,10 +29,14 @@ class BluetoothState extends State<BluetoothTestScreen> {
                 child: const Text('Search for devices'),
                 onPressed: () => scanForDevices(),
               ),
-              Column (
+              Flexible (
+                child: Column (
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   listDevices()
                 ]
+              )
               )
             ]
         )
@@ -40,11 +45,10 @@ class BluetoothState extends State<BluetoothTestScreen> {
 
   scanForDevices() {
     print('INFO: Scanning for bluetooth devcies...');
-    scanner = flutterBlue.scan(timeout: const Duration(seconds: 5)).listen((scanResult){
+    scanner = flutterBlue.scan(timeout: const Duration(milliseconds: 500)).listen((scanResult) async{
       print('INFO: deviceID = ${scanResult.device.id}');
-      deviceList.add(scanResult.device);
       setState((){
-        scanResults[scanResult.device.id] = scanResult;
+          deviceList.add(scanResult.device);
       });
     }, onDone: stopScanning());
 
@@ -61,11 +65,11 @@ class BluetoothState extends State<BluetoothTestScreen> {
 
   Widget listDevices() {
     List<Widget> list = new List<Widget>();
-    print('INFO: scanResults length = ' + scanResults.length.toString());
-    for(var i=0;i<scanResults.length; i++){
-      list.add(new Text(scanResults[i].toString()));
-      if(scanResults[i] != null) {
-        print('INFO: SR = ' + scanResults[i].device.id.toString());
+    print('INFO: scanResults length = ' + deviceList.length.toString());
+    for(var i=0;i<deviceList.length; i++){
+      list.add(new Text(deviceList[i].id.toString()));
+      if(deviceList[i] != null) {
+        print('INFO: SR = ' + deviceList[i].id.toString());
       }
     }
     if(list == null){
