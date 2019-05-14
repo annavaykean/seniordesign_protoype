@@ -18,6 +18,10 @@ class BluetoothState extends State<BluetoothTestScreen> {
   BluetoothDevice device;
   bool connected = false;
   StreamSubscription deviceConnection;
+  StreamSubscription deviceStateSubscription;
+  List<BluetoothService> services = new List();
+  Map<Guid, StreamSubscription> valueChangedSubs = {};
+  BluetoothDeviceState deviceState = BluetoothDeviceState.disconnected;
 
   Widget buildRow(var data){
     final alreadyConnected = connected;
@@ -102,9 +106,22 @@ class BluetoothState extends State<BluetoothTestScreen> {
   }
 
   connectToDevice(BluetoothDevice device) {
-    deviceConnection = flutterBlue.connect(device, timeout: const Duration(seconds: 4)).listen(null);
-    connected = true;
-    print('Connected to ' + device.id.toString());
-    return null;
+    deviceConnection = flutterBlue.connect(device, timeout: const Duration(seconds: 4), autoConnect: false).listen(null);
+    deviceStateSubscription = device.onStateChanged().listen((s) {
+      if(s == BluetoothDeviceState.connected) {
+      print("INFO: Connection Successful!");
+      stopScanning();
+      device.discoverServices().then((s) {
+        print('INFO: Connected to ' + device.id.toString());
+        services = s;
+        services.forEach((service) {
+          print('Services: ' + service.toString());
+        });
+      });
+      } else {
+        print("INFO: Failed to connect to " + device.id.toString());
+      }
+    });
+
   }
 }
