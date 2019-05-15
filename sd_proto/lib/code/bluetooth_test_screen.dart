@@ -106,7 +106,7 @@ class BluetoothState extends State<BluetoothTestScreen> {
   }
 
   connectToDevice(BluetoothDevice device) {
-    deviceConnection = flutterBlue.connect(device, timeout: const Duration(seconds: 4), autoConnect: false).listen(null);
+    deviceConnection = flutterBlue.connect(device, timeout: const Duration(seconds: 20), autoConnect: false).listen(null);
     deviceStateSubscription = device.onStateChanged().listen((s) {
       if(s == BluetoothDeviceState.connected) {
       print("INFO: Connection Successful!");
