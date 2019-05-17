@@ -17,24 +17,30 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
         appBar: AppBar(
           title: const Text('Connection Established!'),
         ),
-        body: Column(
-            children: <Widget> [
-              Text('Recieved: ${numReceived}'),
-              Text('Last Sent: ${numToSend}'),
-              new TextField(
-                controller: numToSendCtrl,
-                autofocus: true,
-                decoration: new InputDecoration(
-                  labelText: 'Enter a number',
-                  fillColor: Colors.white,
-                  border: new OutlineInputBorder(borderRadius: new BorderRadius.circular(25.0)),
-                ),
-              ),
-              new RaisedButton(
-                  onPressed: () => sendInt(numToSendCtrl.text),
-                  child: Text('Send')
-              )
-            ]
+        body: Center(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget> [
+                  Text('Recieved: ${numReceived}'),
+                  Text('Last Sent: ${numToSend}'),
+                  new Container(
+                    width: 200.0,
+                    child: new TextField(
+                      controller: numToSendCtrl,
+                      autofocus: true,
+                      decoration: new InputDecoration(
+                        labelText: 'Enter a number',
+                        fillColor: Colors.white,
+                        border: new OutlineInputBorder(borderRadius: new BorderRadius.circular(10.0)),
+                      ),
+                    ),
+                  ),
+                  new RaisedButton(
+                      onPressed: () => sendInt(numToSendCtrl.text),
+                      child: Text('Send')
+                  )
+                ]
+            )
         )
     );
   }

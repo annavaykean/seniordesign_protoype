@@ -3,12 +3,18 @@ import 'code/dashboard_page.dart';
 import 'code/analysis_page.dart';
 import 'code/settings_page.dart';
 import 'code/bluetooth_test_screen.dart';
+import 'code/send_bluetooth_data.dart';
+import 'package:flutter_blue/flutter_blue.dart';
+import 'dart:async';
 
 void main(){
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  static BluetoothDevice device = null;
+  static int testing = 33;
+  static StreamSubscription deviceConnection = null;
   @override
   Widget build(BuildContext context){
     return MaterialApp(
@@ -20,6 +26,7 @@ class MyApp extends StatelessWidget {
         '/SettingsScreen' : (BuildContext context) => new SettingsScreen(),
         '/AnalysisScreen' : (BuildContext context) => new AnalysisScreen(),
         '/BluetoothTestScreen' : (BuildContext context) => new BluetoothTestScreen(),
+        '/SendBluetoothData' : (BuildContext context) => new SendBluetoothData(),
       }
       );
   }
