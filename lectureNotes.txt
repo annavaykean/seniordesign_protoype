@@ -2,7 +2,7 @@ SD2 Lecture 5/17/2019
 
 See syllabus & ppt
 
-Critical Design Review : see dates on webcourses
+Critical Design Review : see dates on webcourses (will start 5/31)
 -remind faculty of review the week, day, and hour before
 -requires a ppt (must be high quality)
 -two fridays from now is first CDR
@@ -10,7 +10,21 @@ Critical Design Review : see dates on webcourses
 -make sure the conference paper is well-written and edited
 -final presentation the week before 'finals week'
 -midterm demo
+
+CDR Format
+-see online doc
+-also focus on what the issues are (brainstorming)
+
 ABET
 -attendance mandatory on CDR presentation days
 
 -NO SD DAY
+
+Technical Presentation Recommendations
+-know your audience
+-know the purpose of presentation
+-see slide recommendations
+-put scales on figures
+-requirements and specs in table
+-progress represented as various aspects of proj by % done
+
