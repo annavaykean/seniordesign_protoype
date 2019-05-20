@@ -24,18 +24,20 @@ class BluetoothState extends State<BluetoothTestScreen> {
   BluetoothDeviceState deviceState = BluetoothDeviceState.disconnected;
 
   Widget buildRow(var data){
-    final bool alreadyConnected = false;
     return ListTile(
       title: Text(
-        data.id.toString(),
+      //  data.advertisementData.localName.toString() == ''? data.id.toString(): data.advertisementData.localName.toString(),
+      //  data.id.toString(),
+        data.name.toString() == ''? data.id.toString(): data.name.toString(),
       ),
       trailing: Icon(
         Icons.favorite,
       ),
       onTap: () {
         setState(() {
-          if(alreadyConnected) {
-            disconnectFromDevice();
+          if(connected) {
+           // disconnectFromDevice();
+            print("INFO: Device is already connected!");
           }
           else {
             connectToDevice(data);
@@ -48,8 +50,9 @@ class BluetoothState extends State<BluetoothTestScreen> {
     return ListView.builder(
       padding: const EdgeInsets.all(16.0),
       itemBuilder: (context, i) {
-        if(deviceList.length > i) {
-          return buildRow(deviceList[i]);
+        var tmp = deviceList.toSet().toList();
+        if(tmp.length > i) {
+          return buildRow(tmp[i]);
         }
       },
       shrinkWrap: true,
@@ -83,18 +86,24 @@ class BluetoothState extends State<BluetoothTestScreen> {
   }
 
   scanForDevices() {
-    print('INFO: Scanning for bluetooth devcies...');
-    scanner = flutterBlue.scan(timeout: const Duration(milliseconds: 500)).listen((scanResult) async{
-      print('INFO: deviceID = ${scanResult.device.id} ( ${scanResult.device.name} )');
+    deviceList = [];
+    print('INFO: Scanning for bluetooth devices...');
+    scanner = flutterBlue.scan(timeout: const Duration(milliseconds: 300)).listen((scanResult) async{
+      scanResult.advertisementData.localName.toString() == ''? print('INFO: deviceID = ${scanResult.device.id}'): print('INFO: deviceName = ${scanResult.advertisementData.localName} (${scanResult.device.id})');
       setState((){
         //to prevent lots of results, change the if condition
         //to see if the device ID matches the id associated with each
         //piece of hardware
-        if(!deviceList.contains(scanResult.device)) {
+        if(deviceList == null){
           deviceList.add(scanResult.device);
-          print('INFO: devList contains ${scanResult.device.id} FALSE');
+
+        }
+        if(!deviceList.contains(scanResult.device)) {
+          deviceList = List.from(deviceList);
+          deviceList.add(scanResult.device);
+          print('INFO: adding ${scanResult.device} to list of available devices');
         } else {
-          print('INFO: devList contains ${scanResult.device.id} TRUE');
+          print('INFO: ${scanResult.device} is already in the list of available devices, skipping duplicate');
         }
       });
     }, onDone: stopScanning());
@@ -104,6 +113,7 @@ class BluetoothState extends State<BluetoothTestScreen> {
     if(scanner == null){
       print("INFO: Attempted to cancel the scanner, but it was null");
     } else {
+      print('INFO: Scanner has been terminated');
       scanner?.cancel();
       scanner = null;
     }
@@ -111,16 +121,15 @@ class BluetoothState extends State<BluetoothTestScreen> {
   }
 
   disconnectFromDevice() {
+    connected = false;
     return null;
   }
 
   connectToDevice(BluetoothDevice device) {
-    print('TEST: testing = ${MyApp.testing}');
-    MyApp.testing = 44;
-    print('Test: testing = ${MyApp.testing}');
     deviceConnection = flutterBlue.connect(device, timeout: const Duration(seconds: 20), autoConnect: false).listen(null);
     deviceStateSubscription = device.onStateChanged().listen((s) {
       if(s == BluetoothDeviceState.connected) {
+        connected = true;
       print("INFO: Connection Successful!");
       stopScanning();
       MyApp.device = device;

@@ -1,0 +1,23 @@
+App ToDo
+
+General ToDo
+-get firebase libraries working
+-setup firebase authentication
+-create firebase database
+-send posture data to firebase db and fetch from db
+-recieve bluetooth data from hardware
+-send bluetooth commands to hardware
+-layout
+-settings menu (user preferences)
+-display posture data in graphical format
+-display stats for day and over time
+
+Known Bugs
+- if bluetooth is off on device and 'Search for devices' is selected app crashes
+-
+
+Completed Tasks
+-create basic flutter app
+-search for bluetooth devices
+-connect to bluetooth devices
+
