@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-
+import 'package:sd_proto/main.dart';
 //send and receive numbers (for testing purposes only)
 class SendBluetoothData extends StatefulWidget {
   @override
@@ -38,6 +38,10 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
                   new RaisedButton(
                       onPressed: () => sendInt(numToSendCtrl.text),
                       child: Text('Send')
+                  ),
+                  new RaisedButton(
+                    onPressed: () => readIntHelper(),
+                    child: Text('Fetch')
                   )
                 ]
             )
@@ -45,10 +49,47 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
     );
   }
 
+  readIntHelper() {
+    MyApp.device.discoverServices().then((s) {
+      setState((){
+        MyApp.services = s;
+        MyApp.services.forEach((service) {
+          for(BluetoothCharacteristic c in service.characteristics){
+            readInt(c).then((value) {
+              //success
+            }).catchError((err){
+              print(err);
+            });
+          }
+        });
+      });
+
+    });
+  }
+
+  readInt(BluetoothCharacteristic c) async {
+    final value1 = await MyApp.device.readCharacteristic(c);
+    setState((){
+      numReceived = value1[0];
+    });
+    print('TADA: ' + value1.toString());
+
+  }
   sendInt(String txt) {
     print('INFO: Preparing to send ${numToSendCtrl.text}');
     setState(() {
       numToSend = numToSendCtrl.text;
     });
+    MyApp.device.discoverServices().then((s) {
+      setState((){
+        MyApp.services = s;
+        MyApp.services.forEach((service) {
+          for(BluetoothCharacteristic c in service.characteristics){
+          }
+        });
+      });
+
+    });
+
   }
 }

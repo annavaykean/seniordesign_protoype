@@ -15,6 +15,8 @@ class MyApp extends StatelessWidget {
   static BluetoothDevice device = null;
   static int testing = 33;
   static StreamSubscription deviceConnection = null;
+  static List<BluetoothService> services = new List();
+
   @override
   Widget build(BuildContext context){
     return MaterialApp(
