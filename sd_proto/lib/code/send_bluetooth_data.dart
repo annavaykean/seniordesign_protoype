@@ -21,8 +21,12 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget> [
-                  Text('Recieved: ${numReceived}'),
-                  Text('Last Sent: ${numToSend}'),
+                  Text('Recieved: ${numReceived}',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)
+                  ),
+                  Text('Last Sent: ${numToSend}',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)
+                  ),
                   new Container(
                     width: 200.0,
                     child: new TextField(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:async';
 import 'package:sd_proto/main.dart';
+
 class BluetoothTestScreen extends StatefulWidget {
   @override
   BluetoothState createState() => BluetoothState();
@@ -13,7 +14,6 @@ class BluetoothState extends State<BluetoothTestScreen> {
   //For Scanning
   StreamSubscription scanner;
   List<BluetoothDevice> deviceList = [];
-
   //For Device connect / disconnect
   BluetoothDevice device;
   bool connected = false;
@@ -50,9 +50,8 @@ class BluetoothState extends State<BluetoothTestScreen> {
     return ListView.builder(
       padding: const EdgeInsets.all(16.0),
       itemBuilder: (context, i) {
-        var tmp = deviceList.toSet().toList();
-        if(tmp.length > i) {
-          return buildRow(tmp[i]);
+        if(deviceList.length > i) {
+          return buildRow(deviceList[i]);
         }
       },
       shrinkWrap: true,
@@ -89,24 +88,34 @@ class BluetoothState extends State<BluetoothTestScreen> {
     deviceList = [];
     print('INFO: Scanning for bluetooth devices...');
     scanner = flutterBlue.scan(timeout: const Duration(milliseconds: 300)).listen((scanResult) async{
+
       scanResult.advertisementData.localName.toString() == ''? print('INFO: deviceID = ${scanResult.device.id}'): print('INFO: deviceName = ${scanResult.advertisementData.localName} (${scanResult.device.id})');
+      //check to see if device has already been added to deviceList
+      bool isDuplicate = false;
+      for(int i=0;i<deviceList.length;i++){
+        if(deviceList[i].id == scanResult.device.id) {
+          isDuplicate = true;
+          break;
+        }
+      }
       setState((){
         //to prevent lots of results, change the if condition
         //to see if the device ID matches the id associated with each
         //piece of hardware
-        if(deviceList == null){
-          deviceList.add(scanResult.device);
-
-        }
-        if(!deviceList.contains(scanResult.device)) {
+        if(deviceList == null || !isDuplicate) {
           deviceList = List.from(deviceList);
           deviceList.add(scanResult.device);
+          print('deviceList');
+          for(int i=0;i<deviceList.length;i++){
+            print(deviceList[i].id);
+          }
           print('INFO: adding ${scanResult.device} to list of available devices');
         } else {
           print('INFO: ${scanResult.device} is already in the list of available devices, skipping duplicate');
         }
       });
     }, onDone: stopScanning());
+
 
   }
   stopScanning() {
