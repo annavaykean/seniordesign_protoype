@@ -11,6 +11,8 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
   TextEditingController numToSendCtrl = new TextEditingController();
   int numReceived = 0;
   String numToSend = '0';
+  String magicNumber = '6E400003-B5A3-F393-E0A9-E50E24DccA9E';
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -21,8 +23,12 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget> [
-                  Text('Recieved: ${numReceived}'),
-                  Text('Last Sent: ${numToSend}'),
+                  Text('Recieved: ${numReceived}',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)
+                  ),
+                  Text('Last Sent: ${numToSend}',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)
+                  ),
                   new Container(
                     width: 200.0,
                     child: new TextField(
@@ -55,8 +61,12 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
         MyApp.services = s;
         MyApp.services.forEach((service) {
           for(BluetoothCharacteristic c in service.characteristics){
+            print('hit1');
+            if(c.uuid.toString().toUpperCase() == magicNumber.toUpperCase()){
+              print("match found");
+            }
             readInt(c).then((value) {
-              //success
+              print("returned");
             }).catchError((err){
               print(err);
             });
@@ -66,14 +76,29 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
 
     });
   }
-
-  readInt(BluetoothCharacteristic c) async {
-    final value1 = await MyApp.device.readCharacteristic(c);
-    setState((){
-      numReceived = value1[0];
+ setNotification(BluetoothCharacteristic c) async{
+    await MyApp.device.setNotifyValue(c, true);
+    print('hit');
+    final sub = MyApp.device.onValueChanged(c).listen((d){
+      setState(() {
+        print('onValueChanged ${d}');
+        numReceived = d[0];
+      });
     });
-    print('TADA: ' + value1.toString());
-
+ }
+  readInt(BluetoothCharacteristic c) async {
+    if(c.uuid.toString().toUpperCase() == magicNumber.toUpperCase()) {
+      print('hit2');
+     // final value1 = await MyApp.device.readCharacteristic(c);
+      final value1 = c.value;
+      print('hit2.5');
+      setNotification(c);
+      print('passed setNotif');
+      setState(() {
+       // numReceived = value1[0];
+      });
+      print('TADA: ' + value1.toString());
+    }
   }
   sendInt(String txt) {
     print('INFO: Preparing to send ${numToSendCtrl.text}');
