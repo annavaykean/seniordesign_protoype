@@ -1,3 +1,5 @@
+// Libraries to include for BT device
+// MAC Address CC:50:E3:AF:0C:A2
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
@@ -7,9 +9,13 @@ BLECharacteristic *pCharacteristic;
 bool deviceConnected = false;
 int txValue = 0;
 
+
+// Univesally Unique Identifier
 #define SERVICE_UUID            "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
 #define CHARACTERISTIC_UUID_TX  "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
 
+
+// Connection of the Device
 class MyServerCallbacks:  public BLEServerCallbacks
 {
   void onConnect (BLEServer* pServer)
@@ -24,6 +30,11 @@ class MyServerCallbacks:  public BLEServerCallbacks
 };
 
 
+//boolean stop_it = false;
+
+
+// Declaring the Device and Connection
+// Device Server and Characteristic
 void setup() 
 {
   Serial.begin(9600);
@@ -50,20 +61,54 @@ void setup()
   // Start the service
   pService->start();
 
-  // Stat advertising
+  // Start advertising
   pServer->getAdvertising()->start();
   Serial.println("Waiting for a client connection to notify...");
-  
 }
 
+
+//boolean stop_main_loop()
+//{
+//  if (stop_it == false)
+//  {
+//    if (deviceConnected)
+//    {
+//      txValue = random(0, 9);
+//  
+//      // Conversion of txValue
+//      char txString[8];
+//      // Convert float to string
+//      dtostrf(txValue, 1, 2, txString);
+//  
+//      // Setting the value to the characteristic
+//      pCharacteristic->setValue(txString);
+//  
+//      // Notifying the connected client
+//      pCharacteristic->notify();
+//      Serial.println("Sent Value: " + String(txString));
+//      delay(500); 
+//    }
+//  }
+//
+//  stop_it = true;
+//  return stop_it;
+//}
+
+
+// Neverending Loop of Values
 void loop() 
 {
+
+//  stop_it = stop_main_loop();
+
+  
   if (deviceConnected)
   {
-    txValue = random(-10, 20);
+    txValue = random(0, 9);
 
     // Conversion of txValue
     char txString[8];
+    // Convert float to string
     dtostrf(txValue, 1, 2, txString);
 
     // Setting the value to the characteristic
