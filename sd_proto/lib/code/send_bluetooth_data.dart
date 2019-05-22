@@ -95,7 +95,7 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
       setNotification(c);
       print('passed setNotif');
       setState(() {
-        numReceived = value1[0];
+       // numReceived = value1[0];
       });
       print('TADA: ' + value1.toString());
     }
