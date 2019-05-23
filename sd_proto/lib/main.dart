@@ -4,6 +4,7 @@ import 'code/analysis_page.dart';
 import 'code/settings_page.dart';
 import 'code/bluetooth_test_screen.dart';
 import 'code/send_bluetooth_data.dart';
+import 'code/signUp.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +14,8 @@ void main(){
 }
 
 class MyApp extends StatelessWidget {
+  static FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  static FirebaseUser user;
   static BluetoothDevice device = null;
   static int testing = 33;
   static StreamSubscription deviceConnection = null;
@@ -23,6 +26,7 @@ class MyApp extends StatelessWidget {
       home: new WelcomeScreen(),
       routes: <String, WidgetBuilder> {
         '/WelcomeScreen': (BuildContext context) => new WelcomeScreen(),
+        '/SignUp': (BuildContext context) => new SignUpScreen(),
         '/DashboardScreen': (BuildContext context) => new DashboardScreen(),
         '/SettingsScreen' : (BuildContext context) => new SettingsScreen(),
         '/AnalysisScreen' : (BuildContext context) => new AnalysisScreen(),
@@ -35,15 +39,19 @@ class MyApp extends StatelessWidget {
 
 class WelcomeScreen extends StatelessWidget {
 
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  TextEditingController emailCtrl = new TextEditingController();
-  TextEditingController passwordCtrl = new TextEditingController();
+  final TextEditingController emailCtrl = new TextEditingController();
+  final TextEditingController passwordCtrl = new TextEditingController();
 
-  Future<String> signIn(String email, String password) async {
-    FirebaseUser user = await firebaseAuth.signInWithEmailAndPassword(
+  Future<String> signIn(BuildContext context, String email, String password) async {
+    MyApp.user = await MyApp.firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
-    print('I think we might have signed in...?');
-    return user.uid;
+    print('INFO: ${MyApp.user.uid} signed in.');
+    Navigator.of(context).pushNamed('/DashboardScreen');
+    return MyApp.user.uid;
+  }
+
+  Future<void> signOut() async {
+    return MyApp.firebaseAuth.signOut();
   }
 
   @override
@@ -74,11 +82,11 @@ class WelcomeScreen extends StatelessWidget {
               ),
               RaisedButton(
                 child: const Text('Sign Up!'),
-                onPressed: null,
+                onPressed: () => Navigator.of(context).pushNamed('/SignUp'),
               ),
               RaisedButton(
                   child: const Text('Sign In!'),
-                  onPressed: () => signIn(emailCtrl.text, passwordCtrl.text)
+                  onPressed: () => signIn(context, emailCtrl.text, passwordCtrl.text)
               ),
             ]
 
