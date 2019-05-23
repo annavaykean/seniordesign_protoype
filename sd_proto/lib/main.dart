@@ -6,6 +6,7 @@ import 'code/bluetooth_test_screen.dart';
 import 'code/send_bluetooth_data.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main(){
   runApp(MyApp());
@@ -33,17 +34,54 @@ class MyApp extends StatelessWidget {
 }
 
 class WelcomeScreen extends StatelessWidget {
+
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  TextEditingController emailCtrl = new TextEditingController();
+  TextEditingController passwordCtrl = new TextEditingController();
+
+  Future<String> signIn(String email, String password) async {
+    FirebaseUser user = await firebaseAuth.signInWithEmailAndPassword(
+        email: email, password: password);
+    print('I think we might have signed in...?');
+    return user.uid;
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: AppBar(
           title: const Text('Welcome To My App!'),
         ),
-        body: Center(
-            child: RaisedButton(
-                child: const Text('Enter the App!'),
-                onPressed: () => Navigator.of(context).pushNamed('/DashboardScreen')
-            )
+        body: Column(
+            children: <Widget> [
+              Container(
+                child: TextField(
+                  controller: emailCtrl,
+                  autofocus: true,
+                  decoration: new InputDecoration(
+                    labelText: 'Email'
+                  ),
+                )
+              ),
+              Container(
+                child: TextField(
+                  controller: passwordCtrl,
+                  autofocus: false,
+                  decoration: new InputDecoration(
+                    labelText: 'Password'
+                  ),
+                )
+              ),
+              RaisedButton(
+                child: const Text('Sign Up!'),
+                onPressed: null,
+              ),
+              RaisedButton(
+                  child: const Text('Sign In!'),
+                  onPressed: () => signIn(emailCtrl.text, passwordCtrl.text)
+              ),
+            ]
+
         )
     );
   }
