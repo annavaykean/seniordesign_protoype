@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sd_proto/main.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -17,6 +16,11 @@ class SignUpScreen extends StatelessWidget {
     return MyApp.user.uid;
   }
 
+  clearForm() {
+    emailCtrl.clear();
+    passwordCtrl.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -26,9 +30,12 @@ class SignUpScreen extends StatelessWidget {
         body: Column(
             children: <Widget> [
               Container(
+                  child: Text('Please fill out the form below.'),
+              ),
+              Container(
                   child: TextField(
                     controller: emailCtrl,
-                    autofocus: true,
+                    autofocus: false,
                     decoration: new InputDecoration(
                         labelText: 'Email'
                     ),
@@ -43,17 +50,21 @@ class SignUpScreen extends StatelessWidget {
                     ),
                   )
               ),
+              Row(
+                children: <Widget>[
 
-              RaisedButton(
-                child: const Text('Sign Up!'),
-                onPressed: () => signUp(context, emailCtrl.text, passwordCtrl.text),
-              ),
-              RaisedButton(
-                  child: const Text('Cancel'),
-                  onPressed: null,
-              ),
+                  RaisedButton(
+                    child: const Text('Submit'),
+                    onPressed: () => signUp(context, emailCtrl.text, passwordCtrl.text),
+                  ),
+                  //add column for padding
+                  RaisedButton(
+                    child: const Text('Cancel'),
+                    onPressed: () => clearForm(),
+                  ),
+                ],
+              )
             ]
-
         )
     );
   }

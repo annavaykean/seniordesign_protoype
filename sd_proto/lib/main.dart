@@ -61,8 +61,11 @@ class WelcomeScreen extends StatelessWidget {
           title: const Text('Welcome To My App!'),
         ),
         body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget> [
               Container(
+                width: 300,
                 child: TextField(
                   controller: emailCtrl,
                   autofocus: true,
@@ -72,6 +75,7 @@ class WelcomeScreen extends StatelessWidget {
                 )
               ),
               Container(
+                width: 300,
                 child: TextField(
                   controller: passwordCtrl,
                   autofocus: false,
@@ -81,11 +85,11 @@ class WelcomeScreen extends StatelessWidget {
                 )
               ),
               RaisedButton(
-                child: const Text('Sign Up!'),
+                child: const Text('Sign Up'),
                 onPressed: () => Navigator.of(context).pushNamed('/SignUp'),
               ),
               RaisedButton(
-                  child: const Text('Sign In!'),
+                  child: const Text('Sign In'),
                   onPressed: () => signIn(context, emailCtrl.text, passwordCtrl.text)
               ),
             ]
