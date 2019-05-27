@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
-
+import 'package:sd_proto/main.dart';
 class DashboardScreen extends StatelessWidget {
+
+  signOut(BuildContext context) {
+    MyApp.firebaseAuth.signOut();
+    MyApp.user = null;
+    Navigator.popUntil(context, ModalRoute.withName('/'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: AppBar(
-          title: const Text('This is a home page!'),
+          title: Text('Welcome ${MyApp.user.email}'),
         ),
         body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -22,6 +29,10 @@ class DashboardScreen extends StatelessWidget {
               RaisedButton(
                 child: const Text('Bluetooth Testing Page'),
                 onPressed: () => Navigator.of(context).pushNamed('/BluetoothTestScreen'),
+              ),
+              RaisedButton(
+                child: const Text('Sign Out'),
+                onPressed: () => signOut(context),
               )
             ]
         )
