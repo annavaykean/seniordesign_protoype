@@ -9,7 +9,7 @@ class SendBluetoothData extends StatefulWidget {
 
 class SendBluetoothDataState extends State<SendBluetoothData> {
   TextEditingController numToSendCtrl = new TextEditingController();
-  int numReceived = 0;
+  String numReceived = '0';
   String numToSend = '0';
   String magicNumber = '6E400003-B5A3-F393-E0A9-E50E24DccA9E';
 
@@ -24,10 +24,10 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget> [
                   Text('Recieved: ${numReceived}',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
                   ),
                   Text('Last Sent: ${numToSend}',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
                   ),
                   new Container(
                     width: 200.0,
@@ -81,8 +81,8 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
     print('hit');
     final sub = MyApp.device.onValueChanged(c).listen((d){
       setState(() {
-        print('onValueChanged ${d}');
-        numReceived = d[0];
+        print('Current Val: ' + String.fromCharCode(d[0]));
+        numReceived = String.fromCharCode(d[0]);
       });
     });
  }
