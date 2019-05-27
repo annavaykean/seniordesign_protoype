@@ -33,6 +33,10 @@ class DashboardScreen extends StatelessWidget {
               RaisedButton(
                 child: const Text('Sign Out'),
                 onPressed: () => signOut(context),
+              ),
+              RaisedButton(
+                child: const Text('Database Testing Page'),
+                onPressed: () => Navigator.of(context).pushNamed('/DatabaseTestPage'),
               )
             ]
         )

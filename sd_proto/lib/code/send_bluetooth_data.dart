@@ -83,17 +83,15 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
       setState(() {
         print('Current Val: ' + String.fromCharCode(d[0]));
         numReceived = String.fromCharCode(d[0]);
+     //   FirebaseDatabase.instance.reference().child('newData').;
       });
     });
  }
   readInt(BluetoothCharacteristic c) async {
     if(c.uuid.toString().toUpperCase() == magicNumber.toUpperCase()) {
-      print('hit2');
      // final value1 = await MyApp.device.readCharacteristic(c);
       final value1 = c.value;
-      print('hit2.5');
       setNotification(c);
-      print('passed setNotif');
       setState(() {
        // numReceived = value1[0];
       });

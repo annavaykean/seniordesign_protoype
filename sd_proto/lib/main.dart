@@ -5,21 +5,27 @@ import 'code/settings_page.dart';
 import 'code/bluetooth_test_screen.dart';
 import 'code/send_bluetooth_data.dart';
 import 'code/signUp.dart';
+import 'code/database_test_page.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:firebase_database/firebase_database.dart';
 void main(){
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  //global access to bluetooth connection
   static FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   static FirebaseUser user;
   static BluetoothDevice device = null;
   static int testing = 33;
   static StreamSubscription deviceConnection = null;
   static List<BluetoothService> services = new List();
+
+  //global access to database connection
+  static FirebaseDatabase database = new FirebaseDatabase();
+  static DatabaseReference userReference;
 
   @override
   Widget build(BuildContext context){
@@ -34,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/AnalysisScreen' : (BuildContext context) => new AnalysisScreen(),
         '/BluetoothTestScreen' : (BuildContext context) => new BluetoothTestScreen(),
         '/SendBluetoothData' : (BuildContext context) => new SendBluetoothData(),
+        '/DatabaseTestPage' : (BuildContext context) => new DatabaseTestPage(),
       }
       );
   }
@@ -48,13 +55,22 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   final TextEditingController passwordCtrl = new TextEditingController();
   bool validEmail = false;
   bool validPass = false;
+
+
   Future<String> signIn(BuildContext context, String email, String password) async {
     if(email != null && password != null) {
       MyApp.user = await MyApp.firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      print('INFO: ${MyApp.user.uid} signed in.');
-      Navigator.of(context).pushNamed('/DashboardScreen');
-      return MyApp.user.uid;
+      if(MyApp.user != null) {
+        print('INFO: ${MyApp.user.uid} signed in.');
+        //establish new database session
+        MyApp.database.setPersistenceEnabled(true);
+        MyApp.database.setPersistenceCacheSizeBytes(10000000);
+        MyApp.userReference = MyApp.database.reference().child('user)');
+        //navigate to homepage
+        Navigator.of(context).pushNamed('/DashboardScreen');
+        return MyApp.user.uid;
+      }
     }
     else{
       print('Must input email and password to sign in');
