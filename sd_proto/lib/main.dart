@@ -38,18 +38,27 @@ class MyApp extends StatelessWidget {
       );
   }
 }
-
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget{
+  @override
+  WelcomeScreenState createState() => WelcomeScreenState();
+}
+class WelcomeScreenState extends State<WelcomeScreen> {
 
   final TextEditingController emailCtrl = new TextEditingController();
   final TextEditingController passwordCtrl = new TextEditingController();
-
+  bool validEmail = false;
+  bool validPass = false;
   Future<String> signIn(BuildContext context, String email, String password) async {
-    MyApp.user = await MyApp.firebaseAuth.signInWithEmailAndPassword(
-        email: email, password: password);
-    print('INFO: ${MyApp.user.uid} signed in.');
-    Navigator.of(context).pushNamed('/DashboardScreen');
-    return MyApp.user.uid;
+    if(email != null && password != null) {
+      MyApp.user = await MyApp.firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password);
+      print('INFO: ${MyApp.user.uid} signed in.');
+      Navigator.of(context).pushNamed('/DashboardScreen');
+      return MyApp.user.uid;
+    }
+    else{
+      print('Must input email and password to sign in');
+    }
   }
 
   Future<void> signOut() async {
@@ -72,7 +81,8 @@ class WelcomeScreen extends StatelessWidget {
                   controller: emailCtrl,
                   autofocus: true,
                   decoration: new InputDecoration(
-                    labelText: 'Email'
+                    labelText: 'Email',
+                    errorText: validEmail ? 'Required Field' : null,
                   ),
                 )
               ),
@@ -82,17 +92,25 @@ class WelcomeScreen extends StatelessWidget {
                   controller: passwordCtrl,
                   autofocus: false,
                   decoration: new InputDecoration(
-                    labelText: 'Password'
+                    labelText: 'Password',
+                    errorText: validPass ? 'Required Field' : null,
                   ),
                 )
               ),
               RaisedButton(
                 child: const Text('Sign Up'),
-                onPressed: () => Navigator.of(context).pushNamed('/SignUp'),
+                onPressed: (){
+                  Navigator.of(context).pushNamed('/SignUp'); },
               ),
               RaisedButton(
                   child: const Text('Sign In'),
-                  onPressed: () => signIn(context, emailCtrl.text, passwordCtrl.text)
+                  onPressed: () {
+                    setState((){
+                      emailCtrl.text.isEmpty ? validEmail = true : validEmail = false;
+                      passwordCtrl.text.isEmpty ? validPass = true : validPass = false;
+                    });
+                    signIn(context, emailCtrl.text, passwordCtrl.text);
+                  }
               ),
             ]
 

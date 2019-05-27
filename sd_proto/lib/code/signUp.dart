@@ -5,7 +5,8 @@ import 'package:sd_proto/main.dart';
 class SignUpScreen extends StatelessWidget {
   final TextEditingController emailCtrl = new TextEditingController();
   final TextEditingController passwordCtrl = new TextEditingController();
-
+  final TextEditingController fnameCtrl = new TextEditingController();
+  final TextEditingController lnameCtrl = new TextEditingController();
   Future<String> signUp(BuildContext context, String email, String password) async {
     MyApp.user = await MyApp.firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
@@ -19,6 +20,8 @@ class SignUpScreen extends StatelessWidget {
   clearForm() {
     emailCtrl.clear();
     passwordCtrl.clear();
+    fnameCtrl.clear();
+    lnameCtrl.clear();
   }
 
   @override
@@ -31,6 +34,24 @@ class SignUpScreen extends StatelessWidget {
             children: <Widget> [
               Container(
                   child: Text('Please fill out the form below.'),
+              ),
+              Container(
+                child: TextField(
+                  controller: fnameCtrl,
+                  autofocus: true,
+                  decoration: new InputDecoration(
+                    labelText: 'First Name'
+                  )
+                )
+              ),
+              Container(
+                child: TextField(
+                  controller: lnameCtrl,
+                  autofocus: false,
+                  decoration: new InputDecoration(
+                    labelText: 'Last Name'
+                  ),
+                )
               ),
               Container(
                   child: TextField(
