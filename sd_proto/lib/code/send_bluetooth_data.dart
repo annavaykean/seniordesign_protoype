@@ -109,22 +109,23 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
     setState(() {
       numToSend = numToSendCtrl.text;
     });
-    if (MyApp.services == null) {
-      //get services
-      MyApp.device.discoverServices().then((s) {
-        setState(() {
-          MyApp.services = s;
-        });
-      });
-    }
     MyApp.services.forEach((service) {
       for (BluetoothCharacteristic c in service.characteristics) {
+        print('INFO: looking for matching characteristic');
         if (c.uuid.toString().toUpperCase() == magicNumber.toUpperCase()) {
-          print("match found");
+          print('INFO: sending...');
+          MyApp.device.writeCharacteristic(c, [int.parse(txt)]);
+          setState(() {
+            numToSend = txt;
+          });
+          break;
         }
-        MyApp.device.writeCharacteristic(c, [0xFF, 0xFF]);
-        break;
+        else {
+          print('INFO: checked uuid ' + c.uuid.toString());
+        }
+
       }
     });
+    print('INFO: bluetooth write terminated');
   }
 }

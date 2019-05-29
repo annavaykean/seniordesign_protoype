@@ -5,7 +5,7 @@ class DashboardScreen extends StatelessWidget {
   signOut(BuildContext context) {
     MyApp.firebaseAuth.signOut();
     MyApp.user = null;
-    Navigator.popUntil(context, ModalRoute.withName('/'));
+    Navigator.of(context).pushNamed('/WelcomeScreen');
   }
 
   @override
@@ -13,6 +13,12 @@ class DashboardScreen extends StatelessWidget {
     return new Scaffold(
         appBar: AppBar(
           title: Text('Welcome ${MyApp.user.email}'),
+            actions: <Widget>[
+            new IconButton(
+              icon: new Icon(Icons.close),
+              onPressed: () => signOut(context),
+            )
+  ],
         ),
         body: Column(
             mainAxisAlignment: MainAxisAlignment.center,

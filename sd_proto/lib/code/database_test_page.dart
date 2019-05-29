@@ -40,12 +40,41 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
 
   readFromDatabase(){
     var userID = MyApp.user.uid;
-    var retrievedData;
-    MyApp.userReference.once().then((DataSnapshot snapshot) {
+    List list = [];
+    MyApp.userReference.child(userID).once().then((DataSnapshot snapshot) {
       print('DATA: ${snapshot.value}');
-      retrievedData = snapshot;
+      for(var value in snapshot.value.values) {
+        list.add(new Posture.fromJson(value));
+      }
+      print('length: ' + list.length.toString());
+      return list;
     });
+  }
 
+  buildRow(var data) {
+    String summary = 'CogX: ' + data.cogX + ', CogY: ' + data.cogY + ', date: ' + data.created_at;
+    print(summary);
+    return ListTile(
+        title: Text(summary),
+        onTap: () {
+          print('tap');
+        }
+    );
+  }
+  showData() {
+    readFromDatabase().then((list) {
+      print(list.length);
+      return ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemBuilder: (context, i) {
+          if(list.length > i) {
+            print('hit2');
+            return buildRow(list[i]);
+          }
+        },
+        shrinkWrap: true,
+      );
+    });
 
   }
 
@@ -59,10 +88,6 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              RaisedButton(
-                child: const Text('Sign Out'),
-                onPressed: () => signOut(context),
-              ),
               Container(
                 child: new TextField(
                   controller: cogXctrl,
@@ -87,11 +112,31 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
               ),
               RaisedButton(
                 child: const Text('Fetch Data from Database'),
-                onPressed: () => readFromDatabase(),
+                onPressed: () => null, //showData(),
+              ),
+              Expanded(
+                child: Container(
+                  //child: showData(),
+                )
               )
             ]
         )
     );
   }
+
 }
+
+class Posture {
+  String cogX;
+  String cogY;
+  String created_at;
+
+  Posture.fromJson(var data){
+    this.cogX = data['cogX'];
+    this.cogY = data['cogY'];
+    this.created_at = data['created_at'];
+  }
+}
+
+
 

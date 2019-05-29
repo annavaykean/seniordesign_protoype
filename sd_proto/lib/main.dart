@@ -68,7 +68,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
         MyApp.database.setPersistenceCacheSizeBytes(10000000);
         MyApp.userReference = MyApp.database.reference().child('user)');
         //navigate to homepage
-        Navigator.of(context).pushNamed('/DashboardScreen');
+        Navigator.of(context).pushReplacementNamed('/DashboardScreen');
         return MyApp.user.uid;
       }
     }
@@ -88,7 +88,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
           title: const Text('Welcome To My App!'),
         ),
         body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        //  mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget> [
               Container(

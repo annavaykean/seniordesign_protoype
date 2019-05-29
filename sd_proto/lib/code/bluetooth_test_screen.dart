@@ -143,6 +143,11 @@ class BluetoothState extends State<BluetoothTestScreen> {
       stopScanning();
       MyApp.device = device;
       MyApp.deviceConnection = deviceConnection;
+      MyApp.device.discoverServices().then((s) {
+          setState(() {
+            MyApp.services = s;
+          });
+      });
       Navigator.of(context).pushNamed('/SendBluetoothData');
       } else {
         print("INFO: Failed to connect to " + device.id.toString());
