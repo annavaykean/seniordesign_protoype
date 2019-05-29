@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:sd_proto/main.dart';
+
 //send and receive numbers (for testing purposes only)
 class SendBluetoothData extends StatefulWidget {
   @override
@@ -22,12 +23,14 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
         body: Center(
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget> [
+                children: <Widget>[
                   Text('Recieved: ${numReceived}',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20)
                   ),
                   Text('Last Sent: ${numToSend}',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20)
                   ),
                   new Container(
                     width: 200.0,
@@ -37,7 +40,8 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
                       decoration: new InputDecoration(
                         labelText: 'Enter a number',
                         fillColor: Colors.white,
-                        border: new OutlineInputBorder(borderRadius: new BorderRadius.circular(10.0)),
+                        border: new OutlineInputBorder(
+                            borderRadius: new BorderRadius.circular(10.0)),
                       ),
                     ),
                   ),
@@ -46,8 +50,8 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
                       child: Text('Send')
                   ),
                   new RaisedButton(
-                    onPressed: () => readIntHelper(),
-                    child: Text('Fetch')
+                      onPressed: () => readIntHelper(),
+                      child: Text('Fetch')
                   )
                 ]
             )
@@ -57,62 +61,70 @@ class SendBluetoothDataState extends State<SendBluetoothData> {
 
   readIntHelper() {
     MyApp.device.discoverServices().then((s) {
-      setState((){
+      setState(() {
         MyApp.services = s;
         MyApp.services.forEach((service) {
-          for(BluetoothCharacteristic c in service.characteristics){
+          for (BluetoothCharacteristic c in service.characteristics) {
             print('hit1');
-            if(c.uuid.toString().toUpperCase() == magicNumber.toUpperCase()){
+            if (c.uuid.toString().toUpperCase() == magicNumber.toUpperCase()) {
               print("match found");
             }
             readInt(c).then((value) {
               print("returned");
-            }).catchError((err){
+            }).catchError((err) {
               print(err);
             });
           }
         });
       });
-
     });
   }
- setNotification(BluetoothCharacteristic c) async{
+
+  setNotification(BluetoothCharacteristic c) async {
     await MyApp.device.setNotifyValue(c, true);
     print('hit');
-    final sub = MyApp.device.onValueChanged(c).listen((d){
+    final sub = MyApp.device.onValueChanged(c).listen((d) {
       setState(() {
         print('Current Val: ' + String.fromCharCode(d[0]));
         numReceived = String.fromCharCode(d[0]);
-     //   FirebaseDatabase.instance.reference().child('newData').;
+        //   FirebaseDatabase.instance.reference().child('newData').;
       });
     });
- }
+  }
+
   readInt(BluetoothCharacteristic c) async {
-    if(c.uuid.toString().toUpperCase() == magicNumber.toUpperCase()) {
-     // final value1 = await MyApp.device.readCharacteristic(c);
+    if (c.uuid.toString().toUpperCase() == magicNumber.toUpperCase()) {
+      // final value1 = await MyApp.device.readCharacteristic(c);
       final value1 = c.value;
       setNotification(c);
       setState(() {
-       // numReceived = value1[0];
+        // numReceived = value1[0];
       });
       print('TADA: ' + value1.toString());
     }
   }
+
   sendInt(String txt) {
     print('INFO: Preparing to send ${numToSendCtrl.text}');
     setState(() {
       numToSend = numToSendCtrl.text;
     });
-    MyApp.device.discoverServices().then((s) {
-      setState((){
-        MyApp.services = s;
-        MyApp.services.forEach((service) {
-          for(BluetoothCharacteristic c in service.characteristics){
-          }
+    if (MyApp.services == null) {
+      //get services
+      MyApp.device.discoverServices().then((s) {
+        setState(() {
+          MyApp.services = s;
         });
       });
-
+    }
+    MyApp.services.forEach((service) {
+      for (BluetoothCharacteristic c in service.characteristics) {
+        if (c.uuid.toString().toUpperCase() == magicNumber.toUpperCase()) {
+          print("match found");
+        }
+        MyApp.device.writeCharacteristic(c, [0xFF, 0xFF]);
+        break;
+      }
     });
-
   }
 }
