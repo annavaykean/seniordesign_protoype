@@ -6,6 +6,9 @@ class DashboardScreen extends StatelessWidget {
     MyApp.firebaseAuth.signOut();
     MyApp.user = null;
     Navigator.of(context).pushNamed('/WelcomeScreen');
+    if(MyApp.deviceConnection != null) {
+      MyApp.deviceConnection.cancel();
+    }
   }
 
   @override
