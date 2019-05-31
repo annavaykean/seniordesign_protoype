@@ -15,7 +15,6 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
   TextEditingController cogYctrl = new TextEditingController();
   List list = [];
 
-
   signOut(BuildContext context) {
     MyApp.firebaseAuth.signOut();
     MyApp.user = null;
@@ -50,7 +49,8 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
       print('length: ' + list.length.toString());
    //   return list;
       print('hit');
-      return ListView.builder(
+      showData();
+/*      return ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemBuilder: (context, i) {
           print('INFO: ' + list.length.toString());
@@ -60,7 +60,7 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
           }
         },
         shrinkWrap: true,
-      );
+      );*/
     });
 
   }
