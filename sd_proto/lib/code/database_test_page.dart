@@ -13,7 +13,7 @@ class DatabaseTestPage extends StatefulWidget {
 class DatabaseTestPageState extends State<DatabaseTestPage> {
   TextEditingController cogXctrl = new TextEditingController();
   TextEditingController cogYctrl = new TextEditingController();
-
+  List list = [];
 
   signOut(BuildContext context) {
     MyApp.firebaseAuth.signOut();
@@ -39,21 +39,35 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
   }
 
   readFromDatabase(){
+    list = [];
     var userID = MyApp.user.uid;
-    List list = [];
     MyApp.userReference.child(userID).once().then((DataSnapshot snapshot) {
       print('DATA: ${snapshot.value}');
       for(var value in snapshot.value.values) {
         list.add(new Posture.fromJson(value));
       }
       print('length: ' + list.length.toString());
-      return list;
+   //   return list;
+      print('hit');
+      showData();
+/*      return ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemBuilder: (context, i) {
+          print('INFO: ' + list.length.toString());
+          if (list.length > i) {
+            print('hit2');
+            return buildRow(list[i]);
+          }
+        },
+        shrinkWrap: true,
+      );*/
     });
+
   }
 
   buildRow(var data) {
     String summary = 'CogX: ' + data.cogX + ', CogY: ' + data.cogY + ', date: ' + data.created_at;
-    print(summary);
+    print('SUMMARY: ' + summary);
     return ListTile(
         title: Text(summary),
         onTap: () {
@@ -62,20 +76,22 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
     );
   }
   showData() {
-    readFromDatabase().then((list) {
+ //   readFromDatabase().then((list) {
+    if(list != null && list.length > 0) {
       print(list.length);
       return ListView.builder(
         padding: const EdgeInsets.all(16.0),
         itemBuilder: (context, i) {
-          if(list.length > i) {
+          print('INFO: ' + list.length.toString());
+          if (list.length > i) {
             print('hit2');
             return buildRow(list[i]);
           }
         },
         shrinkWrap: true,
       );
-    });
-
+//    });
+    }
   }
 
   @override
@@ -112,11 +128,11 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
               ),
               RaisedButton(
                 child: const Text('Fetch Data from Database'),
-                onPressed: () => null, //showData(),
+                onPressed: () => readFromDatabase(), //showData(),
               ),
               Expanded(
                 child: Container(
-                  //child: showData(),
+                  child: showData(),
                 )
               )
             ]

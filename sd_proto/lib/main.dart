@@ -62,10 +62,13 @@ class WelcomeScreenState extends State<WelcomeScreen> {
       MyApp.user = await MyApp.firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
       if(MyApp.user != null) {
-        print('INFO: ${MyApp.user.uid} signed in.');
+        print('INFO: ${MyApp.user.email} signed in.');
         //establish new database session
+
+        //save data offline until connection is reestablished
         MyApp.database.setPersistenceEnabled(true);
         MyApp.database.setPersistenceCacheSizeBytes(10000000);
+        //get reference to user's document within database
         MyApp.userReference = MyApp.database.reference().child('user)');
         //navigate to homepage
         Navigator.of(context).pushReplacementNamed('/DashboardScreen');
@@ -85,10 +88,11 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: AppBar(
-          title: const Text('Welcome To My App!'),
+          title: const Text('Welcome to Smart Chair!'),
         ),
-        body: Column(
-        //  mainAxisAlignment: MainAxisAlignment.center,
+        body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget> [
               Container(
@@ -130,7 +134,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
               ),
             ]
 
-        )
+        ))
     );
   }
 }
