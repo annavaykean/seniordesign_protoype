@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:sd_proto/main.dart';
 import 'package:intl/intl.dart';
-import 'package:charts_flutter/flutter.dart';
-
+import 'package:charts_flutter/flutter.dart' as charts;
 //send and receive numbers (for testing purposes only)
 class DatabaseTestPage extends StatefulWidget {
   @override
@@ -14,6 +13,7 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
   TextEditingController cogXctrl = new TextEditingController();
   TextEditingController cogYctrl = new TextEditingController();
   List list = [];
+
 
   signOut(BuildContext context) {
     MyApp.firebaseAuth.signOut();
@@ -50,17 +50,7 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
    //   return list;
       print('hit');
       showData();
-/*      return ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemBuilder: (context, i) {
-          print('INFO: ' + list.length.toString());
-          if (list.length > i) {
-            print('hit2');
-            return buildRow(list[i]);
-          }
-        },
-        shrinkWrap: true,
-      );*/
+
     });
 
   }
@@ -130,11 +120,15 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
                 child: const Text('Fetch Data from Database'),
                 onPressed: () => readFromDatabase(), //showData(),
               ),
+              Container(
+                  child: null,
+              ),
               Expanded(
                 child: Container(
                   child: showData(),
                 )
               )
+
             ]
         )
     );
@@ -153,6 +147,21 @@ class Posture {
     this.created_at = data['created_at'];
   }
 }
+/*
+class LineChart {
+  final List<charts.Series> seriesList = null;
+  final bool animate = false;
+
+  LineChart(this.seriesList, {this.animate});
+
+  factory LineChart.withSampleData() {
+    return new LineChart(generateData(),
+    animate: false,
+    );
+  }
+
+
+}*/
 
 
 
