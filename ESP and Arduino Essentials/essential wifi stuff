@@ -1,0 +1,4 @@
+#define WIFI_SSID		""
+#define WIFI_PASSWORD	""
+#define FIREBASE_HOST	"wirelesstest-e1543.firebaseio.com"
+#define FIREBASE_AUTH	"csCZKaaA8QK5Hc8x85HGYckuaJ8heGSW5Wcykrjy"
