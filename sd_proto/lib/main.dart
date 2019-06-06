@@ -111,26 +111,33 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                 child: TextField(
                   controller: passwordCtrl,
                   autofocus: false,
+                  obscureText: true,
                   decoration: new InputDecoration(
                     labelText: 'Password',
                     errorText: validPass ? 'Required Field' : null,
                   ),
                 )
               ),
-              RaisedButton(
-                child: const Text('Sign Up'),
+              ButtonTheme(
+                minWidth: 300.0,
+                child:  RaisedButton(
+                    child: const Text('Sign In'),
+                    color: Colors.blue,
+                    textColor: Colors.white,
+                    splashColor: Colors.purple,
+                    onPressed: () {
+                      setState((){
+                        emailCtrl.text.isEmpty ? validEmail = true : validEmail = false;
+                        passwordCtrl.text.isEmpty ? validPass = true : validPass = false;
+                      });
+                      signIn(context, emailCtrl.text, passwordCtrl.text);
+                    }
+                ),
+              ),
+              FlatButton(
+                child: const Text('Create an account'),
                 onPressed: (){
                   Navigator.of(context).pushNamed('/SignUp'); },
-              ),
-              RaisedButton(
-                  child: const Text('Sign In'),
-                  onPressed: () {
-                    setState((){
-                      emailCtrl.text.isEmpty ? validEmail = true : validEmail = false;
-                      passwordCtrl.text.isEmpty ? validPass = true : validPass = false;
-                    });
-                    signIn(context, emailCtrl.text, passwordCtrl.text);
-                  }
               ),
             ]
 
