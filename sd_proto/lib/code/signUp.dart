@@ -7,6 +7,8 @@ class SignUpScreen extends StatelessWidget {
   final TextEditingController passwordCtrl = new TextEditingController();
   final TextEditingController fnameCtrl = new TextEditingController();
   final TextEditingController lnameCtrl = new TextEditingController();
+  final TextEditingController pinCtrl = new TextEditingController();
+
   Future<String> signUp(BuildContext context, String email, String password) async {
     MyApp.user = await MyApp.firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
@@ -17,11 +19,24 @@ class SignUpScreen extends StatelessWidget {
     return MyApp.user.uid;
   }
 
-  clearForm() {
-    emailCtrl.clear();
-    passwordCtrl.clear();
-    fnameCtrl.clear();
-    lnameCtrl.clear();
+  clearForm(BuildContext context) {
+    //check for null b/c if form is blank and cancel button is clicked causes error
+    if(emailCtrl.text != null){
+      emailCtrl.clear();
+    }
+    if(passwordCtrl.text != null) {
+      passwordCtrl.clear();
+    }
+    if(fnameCtrl.text != null) {
+      fnameCtrl.clear();
+    }
+    if(lnameCtrl.text != null) {
+      lnameCtrl.clear();
+    }
+    if(pinCtrl.text != null) {
+      pinCtrl.clear();
+    }
+    Navigator.popUntil(context, ModalRoute.withName('/'));
   }
 
   @override
@@ -71,6 +86,15 @@ class SignUpScreen extends StatelessWidget {
                     ),
                   )
               ),
+              Container (
+                child: TextField(
+                  controller: pinCtrl,
+                  autofocus: false,
+                  decoration: new InputDecoration(
+                    labelText: 'Pin Code'
+                  ),
+                )
+              ),
               Row(
                 children: <Widget>[
 
@@ -81,7 +105,7 @@ class SignUpScreen extends StatelessWidget {
                   //add column for padding
                   RaisedButton(
                     child: const Text('Cancel'),
-                    onPressed: () => clearForm(),
+                    onPressed: () => clearForm(context),
                   ),
                 ],
               )

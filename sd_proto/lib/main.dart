@@ -10,6 +10,8 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/services.dart';
 void main(){
   runApp(MyApp());
 }
@@ -17,12 +19,14 @@ void main(){
 class MyApp extends StatelessWidget {
   //global access to bluetooth connection
   static FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  static GoogleSignIn gSignIn = new GoogleSignIn();
   static FirebaseUser user;
   static BluetoothDevice device = null;
   static int testing = 33;
   static StreamSubscription deviceConnection = null;
   static List<BluetoothService> services = new List();
-
+  static List postureDataList = null;
+  static String pin;
   //global access to database connection
   static FirebaseDatabase database = new FirebaseDatabase();
   static DatabaseReference userReference;
@@ -59,8 +63,12 @@ class WelcomeScreenState extends State<WelcomeScreen> {
 
   Future<String> signIn(BuildContext context, String email, String password) async {
     if(email != null && password != null) {
-      MyApp.user = await MyApp.firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: password);
+      try {
+        MyApp.user = await MyApp.firebaseAuth.signInWithEmailAndPassword(
+            email: email, password: password);
+      } on PlatformException catch (e){
+          print('INFO: ${e}');
+      }
       if(MyApp.user != null) {
         print('INFO: ${MyApp.user.email} signed in.');
         //establish new database session
@@ -69,7 +77,8 @@ class WelcomeScreenState extends State<WelcomeScreen> {
         MyApp.database.setPersistenceEnabled(true);
         MyApp.database.setPersistenceCacheSizeBytes(10000000);
         //get reference to user's document within database
-        MyApp.userReference = MyApp.database.reference().child('user)');
+       // MyApp.userReference = MyApp.database.reference().child('user)');
+        MyApp.userReference = MyApp.database.reference().child('0000');
         //navigate to homepage
         Navigator.of(context).pushReplacementNamed('/DashboardScreen');
         return MyApp.user.uid;
@@ -81,7 +90,12 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   Future<void> signOut() async {
-    return MyApp.firebaseAuth.signOut();
+    if(MyApp.gSignIn != null) {
+      return MyApp.gSignIn.signOut();
+    }
+    else {
+      return MyApp.firebaseAuth.signOut();
+    }
   }
 
   @override
@@ -136,6 +150,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
               ),
               FlatButton(
                 child: const Text('Create an account'),
+                splashColor: Colors.blue,
                 onPressed: (){
                   Navigator.of(context).pushNamed('/SignUp'); },
               ),

@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:sd_proto/main.dart';
 import 'package:intl/intl.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'dart:convert';
 //send and receive numbers (for testing purposes only)
 class DatabaseTestPage extends StatefulWidget {
   @override
@@ -12,11 +13,14 @@ class DatabaseTestPage extends StatefulWidget {
 class DatabaseTestPageState extends State<DatabaseTestPage> {
   TextEditingController cogXctrl = new TextEditingController();
   TextEditingController cogYctrl = new TextEditingController();
-  List list = [];
+  //List list = [];
+  List list = MyApp.postureDataList;
 
 
   signOut(BuildContext context) {
-    MyApp.firebaseAuth.signOut();
+    if(MyApp.firebaseAuth != null) {
+      MyApp.firebaseAuth.signOut();
+    }
     MyApp.user = null;
     Navigator.popUntil(context, ModalRoute.withName('/'));
   }
@@ -28,10 +32,12 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
     //send data
     print("INFO: Preparing to write to database...");
     if(MyApp.user != null){
-      MyApp.userReference.child(MyApp.user.uid).child(formattedDate).set(<String, String>{
+
+  //    MyApp.userReference.child(MyApp.user.uid).child(formattedDate).set(<String, String>{
+      MyApp.userReference.child(formattedDate).set(<String, String>{
         "cogX": "" + cogX,
         "cogY": "" + cogY,
-        "created_at": "" + formattedDate
+        "created_at": "" + now.toString(),
       }).then((result){
         print("INFO: Database Write Completed");
       });
@@ -39,24 +45,32 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
   }
 
   readFromDatabase(){
+    print('reading from firebase...');
     list = [];
-    var userID = MyApp.user.uid;
-    MyApp.userReference.child(userID).once().then((DataSnapshot snapshot) {
+    //var userID = MyApp.user.uid;
+    MyApp.userReference.once().then((DataSnapshot snapshot) {
       print('DATA: ${snapshot.value}');
       for(var value in snapshot.value.values) {
-        list.add(new Posture.fromJson(value));
-      }
-      print('length: ' + list.length.toString());
-   //   return list;
-      print('hit');
-      showData();
+        //was previously experiencing errors on parsing from json. Fixed by converting data to string then to int.
+       var cogX = value['cogX'].toString();
+       var xInt = int.parse(cogX);
+       var cogY = value['cogY'].toString();
+       var yInt = int.parse(cogY);
+       var created_at = value['created_at'].toString();
 
+       //add parsed data to list as a Posture object
+       list.add(new Posture(xInt, yInt, created_at));
+      }
+      //update global posture data list with fresh data.
+      MyApp.postureDataList = list;
+      //display list on db testing page for testing purposes...disable later
+      showData();
     });
 
   }
 
   buildRow(var data) {
-    String summary = 'CogX: ' + data.cogX + ', CogY: ' + data.cogY + ', date: ' + data.created_at;
+    String summary = 'CogX: ' + data.cogX.toString() + ', CogY: ' + data.cogY.toString(); //+ ', date: ' + data.created_at;
     print('SUMMARY: ' + summary);
     return ListTile(
         title: Text(summary),
@@ -97,7 +111,7 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
               Container(
                 child: new TextField(
                   controller: cogXctrl,
-                  autofocus: true,
+                  autofocus: false,
                   decoration: new InputDecoration(
                     labelText: 'CogX',
                   ),
@@ -137,31 +151,13 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
 }
 
 class Posture {
-  String cogX;
-  String cogY;
+  int cogX;
+  int cogY;
   String created_at;
+Posture(this.cogX, this.cogY, this.created_at);
 
-  Posture.fromJson(var data){
-    this.cogX = data['cogX'];
-    this.cogY = data['cogY'];
-    this.created_at = data['created_at'];
-  }
 }
-/*
-class LineChart {
-  final List<charts.Series> seriesList = null;
-  final bool animate = false;
 
-  LineChart(this.seriesList, {this.animate});
-
-  factory LineChart.withSampleData() {
-    return new LineChart(generateData(),
-    animate: false,
-    );
-  }
-
-
-}*/
 
 
 
