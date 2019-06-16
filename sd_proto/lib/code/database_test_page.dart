@@ -13,7 +13,6 @@ class DatabaseTestPage extends StatefulWidget {
 class DatabaseTestPageState extends State<DatabaseTestPage> {
   TextEditingController cogXctrl = new TextEditingController();
   TextEditingController cogYctrl = new TextEditingController();
-  //List list = [];
   List list = MyApp.postureDataList;
 
 
@@ -26,14 +25,9 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
   }
 
   writeToDatabase(String cogX, String cogY){
-    //prep data
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('MMddyyyy_kkmmss').format(now);
-    //send data
-    print("INFO: Preparing to write to database...");
     if(MyApp.user != null){
-
-  //    MyApp.userReference.child(MyApp.user.uid).child(formattedDate).set(<String, String>{
       MyApp.userReference.child(formattedDate).set(<String, String>{
         "cogX": "" + cogX,
         "cogY": "" + cogY,
@@ -42,12 +36,13 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
         print("INFO: Database Write Completed");
       });
     }
+    //dismiss keyboard
+    FocusScope.of(context).requestFocus(new FocusNode());
   }
 
   readFromDatabase(){
-    print('reading from firebase...');
+    print('hit');
     list = [];
-    //var userID = MyApp.user.uid;
     MyApp.userReference.once().then((DataSnapshot snapshot) {
       print('DATA: ${snapshot.value}');
       for(var value in snapshot.value.values) {
@@ -61,10 +56,15 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
        //add parsed data to list as a Posture object
        list.add(new Posture(xInt, yInt, created_at));
       }
+      print('exited for loop');
       //update global posture data list with fresh data.
       MyApp.postureDataList = list;
+      setState(() {
+      });
       //display list on db testing page for testing purposes...disable later
-      showData();
+   //   showData();
+      print('end');
+      return;
     });
 
   }
@@ -75,7 +75,6 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
     return ListTile(
         title: Text(summary),
         onTap: () {
-          print('tap');
         }
     );
   }
@@ -88,7 +87,6 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
         itemBuilder: (context, i) {
           print('INFO: ' + list.length.toString());
           if (list.length > i) {
-            print('hit2');
             return buildRow(list[i]);
           }
         },

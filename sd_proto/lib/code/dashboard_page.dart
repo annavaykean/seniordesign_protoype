@@ -4,8 +4,6 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:intl/intl.dart';
 
-
-
 class DashboardScreen extends StatelessWidget {
   //List<GraphData> data = MyApp.postureDataList;
 
@@ -29,37 +27,86 @@ class DashboardScreen extends StatelessWidget {
 
   Widget buildChart(){
     data = [];
-    series = fetchGraphData();
+    print('in build chart');
     if(MyApp.postureDataList == null) {
+      print('pdl is null in build chart');
       return Text('No Data Available');
     }
     else {
-      print('length test: ' + MyApp.postureDataList.length.toString());
+      print('in build chart: length ' + MyApp.postureDataList.length.toString());
       for(int i=0;i<MyApp.postureDataList.length;i++) {
+        //convert posture data object to graph data object
         var freshData = new GraphData(MyApp.postureDataList[i].cogX, MyApp.postureDataList[i].cogY, MyApp.postureDataList[i].created_at);
         if(freshData != null && data != null) {
-          print('adding data...');
           data.add(freshData);
+          print('added freshData to data list');
         }
         else {
           return Text('Invalid Data. Cannot display.');
         }
       }
-      //sort by date
-
-      print('building chart now...');
+      series = fetchGraphData();
       return charts.ScatterPlotChart(
           series,
           animate: true,
- /*         behaviors: [
-            new charts.InitialSelection(selectedDataConfig: [
-              new charts.SeriesDatumConfig<String>('CogX', 'testing')
-            ])
-          ],*/
       );
     }
   }
+  readFromDatabase(){
+    print('hit');
+    List list = [];
+    MyApp.userReference.once().then((DataSnapshot snapshot) {
+      print('DATA: ${snapshot.value}');
+      for(var value in snapshot.value.values) {
+        //was previously experiencing errors on parsing from json. Fixed by converting data to string then to int.
+        var cogX = value['cogX'].toString();
+        var xInt = int.parse(cogX);
+        var cogY = value['cogY'].toString();
+        var yInt = int.parse(cogY);
+        var created_at = value['created_at'].toString();
 
+        //add parsed data to list as a Posture object
+        list.add(new GraphData(xInt, yInt, created_at));
+      }
+      print('exited for loop');
+      //update global posture data list with fresh data.
+      MyApp.postureDataList = list;
+      //display list on db testing page for testing purposes...disable later
+      //   showData();
+      print('end2');
+      series = fetchGraphData();
+      buildChart();
+    });
+
+  }
+
+  void reload(BuildContext context) {
+    //reload chart with fresh data
+    if(MyApp.postureDataList == null) {
+      print('pdL is null');
+      //pull fresh data from database
+       MyApp.databaseData.readFromDatabase();
+        print('hit2');
+        print(MyApp.postureDataList);
+        series = fetchGraphData();
+        buildChart();
+        print(data);
+    } else {
+      print('pdl is not null');
+      buildChart();
+    }
+    Navigator.of(context).pushReplacementNamed('/DashboardScreen');
+  }
+  Widget showYoga () {
+    return Expanded(
+        child: DecoratedBox(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/cat-cow.jpg'),
+                )
+            )
+        ));
+  }
   @override
   Widget build(BuildContext context) {
      series = fetchGraphData();
@@ -67,6 +114,10 @@ class DashboardScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text('Welcome ${MyApp.user.email}'),
             actions: <Widget>[
+              new IconButton(
+                icon: new Icon(Icons.threesixty),
+                onPressed: () => reload(context),
+              ),
             new IconButton(
               icon: new Icon(Icons.close),
               onPressed: () => signOut(context),
@@ -80,33 +131,24 @@ class DashboardScreen extends StatelessWidget {
               Expanded(
                 child: buildChart(),
               ),
+              GestureDetector(
+                child: Text('Are you experiencing back pain?'),
+                onTap: null //showYoga(),
+              ),
               RaisedButton(
                 child: const Text('Show me the settings page!'),
                 onPressed: () => Navigator.of(context).pushNamed('/SettingsScreen'),
               ),
               RaisedButton(
-                child: const Text('Show me the anaylsis page!'),
-                onPressed: () => Navigator.of(context).pushNamed('/AnalysisScreen'),
-              ),
-              RaisedButton(
-                child: const Text('Bluetooth Testing Page'),
-                onPressed: () => Navigator.of(context).pushNamed('/BluetoothTestScreen'),
-              ),
-              RaisedButton(
-                child: const Text('Sign Out'),
-                onPressed: () => signOut(context),
-              ),
-              RaisedButton(
                 child: const Text('Database Testing Page'),
                 onPressed: () => Navigator.of(context).pushNamed('/DatabaseTestPage'),
-              )
+              ),
             ]
         )
     );
   }
 
    List<charts.Series<GraphData, int>> fetchGraphData() {
-    print('fetching graph data...');
     return [
       new charts.Series<GraphData, int> (
         id: 'Posture',

@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'code/dashboard_page.dart';
-import 'code/analysis_page.dart';
 import 'code/settings_page.dart';
-import 'code/bluetooth_test_screen.dart';
-import 'code/send_bluetooth_data.dart';
 import 'code/signUp.dart';
 import 'code/database_test_page.dart';
-import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/services.dart';
+
 void main(){
   runApp(MyApp());
 }
@@ -19,18 +15,14 @@ void main(){
 class MyApp extends StatelessWidget {
   //global access to bluetooth connection
   static FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  static GoogleSignIn gSignIn = new GoogleSignIn();
   static FirebaseUser user;
-  static BluetoothDevice device = null;
-  static int testing = 33;
   static StreamSubscription deviceConnection = null;
-  static List<BluetoothService> services = new List();
   static List postureDataList = null;
   static String pin;
   //global access to database connection
   static FirebaseDatabase database = new FirebaseDatabase();
   static DatabaseReference userReference;
-
+  static DatabaseTestPageState databaseData = new DatabaseTestPageState();
   @override
   Widget build(BuildContext context){
     return MaterialApp(
@@ -41,9 +33,6 @@ class MyApp extends StatelessWidget {
         '/SignUp': (BuildContext context) => new SignUpScreen(),
         '/DashboardScreen': (BuildContext context) => new DashboardScreen(),
         '/SettingsScreen' : (BuildContext context) => new SettingsScreen(),
-        '/AnalysisScreen' : (BuildContext context) => new AnalysisScreen(),
-        '/BluetoothTestScreen' : (BuildContext context) => new BluetoothTestScreen(),
-        '/SendBluetoothData' : (BuildContext context) => new SendBluetoothData(),
         '/DatabaseTestPage' : (BuildContext context) => new DatabaseTestPage(),
       }
       );
@@ -77,9 +66,25 @@ class WelcomeScreenState extends State<WelcomeScreen> {
         MyApp.database.setPersistenceEnabled(true);
         MyApp.database.setPersistenceCacheSizeBytes(10000000);
         //get reference to user's document within database
-       // MyApp.userReference = MyApp.database.reference().child('user)');
         MyApp.userReference = MyApp.database.reference().child('0000');
-        //navigate to homepage
+        //pull posture data
+        MyApp.userReference.once().then((DataSnapshot snapshot) {
+          List list = [];
+          for(var value in snapshot.value.values) {
+            //was previously experiencing errors on parsing from json. Fixed by converting data to string then to int.
+            var cogX = value['cogX'].toString();
+            var xInt = int.parse(cogX);
+            var cogY = value['cogY'].toString();
+            var yInt = int.parse(cogY);
+            var created_at = value['created_at'].toString();
+            //add parsed data to list as a Posture object
+            list.add(new Posture(xInt, yInt, created_at));
+          }
+          //update global posture data list with fresh data.
+          MyApp.postureDataList = list;
+          });
+        //navigate to homepage and dismiss keyboard
+        FocusScope.of(context).requestFocus(new FocusNode());
         Navigator.of(context).pushReplacementNamed('/DashboardScreen');
         return MyApp.user.uid;
       }
@@ -90,11 +95,15 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   Future<void> signOut() async {
-    if(MyApp.gSignIn != null) {
-      return MyApp.gSignIn.signOut();
-    }
-    else {
+    if(MyApp.firebaseAuth != null) {
       return MyApp.firebaseAuth.signOut();
+    }
+    if(MyApp.user != null) {
+      MyApp.user = null;
+    }
+    Navigator.of(context).pushNamed('/WelcomeScreen');
+    if(MyApp.deviceConnection != null) {
+      MyApp.deviceConnection.cancel();
     }
   }
 
@@ -159,6 +168,14 @@ class WelcomeScreenState extends State<WelcomeScreen> {
         ))
     );
   }
+}
+
+class Posture {
+  int cogX;
+  int cogY;
+  String created_at;
+  Posture(this.cogX, this.cogY, this.created_at);
+
 }
 
 
