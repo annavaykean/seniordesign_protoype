@@ -3,6 +3,7 @@ import 'code/dashboard_page.dart';
 import 'code/settings_page.dart';
 import 'code/signUp.dart';
 import 'code/database_test_page.dart';
+import 'code/stretches_page.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
   static FirebaseDatabase database = new FirebaseDatabase();
   static DatabaseReference userReference;
   static DatabaseTestPageState databaseData = new DatabaseTestPageState();
+  static String pose;
   @override
   Widget build(BuildContext context){
     return MaterialApp(
@@ -34,6 +36,7 @@ class MyApp extends StatelessWidget {
         '/DashboardScreen': (BuildContext context) => new DashboardScreen(),
         '/SettingsScreen' : (BuildContext context) => new SettingsScreen(),
         '/DatabaseTestPage' : (BuildContext context) => new DatabaseTestPage(),
+        '/Stretches' : (BuildContext context) => new Stretches(),
       }
       );
   }
@@ -85,6 +88,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
           });
         //navigate to homepage and dismiss keyboard
         FocusScope.of(context).requestFocus(new FocusNode());
+        print('going to dashboard...');
         Navigator.of(context).pushReplacementNamed('/DashboardScreen');
         return MyApp.user.uid;
       }

@@ -3,6 +3,7 @@ import 'package:sd_proto/main.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:intl/intl.dart';
+import 'dart:math';
 
 class DashboardScreen extends StatelessWidget {
   //List<GraphData> data = MyApp.postureDataList;
@@ -97,16 +98,24 @@ class DashboardScreen extends StatelessWidget {
     }
     Navigator.of(context).pushReplacementNamed('/DashboardScreen');
   }
-  Widget showYoga () {
-    return Expanded(
-        child: DecoratedBox(
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/cat-cow.jpg'),
-                )
-            )
-        ));
+
+  displayStretchPage(BuildContext context) {
+    print('displaying image');
+    List imageURLs = ['cat-cow.jpg', 'thread-the-needle.jpg'];
+
+    //generate random number to select index of image
+    var random = new Random();
+    int scaledRandom = 0 + random.nextInt((imageURLs.length) - 0);
+    print('INFO: random number generated = ' + scaledRandom.toString());
+
+    //return image to display
+    if (scaledRandom >= 0 && scaledRandom < imageURLs.length) {
+      MyApp.pose = 'assets/' + imageURLs[scaledRandom];
+      print('INFO: image selected: ' + imageURLs[scaledRandom]);
+      Navigator.pushNamed(context, '/Stretches');
+    }
   }
+
   @override
   Widget build(BuildContext context) {
      series = fetchGraphData();
@@ -131,9 +140,9 @@ class DashboardScreen extends StatelessWidget {
               Expanded(
                 child: buildChart(),
               ),
-              GestureDetector(
-                child: Text('Are you experiencing back pain?'),
-                onTap: null //showYoga(),
+              RaisedButton(
+                child: Text('I am experiencing back pain!'),
+                onPressed: () => displayStretchPage(context),
               ),
               RaisedButton(
                 child: const Text('Show me the settings page!'),
@@ -149,6 +158,7 @@ class DashboardScreen extends StatelessWidget {
   }
 
    List<charts.Series<GraphData, int>> fetchGraphData() {
+    print('fetching graph data');
     return [
       new charts.Series<GraphData, int> (
         id: 'Posture',
