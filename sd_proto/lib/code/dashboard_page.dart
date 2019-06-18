@@ -100,18 +100,15 @@ class DashboardScreen extends StatelessWidget {
   }
 
   displayStretchPage(BuildContext context) {
-    print('displaying image');
-    List imageURLs = ['cat-cow.jpg', 'thread-the-needle.jpg'];
+    List imageURLs = ['cat-cow.jpg', 'thread-the-needle.jpg', 'supine-twist.jpg', 'arm-across-chest.jpg', 'childs-pose.jpg', 'eagle-arms.jpg', 'sphinx-pose.jpg'];
 
     //generate random number to select index of image
     var random = new Random();
-    int scaledRandom = 0 + random.nextInt((imageURLs.length) - 0);
-    print('INFO: random number generated = ' + scaledRandom.toString());
+    int scaledRandom = random.nextInt((imageURLs.length) - 0);
 
     //return image to display
     if (scaledRandom >= 0 && scaledRandom < imageURLs.length) {
       MyApp.pose = 'assets/' + imageURLs[scaledRandom];
-      print('INFO: image selected: ' + imageURLs[scaledRandom]);
       Navigator.pushNamed(context, '/Stretches');
     }
   }
