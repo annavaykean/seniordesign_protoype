@@ -51,6 +51,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   final TextEditingController passwordCtrl = new TextEditingController();
   bool validEmail = false;
   bool validPass = false;
+  String errorMessage = '';
 
 
   Future<String> signIn(BuildContext context, String email, String password) async {
@@ -60,6 +61,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
             email: email, password: password);
       } on PlatformException catch (e){
           print('INFO: ${e}');
+          errorMessage = "Invalid login. Try again.";
       }
       if(MyApp.user != null) {
         print('INFO: ${MyApp.user.email} signed in.');
@@ -89,11 +91,13 @@ class WelcomeScreenState extends State<WelcomeScreen> {
         //navigate to homepage and dismiss keyboard
         FocusScope.of(context).requestFocus(new FocusNode());
         print('going to dashboard...');
+        errorMessage = "";
         Navigator.of(context).pushReplacementNamed('/DashboardScreen');
         return MyApp.user.uid;
       }
     }
     else{
+      errorMessage = 'Invalid login. Try again.';
       print('Must input email and password to sign in');
     }
   }
@@ -145,6 +149,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 )
               ),
+              Text(errorMessage),
               ButtonTheme(
                 minWidth: 300.0,
                 child:  RaisedButton(
