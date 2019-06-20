@@ -56,7 +56,8 @@ class DashboardScreen extends StatelessWidget {
   readFromDatabase(){
     print('hit');
     List list = [];
-    MyApp.userReference.once().then((DataSnapshot snapshot) {
+    var userReference = MyApp.database.reference().child('0000').child('data');
+    userReference.once().then((DataSnapshot snapshot) {
       print('DATA: ${snapshot.value}');
       for(var value in snapshot.value.values) {
         //was previously experiencing errors on parsing from json. Fixed by converting data to string then to int.
@@ -99,6 +100,30 @@ class DashboardScreen extends StatelessWidget {
     Navigator.of(context).pushReplacementNamed('/DashboardScreen');
   }
 
+  goToSettings (BuildContext context) {
+    var userReference = MyApp.database.reference().child('settings').child('0000');
+    //pull posture data
+    userReference.once().then((DataSnapshot snapshot) {
+      if(snapshot.value['vibration'] == 1){
+        print('vibration feature turned on');
+        MyApp.vibration = true;
+        //set flag in firebase
+
+      } else {
+        print('vibration feature turned off');
+        MyApp.vibration = false;
+      }
+      if(snapshot.value['notification'] == 1) {
+        print('notification feature turned on');
+        MyApp.notification = true;
+      } else {
+        print('notification feature turned off');
+        MyApp.notification = false;
+      }
+      Navigator.of(context).pushNamed('/SettingsScreen');
+      });
+  }
+
   displayStretchPage(BuildContext context) {
     List imageURLs = ['cat-cow.jpg', 'thread-the-needle.jpg', 'supine-twist.jpg', 'arm-across-chest.jpg', 'childs-pose.jpg', 'eagle-arms.jpg', 'sphinx-pose.jpg'];
 
@@ -112,7 +137,6 @@ class DashboardScreen extends StatelessWidget {
       Navigator.pushNamed(context, '/Stretches');
     }
   }
-
   @override
   Widget build(BuildContext context) {
      series = fetchGraphData();
@@ -143,7 +167,7 @@ class DashboardScreen extends StatelessWidget {
               ),
               RaisedButton(
                 child: const Text('Show me the settings page!'),
-                onPressed: () => Navigator.of(context).pushNamed('/SettingsScreen'),
+                onPressed: () => goToSettings(context),
               ),
               RaisedButton(
                 child: const Text('Database Testing Page'),

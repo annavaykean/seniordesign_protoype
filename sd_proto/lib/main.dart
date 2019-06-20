@@ -25,6 +25,8 @@ class MyApp extends StatelessWidget {
   static DatabaseReference userReference;
   static DatabaseTestPageState databaseData = new DatabaseTestPageState();
   static String pose;
+  static bool vibration = true;
+  static bool notification = true;
   @override
   Widget build(BuildContext context){
     return MaterialApp(
@@ -71,20 +73,25 @@ class WelcomeScreenState extends State<WelcomeScreen> {
         MyApp.database.setPersistenceEnabled(true);
         MyApp.database.setPersistenceCacheSizeBytes(10000000);
         //get reference to user's document within database
-        MyApp.userReference = MyApp.database.reference().child('0000');
+        MyApp.userReference = MyApp.database.reference().child('postureData').child('0000');
+        var userReference = MyApp.database.reference().child('0000').child('data');
         //pull posture data
+        print('hit1');
         MyApp.userReference.once().then((DataSnapshot snapshot) {
+          print('hit2');
           List list = [];
+          print('INFO: snapshot = ' + snapshot.value.toString());
           for(var value in snapshot.value.values) {
-            //was previously experiencing errors on parsing from json. Fixed by converting data to string then to int.
-            var cogX = value['cogX'].toString();
-            var xInt = int.parse(cogX);
-            var cogY = value['cogY'].toString();
-            var yInt = int.parse(cogY);
-            var created_at = value['created_at'].toString();
-            //add parsed data to list as a Posture object
-            list.add(new Posture(xInt, yInt, created_at));
-          }
+              //was previously experiencing errors on parsing from json. Fixed by converting data to string then to int.
+              var cogX = value['cogX'].toString();
+              var xInt = int.parse(cogX);
+              var cogY = value['cogY'].toString();
+              var yInt = int.parse(cogY);
+              var created_at = value['created_at'].toString();
+              //add parsed data to list as a Posture object
+              list.add(new Posture(xInt, yInt, created_at));
+            }
+
           //update global posture data list with fresh data.
           MyApp.postureDataList = list;
           });
