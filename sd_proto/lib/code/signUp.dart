@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sd_proto/main.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -9,9 +10,19 @@ class SignUpScreen extends StatelessWidget {
   final TextEditingController lnameCtrl = new TextEditingController();
   final TextEditingController pinCtrl = new TextEditingController();
 
-  Future<String> signUp(BuildContext context, String email, String password) async {
+
+  Future<bool> setPinNumber() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    print('setting pin number');
+    return prefs.setString(MyApp.prefsPin, MyApp.pin);
+  }
+
+  Future<String> signUp(BuildContext context, String email, String password, String pin) async {
     MyApp.user = await MyApp.firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
+    MyApp.pin = pin;
+    //TODO: sign into firebase and set up pin
+    setPinNumber();
     print('INFO: account created for ${MyApp.user.uid}');
     if(MyApp.user.uid != null) {
       Navigator.of(context).pushNamed('/DashboardScreen');
@@ -100,7 +111,7 @@ class SignUpScreen extends StatelessWidget {
 
                   RaisedButton(
                     child: const Text('Submit'),
-                    onPressed: () => signUp(context, emailCtrl.text, passwordCtrl.text),
+                    onPressed: () => signUp(context, emailCtrl.text, passwordCtrl.text, pinCtrl.text),
                   ),
                   //add column for padding
                   RaisedButton(

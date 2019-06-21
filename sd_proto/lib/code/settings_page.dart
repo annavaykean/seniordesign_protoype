@@ -25,13 +25,15 @@ class SettingsScreenState extends State<SettingsScreen>{
     }
     //update flag in firebase
     if (MyApp.user != null) {
-      var db = MyApp.database.reference().child('settings').child('0000').set(
-          <String, String>{
-            "notification": "" + (notificationToggle ? '1': '0'),
-            "vibration": "" + (vibrationToggle ? '1' : '0'),
-          }).then((result) {
-        print("INFO: Database Write Completed");
-      });
+      if(MyApp.pin != null) {
+        var db = MyApp.database.reference().child('settings').child(MyApp.pin).set(
+            <String, String>{
+              "notification": "" + (notificationToggle ? '1' : '0'),
+              "vibration": "" + (vibrationToggle ? '1' : '0'),
+            }).then((result) {
+          print("INFO: Database Write Completed");
+        });
+      }
     }
   }
 
@@ -47,13 +49,16 @@ class SettingsScreenState extends State<SettingsScreen>{
         MyApp.notification = true;
       });
     }
-    if(MyApp.user != null){
-      var db = MyApp.database.reference().child('settings').child('0000').set(<String, String>{
-        "notification": "" + (notificationToggle ? '1': '0'),
-        "vibration": "" + (vibrationToggle ? '1' : '0'),
-      }).then((result){
-        print("INFO: Database Write Completed");
-      });
+    if(MyApp.user != null) {
+      if (MyApp.pin != null) {
+        var db = MyApp.database.reference().child('settings').child(MyApp.pin).set(
+            <String, String>{
+              "notification": "" + (notificationToggle ? '1' : '0'),
+              "vibration": "" + (vibrationToggle ? '1' : '0'),
+            }).then((result) {
+          print("INFO: Database Write Completed");
+        });
+      }
     }
   }
 

@@ -6,6 +6,7 @@ import 'code/database_test_page.dart';
 import 'code/stretches_page.dart';
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
   static StreamSubscription deviceConnection = null;
   static List postureDataList = null;
   static String pin;
+  static String prefsPin = 'pinNum';
   //global access to database connection
   static FirebaseDatabase database = new FirebaseDatabase();
   static DatabaseReference userDataReference;
@@ -72,6 +74,13 @@ class WelcomeScreenState extends State<WelcomeScreen> {
 
   }
 
+  Future<String> getPinNumber() async {
+    final SharedPreferences prefs =  await SharedPreferences.getInstance();
+    print('fetching pin number...');
+    return prefs.getString(MyApp.prefsPin)?? 'invalid';
+  }
+
+
   Future onSelectNotification(String payload) async {
     showDialog(
         context: context,
@@ -98,17 +107,21 @@ class WelcomeScreenState extends State<WelcomeScreen> {
         emailCtrl.clear();
         passwordCtrl.clear();
         print('INFO: ${MyApp.user.email} signed in.');
-        //establish new database session
-
-        //save data offline until connection is reestablished
-        MyApp.database.setPersistenceEnabled(true);
-        MyApp.database.setPersistenceCacheSizeBytes(10000000);
-        //get reference to user's document within database
-        MyApp.userDataReference = MyApp.database.reference().child('postureData').child('0000');
-        //pull posture data
-        MyApp.userDataReference.once().then((DataSnapshot snapshot) {
-          List list = [];
-          for(var value in snapshot.value.values) {
+        var recievePin = await getPinNumber();
+        print('recieved pin: $recievePin');
+        if(recievePin != 'invalid') {
+          MyApp.pin = recievePin;
+          //establish new database session
+          //save data offline until connection is reestablished
+          MyApp.database.setPersistenceEnabled(true);
+          MyApp.database.setPersistenceCacheSizeBytes(10000000);
+          //get reference to user's document within database
+          MyApp.userDataReference =
+              MyApp.database.reference().child('postureData').child(recievePin);
+          //pull posture data
+          MyApp.userDataReference.once().then((DataSnapshot snapshot) {
+            List list = [];
+            for (var value in snapshot.value.values) {
               //was previously experiencing errors on parsing from json. Fixed by converting data to string then to int.
               var cogX = value['cogX'].toString();
               var xInt = int.parse(cogX);
@@ -119,13 +132,14 @@ class WelcomeScreenState extends State<WelcomeScreen> {
               list.add(new Posture(xInt, yInt, created_at));
             }
 
-          //update global posture data list with fresh data.
-          MyApp.postureDataList = list;
+            //update global posture data list with fresh data.
+            MyApp.postureDataList = list;
           });
-        //navigate to homepage and dismiss keyboard
-        FocusScope.of(context).requestFocus(new FocusNode());
-        print('going to dashboard...');
-        Navigator.of(context).pushReplacementNamed('/DashboardScreen');
+          //navigate to homepage and dismiss keyboard
+          FocusScope.of(context).requestFocus(new FocusNode());
+          print('going to dashboard...');
+          Navigator.of(context).pushReplacementNamed('/DashboardScreen');
+        }
       }
     }
     else{
