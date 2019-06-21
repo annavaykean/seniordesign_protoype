@@ -28,7 +28,7 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('MMddyyyy_kkmmss').format(now);
     if(MyApp.user != null){
-      MyApp.userReference.child(formattedDate).set(<String, String>{
+      MyApp.userDataReference.child(formattedDate).set(<String, String>{
         "cogX": "" + cogX,
         "cogY": "" + cogY,
         "created_at": "" + now.toString(),
@@ -43,7 +43,7 @@ class DatabaseTestPageState extends State<DatabaseTestPage> {
   readFromDatabase(){
     print('hit');
     list = [];
-    MyApp.userReference.once().then((DataSnapshot snapshot) {
+    MyApp.userDataReference.once().then((DataSnapshot snapshot) {
       print('DATA: ${snapshot.value}');
       for(var value in snapshot.value.values) {
         //was previously experiencing errors on parsing from json. Fixed by converting data to string then to int.

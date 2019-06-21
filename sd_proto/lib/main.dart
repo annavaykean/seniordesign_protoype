@@ -14,7 +14,8 @@ void main(){
 }
 
 class MyApp extends StatelessWidget {
-  //global access to bluetooth connection
+  //global access to firebase connection information and user settings
+
   static FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   static FirebaseUser user;
   static StreamSubscription deviceConnection = null;
@@ -22,11 +23,13 @@ class MyApp extends StatelessWidget {
   static String pin;
   //global access to database connection
   static FirebaseDatabase database = new FirebaseDatabase();
-  static DatabaseReference userReference;
+  static DatabaseReference userDataReference;
+  static DatabaseReference userSettingsReference;
   static DatabaseTestPageState databaseData = new DatabaseTestPageState();
   static String pose;
   static bool vibration = true;
   static bool notification = true;
+
   @override
   Widget build(BuildContext context){
     return MaterialApp(
@@ -56,16 +59,21 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   String errorMessage = '';
 
 
-  Future<String> signIn(BuildContext context, String email, String password) async {
+   signIn(BuildContext context, String email, String password) async {
     if(email != null && password != null) {
       try {
         MyApp.user = await MyApp.firebaseAuth.signInWithEmailAndPassword(
             email: email, password: password);
       } on PlatformException catch (e){
           print('INFO: ${e}');
-          errorMessage = "Invalid login. Try again.";
+          setState(() {
+            errorMessage = "Invalid login. Try again.";
+          });
       }
       if(MyApp.user != null) {
+        errorMessage = "";
+        emailCtrl.clear();
+        passwordCtrl.clear();
         print('INFO: ${MyApp.user.email} signed in.');
         //establish new database session
 
@@ -73,14 +81,10 @@ class WelcomeScreenState extends State<WelcomeScreen> {
         MyApp.database.setPersistenceEnabled(true);
         MyApp.database.setPersistenceCacheSizeBytes(10000000);
         //get reference to user's document within database
-        MyApp.userReference = MyApp.database.reference().child('postureData').child('0000');
-        var userReference = MyApp.database.reference().child('0000').child('data');
+        MyApp.userDataReference = MyApp.database.reference().child('postureData').child('0000');
         //pull posture data
-        print('hit1');
-        MyApp.userReference.once().then((DataSnapshot snapshot) {
-          print('hit2');
+        MyApp.userDataReference.once().then((DataSnapshot snapshot) {
           List list = [];
-          print('INFO: snapshot = ' + snapshot.value.toString());
           for(var value in snapshot.value.values) {
               //was previously experiencing errors on parsing from json. Fixed by converting data to string then to int.
               var cogX = value['cogX'].toString();
@@ -98,9 +102,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
         //navigate to homepage and dismiss keyboard
         FocusScope.of(context).requestFocus(new FocusNode());
         print('going to dashboard...');
-        errorMessage = "";
         Navigator.of(context).pushReplacementNamed('/DashboardScreen');
-        return MyApp.user.uid;
       }
     }
     else{
@@ -109,7 +111,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
     }
   }
 
-  Future<void> signOut() async {
+/*  Future<void> signOut() async {
     if(MyApp.firebaseAuth != null) {
       return MyApp.firebaseAuth.signOut();
     }
@@ -120,7 +122,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
     if(MyApp.deviceConnection != null) {
       MyApp.deviceConnection.cancel();
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +139,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                 width: 300,
                 child: TextField(
                   controller: emailCtrl,
-                  autofocus: true,
+                  autofocus: false,
                   decoration: new InputDecoration(
                     labelText: 'Email',
                     errorText: validEmail ? 'Required Field' : null,

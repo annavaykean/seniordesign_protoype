@@ -18,7 +18,7 @@ class DashboardScreen extends StatelessWidget {
     if(MyApp.user != null) {
       MyApp.user = null;
     }
-    Navigator.of(context).pushNamed('/WelcomeScreen');
+    Navigator.of(context).pushReplacementNamed('/WelcomeScreen');
     if(MyApp.deviceConnection != null) {
       MyApp.deviceConnection.cancel();
     }

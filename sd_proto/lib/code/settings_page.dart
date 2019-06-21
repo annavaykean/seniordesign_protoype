@@ -51,19 +51,21 @@ class SettingsScreenState extends State<SettingsScreen>{
       });
     }
   }
-  signOut(BuildContext context) {
+  //unsolved bug: on sign out will not push page replacement properly => breaks
+/*  signOut(BuildContext context) async {
     if(MyApp.firebaseAuth != null) {
-      MyApp.firebaseAuth.signOut();
+      await MyApp.firebaseAuth.signOut();
+    }
+    if(MyApp.deviceConnection != null) {
+      await MyApp.deviceConnection.cancel();
     }
     if(MyApp.user != null) {
       MyApp.user = null;
     }
-    Navigator.of(context).pushNamed('/WelcomeScreen');
-    if(MyApp.deviceConnection != null) {
-      MyApp.deviceConnection.cancel();
-    }
+    print('exiting app');
+    Navigator.of(context).pushReplacementNamed('/WelcomeScreen');
 
-  }
+  }*/
 
   Widget listViewConstructor (BuildContext context) {
     return ListView(
@@ -76,10 +78,10 @@ class SettingsScreenState extends State<SettingsScreen>{
           title: Text('Toggle Phone Notifications'),
          trailing: Switch(value: notificationToggle, onChanged: (value) => updateNotifications()),
         ),
-        ListTile(
+/*        ListTile(
           title: Text('Sign Out'),
          onTap: () => signOut(context),
-        )
+        )*/
       ],
     );
   }
