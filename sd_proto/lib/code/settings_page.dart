@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sd_proto/main.dart';
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 class SettingsScreen extends StatefulWidget{
   @override
   SettingsScreenState createState() => SettingsScreenState();
@@ -51,6 +51,21 @@ class SettingsScreenState extends State<SettingsScreen>{
       });
     }
   }
+
+  Future sendNotification() async{
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+      'notofication_channel_id', 'Channel Name',
+      'Here we will put the description about the Channel ',
+      importance: Importance.Max, priority: Priority.High);
+
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+
+    var platformChannelSpecifics = new NotificationDetails(
+      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+
+    await MyApp.notificationsPlugin.show(0, 'New Post', 'How to Show Notification in flutter',
+    platformChannelSpecifics, payload: 'No_Sound');
+  }
   //unsolved bug: on sign out will not push page replacement properly => breaks
 /*  signOut(BuildContext context) async {
     if(MyApp.firebaseAuth != null) {
@@ -78,6 +93,10 @@ class SettingsScreenState extends State<SettingsScreen>{
           title: Text('Toggle Phone Notifications'),
          trailing: Switch(value: notificationToggle, onChanged: (value) => updateNotifications()),
         ),
+        ListTile(
+          title: Text('Test Notification!'),
+          onTap: () => sendNotification(),
+        )
 /*        ListTile(
           title: Text('Sign Out'),
          onTap: () => signOut(context),

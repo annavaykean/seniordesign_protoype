@@ -8,7 +8,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 void main(){
   runApp(MyApp());
 }
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
   static String pose;
   static bool vibration = true;
   static bool notification = true;
-
+  static FlutterLocalNotificationsPlugin notificationsPlugin;
   @override
   Widget build(BuildContext context){
     return MaterialApp(
@@ -58,6 +58,28 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   bool validPass = false;
   String errorMessage = '';
 
+  initState() {
+    super.initState();
+
+     var initializationSettingsAndroid = new AndroidInitializationSettings('@mipmap/ic_launcher');
+     var initializationSettingsIOS = new IOSInitializationSettings();
+     var initializationSettings = new InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
+
+     MyApp.notificationsPlugin = new FlutterLocalNotificationsPlugin();
+     MyApp.notificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);
+
+
+  }
+
+  Future onSelectNotification(String payload) async {
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+          title: const Text('Here is your payload'),
+          content: new Text('Payload: $payload'),
+        )
+    );
+  }
 
    signIn(BuildContext context, String email, String password) async {
     if(email != null && password != null) {
