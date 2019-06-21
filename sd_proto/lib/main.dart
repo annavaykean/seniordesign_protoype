@@ -5,6 +5,7 @@ import 'code/signUp.dart';
 import 'code/database_test_page.dart';
 import 'code/stretches_page.dart';
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';

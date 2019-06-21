@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sd_proto/main.dart';
+import 'dart:typed_data';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 class SettingsScreen extends StatefulWidget{
   @override
@@ -14,10 +15,12 @@ class SettingsScreenState extends State<SettingsScreen>{
     if (vibrationToggle) {
       setState(() {
         vibrationToggle = false;
+        MyApp.vibration = false;
       });
     } else {
       setState(() {
         vibrationToggle = true;
+        MyApp.vibration = true;
       });
     }
     //update flag in firebase
@@ -36,10 +39,12 @@ class SettingsScreenState extends State<SettingsScreen>{
     if(notificationToggle) {
       setState(() {
         notificationToggle = false;
+        MyApp.notification = false;
       });
     } else {
       setState(() {
         notificationToggle = true;
+        MyApp.notification = true;
       });
     }
     if(MyApp.user != null){
@@ -53,18 +58,29 @@ class SettingsScreenState extends State<SettingsScreen>{
   }
 
   Future sendNotification() async{
-    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-      'notofication_channel_id', 'Channel Name',
-      'Here we will put the description about the Channel ',
-      importance: Importance.Max, priority: Priority.High);
+    if(MyApp.notification && notificationToggle) {
+      var vibrationPattern = Int64List(4);
+      vibrationPattern[0] = 0;
+      vibrationPattern[1] = 1000;
+      vibrationPattern[2] = 5000;
+      vibrationPattern[3] = 2000;
+      var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+          'notofication_channel_id', 'Channel Name',
+          'Here we will put the description about the Channel ',
+          vibrationPattern: vibrationPattern,
+          importance: Importance.Max, priority: Priority.High);
 
-    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+      var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
 
-    var platformChannelSpecifics = new NotificationDetails(
-      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+      var platformChannelSpecifics = new NotificationDetails(
+          androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 
-    await MyApp.notificationsPlugin.show(0, 'New Post', 'How to Show Notification in flutter',
-    platformChannelSpecifics, payload: 'No_Sound');
+      await MyApp.notificationsPlugin.show(
+          0, 'New Post', 'How to Show Notification in flutter',
+          platformChannelSpecifics, payload: 'Default_Sound');
+    } else {
+      print('Notifications turned off.');
+    }
   }
   //unsolved bug: on sign out will not push page replacement properly => breaks
 /*  signOut(BuildContext context) async {
