@@ -4,7 +4,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
-
+import 'package:swipedetector/swipedetector.dart';
 class DashboardScreen extends StatelessWidget {
   //List<GraphData> data = MyApp.postureDataList;
 
@@ -101,6 +101,7 @@ class DashboardScreen extends StatelessWidget {
   }
 
   goToSettings (BuildContext context) {
+    print('hit');
     var userReference = MyApp.database.reference().child('settings').child('0000');
     //pull posture data
     userReference.once().then((DataSnapshot snapshot) {
@@ -154,7 +155,8 @@ class DashboardScreen extends StatelessWidget {
             )
   ],
         ),
-        body: Column(
+        body: SwipeDetector(
+              child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -174,6 +176,17 @@ class DashboardScreen extends StatelessWidget {
                 onPressed: () => Navigator.of(context).pushNamed('/DatabaseTestPage'),
               ),
             ]
+        ),
+        onSwipeLeft: () => goToSettings(context),
+        // onSwipeRight: () => goToDataPage(context),
+        swipeConfiguration: SwipeConfiguration(
+         horizontalSwipeMaxHeightThreshold: 50.0,
+         horizontalSwipeMinDisplacement: 10.0,
+         horizontalSwipeMinVelocity: 1.0,
+         verticalSwipeMaxWidthThreshold: 100.0,
+         verticalSwipeMinDisplacement: 50.0,
+          verticalSwipeMinVelocity: 100.0
+        ),
         )
     );
   }

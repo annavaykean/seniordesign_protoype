@@ -29,6 +29,7 @@ dependencies:
   charts_flutter:
   flutter_local_notifications: ^0.4.4+2
   shared_preferences: ^0.4.2
+  swipedetector:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
