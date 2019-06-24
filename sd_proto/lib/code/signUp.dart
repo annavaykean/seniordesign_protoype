@@ -17,7 +17,19 @@ class SignUpScreen extends StatelessWidget {
     print('setting pin number');
     return prefs.setString(MyApp.prefsPin, MyApp.pin);
   }
-
+  setupUserPreferences(){
+    //initialize vibrate and notification preferences to ON
+    if(MyApp.user != null) {
+      var dbRef = MyApp.database.reference().child('settings').child(MyApp.pin);
+      dbRef.set(<String, String>{
+        "notification": "1",
+        "vibration": "1",
+      });
+      //update global vars
+      MyApp.notification = true;
+      MyApp.vibration = true;
+    }
+  }
   writeInitPointsToDatabase() {
     //writes inital 4 values to firebase database to control shape of chart (so that(0,0) is center)
     //order of coords: FL (Quadrant 2), FR (Q1), RL (Q3), RR (Q4)
@@ -56,8 +68,9 @@ class SignUpScreen extends StatelessWidget {
     //save pin number as shared preferences
     setPinNumber();
     print('INFO: account created for ${MyApp.user.uid}');
-    //send initial data points to firebase (the 4 points to control chart shape)
+    //send initial data points to firebase (the 4 points to control chart shape) and preferences
     writeInitPointsToDatabase();
+    setupUserPreferences();
 
     //go to dashboard
     if(MyApp.user.uid != null) {

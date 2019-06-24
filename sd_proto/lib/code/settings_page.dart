@@ -107,7 +107,7 @@ class SettingsScreenState extends State<SettingsScreen>{
     return ListView(
       children: <Widget>[
         ListTile(
-          title: Text('Toggle Vibration'),
+          title: Text('Toggle Chair Vibration'),
           trailing: Switch(value: vibrationToggle, onChanged: (value) => updateVibration())
         ),
         ListTile(

@@ -102,19 +102,18 @@ class DashboardScreen extends StatelessWidget {
 
   goToSettings (BuildContext context) {
     print('hit');
-    var userReference = MyApp.database.reference().child('settings').child('0000');
+    var userReference = MyApp.database.reference().child('settings').child(MyApp.pin);
     //pull posture data
     userReference.once().then((DataSnapshot snapshot) {
-      if(snapshot.value['vibration'] == 1){
+      if(snapshot.value['vibration'] == '1'){
         print('vibration feature turned on');
         MyApp.vibration = true;
-        //set flag in firebase
 
       } else {
         print('vibration feature turned off');
         MyApp.vibration = false;
       }
-      if(snapshot.value['notification'] == 1) {
+      if(snapshot.value['notification'] == '1') {
         print('notification feature turned on');
         MyApp.notification = true;
       } else {
