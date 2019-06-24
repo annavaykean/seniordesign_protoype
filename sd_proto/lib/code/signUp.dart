@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sd_proto/main.dart';
+import 'package:intl/intl.dart';
 
 class SignUpScreen extends StatelessWidget {
   final TextEditingController emailCtrl = new TextEditingController();
@@ -17,13 +18,48 @@ class SignUpScreen extends StatelessWidget {
     return prefs.setString(MyApp.prefsPin, MyApp.pin);
   }
 
+  writeInitPointsToDatabase() {
+    //writes inital 4 values to firebase database to control shape of chart (so that(0,0) is center)
+    //order of coords: FL (Quadrant 2), FR (Q1), RL (Q3), RR (Q4)
+      List initCogX = ['-100', '100', '-100', '100'];
+      List initCogY = ['100', '100', '-100', '-100'];
+
+      if(MyApp.user != null){
+        MyApp.userDataReference = MyApp.database.reference().child('postureData').child(MyApp.pin);
+        int counter = 0;
+        for(int i=0;i<4;i++) {
+          DateTime now = DateTime.now();
+          String created = '01012001_00010' + counter.toString();
+          counter++;
+       //  Timer timer = new Timer(const Duration(milliseconds: 1000), (){
+            MyApp.userDataReference.child(created).set(<String, String>{
+              "cogX": "" + initCogX[i],
+              "cogY": "" + initCogY[i],
+              "created_at": "" + now.toString(),
+            }).then((result) {
+              print(
+                  "INFO: Database Write Completed (${initCogX[i]}, ${initCogY[i]})");
+            });
+   // });
+        }
+      }
+      //dismiss keyboard
+  }
+
   Future<String> signUp(BuildContext context, String email, String password, String pin) async {
+    String emailTrimmed = email.trim();
+    //create user account
     MyApp.user = await MyApp.firebaseAuth.createUserWithEmailAndPassword(
-        email: email, password: password);
+        email: emailTrimmed, password: password);
+    //get pin from form to setup database
     MyApp.pin = pin;
-    //TODO: sign into firebase and set up pin
+    //save pin number as shared preferences
     setPinNumber();
     print('INFO: account created for ${MyApp.user.uid}');
+    //send initial data points to firebase (the 4 points to control chart shape)
+    writeInitPointsToDatabase();
+
+    //go to dashboard
     if(MyApp.user.uid != null) {
       Navigator.of(context).pushNamed('/DashboardScreen');
     }
@@ -92,6 +128,7 @@ class SignUpScreen extends StatelessWidget {
                   child: TextField(
                     controller: passwordCtrl,
                     autofocus: false,
+                    obscureText: true,
                     decoration: new InputDecoration(
                         labelText: 'Password'
                     ),

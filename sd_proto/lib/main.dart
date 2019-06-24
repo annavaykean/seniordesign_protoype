@@ -92,10 +92,11 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   }
 
    signIn(BuildContext context, String email, String password) async {
+    String emailTrimmed = email.trim();
     if(email != null && password != null) {
       try {
         MyApp.user = await MyApp.firebaseAuth.signInWithEmailAndPassword(
-            email: email, password: password);
+            email: emailTrimmed, password: password);
       } on PlatformException catch (e){
           print('INFO: ${e}');
           setState(() {
