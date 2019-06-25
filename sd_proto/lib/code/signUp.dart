@@ -7,10 +7,7 @@ import 'package:intl/intl.dart';
 class SignUpScreen extends StatelessWidget {
   final TextEditingController emailCtrl = new TextEditingController();
   final TextEditingController passwordCtrl = new TextEditingController();
-  final TextEditingController fnameCtrl = new TextEditingController();
-  final TextEditingController lnameCtrl = new TextEditingController();
   final TextEditingController pinCtrl = new TextEditingController();
-
 
   Future<bool> setPinNumber() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -41,13 +38,16 @@ class SignUpScreen extends StatelessWidget {
         int counter = 0;
         for(int i=0;i<4;i++) {
           DateTime now = DateTime.now();
-          String created = '01012001_00010' + counter.toString();
+          String formattedDate = DateFormat('yyyyMMddTkkmms').format(now);
+          //01012001_00010
+          //YYYYMMDDTHHMMSS
+          String created = '20010101T00000' + counter.toString();
           counter++;
        //  Timer timer = new Timer(const Duration(milliseconds: 1000), (){
             MyApp.userDataReference.child(created).set(<String, String>{
               "cogX": "" + initCogX[i],
               "cogY": "" + initCogY[i],
-              "created_at": "" + now.toString(),
+              "created_at": "" + created,
             }).then((result) {
               print(
                   "INFO: Database Write Completed (${initCogX[i]}, ${initCogY[i]})");
@@ -60,9 +60,10 @@ class SignUpScreen extends StatelessWidget {
 
   Future<String> signUp(BuildContext context, String email, String password, String pin) async {
     String emailTrimmed = email.trim();
+    String passwordTrimmed = password.trim();
     //create user account
     MyApp.user = await MyApp.firebaseAuth.createUserWithEmailAndPassword(
-        email: emailTrimmed, password: password);
+        email: emailTrimmed, password: passwordTrimmed);
     //get pin from form to setup database
     MyApp.pin = pin;
     //save pin number as shared preferences
@@ -74,7 +75,7 @@ class SignUpScreen extends StatelessWidget {
 
     //go to dashboard
     if(MyApp.user.uid != null) {
-      Navigator.of(context).pushNamed('/DashboardScreen');
+      Navigator.pushReplacementNamed(context, '/WelcomeScreen');
     }
     return MyApp.user.uid;
   }
@@ -86,12 +87,6 @@ class SignUpScreen extends StatelessWidget {
     }
     if(passwordCtrl.text != null) {
       passwordCtrl.clear();
-    }
-    if(fnameCtrl.text != null) {
-      fnameCtrl.clear();
-    }
-    if(lnameCtrl.text != null) {
-      lnameCtrl.clear();
     }
     if(pinCtrl.text != null) {
       pinCtrl.clear();
@@ -109,24 +104,6 @@ class SignUpScreen extends StatelessWidget {
             children: <Widget> [
               Container(
                   child: Text('Please fill out the form below.'),
-              ),
-              Container(
-                child: TextField(
-                  controller: fnameCtrl,
-                  autofocus: true,
-                  decoration: new InputDecoration(
-                    labelText: 'First Name'
-                  )
-                )
-              ),
-              Container(
-                child: TextField(
-                  controller: lnameCtrl,
-                  autofocus: false,
-                  decoration: new InputDecoration(
-                    labelText: 'Last Name'
-                  ),
-                )
               ),
               Container(
                   child: TextField(

@@ -38,9 +38,18 @@ class DashboardScreen extends StatelessWidget {
       for(int i=0;i<MyApp.postureDataList.length;i++) {
         //convert posture data object to graph data object
         var freshData = new GraphData(MyApp.postureDataList[i].cogX, MyApp.postureDataList[i].cogY, MyApp.postureDataList[i].created_at);
+        //get datetime data for filtering data
+        DateTime now = DateTime.now();
         if(freshData != null && data != null) {
-          data.add(freshData);
-          print('added freshData to data list');
+          //check if data is either from the last 24 hrs or is the 4 points to hold the chart axes in place
+        //  String dataT = freshData.created_at.substring(0, 7) + 'T' + freshData.created_at.substring(9);
+        //  print(dataT);
+          DateTime dataTime = DateTime.parse(freshData.created_at);
+          if(((now.year == dataTime.year) && (now.month == dataTime.month) && (now.day == dataTime.day))
+          || (dataTime.year == 2001)) {
+            data.add(freshData);
+            print('added freshData to data list');
+          }
         }
         else {
           return Text('Invalid Data. Cannot display.');
@@ -56,7 +65,7 @@ class DashboardScreen extends StatelessWidget {
   readFromDatabase(){
     print('hit');
     List list = [];
-    var userReference = MyApp.database.reference().child('0000').child('data');
+    var userReference = MyApp.database.reference().child('postureData').child('0000');
     userReference.once().then((DataSnapshot snapshot) {
       print('DATA: ${snapshot.value}');
       for(var value in snapshot.value.values) {
@@ -87,7 +96,8 @@ class DashboardScreen extends StatelessWidget {
     if(MyApp.postureDataList == null) {
       print('pdL is null');
       //pull fresh data from database
-       MyApp.databaseData.readFromDatabase();
+     //  MyApp.databaseData.readFromDatabase();
+      readFromDatabase();
         print('hit2');
         print(MyApp.postureDataList);
         series = fetchGraphData();
@@ -99,6 +109,7 @@ class DashboardScreen extends StatelessWidget {
     }
     Navigator.of(context).pushReplacementNamed('/DashboardScreen');
   }
+
 
   goToSettings (BuildContext context) {
     print('hit');
@@ -120,7 +131,7 @@ class DashboardScreen extends StatelessWidget {
         print('notification feature turned off');
         MyApp.notification = false;
       }
-      Navigator.of(context).pushNamed('/SettingsScreen');
+      Navigator.pushReplacementNamed(context, '/SettingsScreen');
       });
   }
 
@@ -166,18 +177,11 @@ class DashboardScreen extends StatelessWidget {
                 child: Text('I am experiencing back pain!'),
                 onPressed: () => displayStretchPage(context),
               ),
-              RaisedButton(
-                child: const Text('Show me the settings page!'),
-                onPressed: () => goToSettings(context),
-              ),
-              RaisedButton(
-                child: const Text('Database Testing Page'),
-                onPressed: () => Navigator.of(context).pushNamed('/DatabaseTestPage'),
-              ),
             ]
         ),
         onSwipeLeft: () => goToSettings(context),
-        // onSwipeRight: () => goToDataPage(context),
+        onSwipeRight: () => Navigator.pushReplacementNamed(context, '/LongTermData'),
+        onSwipeDown: () => reload(context),
         swipeConfiguration: SwipeConfiguration(
          horizontalSwipeMaxHeightThreshold: 50.0,
          horizontalSwipeMinDisplacement: 10.0,
@@ -195,7 +199,17 @@ class DashboardScreen extends StatelessWidget {
     return [
       new charts.Series<GraphData, int> (
         id: 'Posture',
-        colorFn:(_, __) => charts.MaterialPalette.blue.shadeDefault,
+     //   colorFn:(_, __) => charts.MaterialPalette.blue.shadeDefault,
+        colorFn: (GraphData point, _) {
+          DateTime dataTime = DateTime.parse(point.created_at);
+          if(dataTime.year == 2001) {
+            print("i should be invisible!");
+            return charts.MaterialPalette.white;
+          } else {
+            print("I am a valid data point");
+            return charts.MaterialPalette.blue.shadeDefault;
+          }
+        },
         domainFn: (GraphData dataPoint, _) => dataPoint.cogX,
         measureFn: (GraphData dataPoint, _) => dataPoint.cogY,
         data: data,

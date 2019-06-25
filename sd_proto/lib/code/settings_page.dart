@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:sd_proto/main.dart';
 import 'dart:typed_data';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:swipedetector/swipedetector.dart';
 class SettingsScreen extends StatefulWidget{
   @override
   SettingsScreenState createState() => SettingsScreenState();
 }
-class SettingsScreenState extends State<SettingsScreen>{
+class SettingsScreenState extends State<SettingsScreen> {
   //get preferences from firebase
   bool vibrationToggle = MyApp.vibration;
   bool notificationToggle = MyApp.notification;
@@ -25,20 +26,23 @@ class SettingsScreenState extends State<SettingsScreen>{
     }
     //update flag in firebase
     if (MyApp.user != null) {
-      if(MyApp.pin != null) {
-        var db = MyApp.database.reference().child('settings').child(MyApp.pin).set(
+      if (MyApp.pin != null) {
+        var db = MyApp.database.reference().child('settings')
+            .child(MyApp.pin)
+            .set(
             <String, String>{
               "notification": "" + (notificationToggle ? '1' : '0'),
               "vibration": "" + (vibrationToggle ? '1' : '0'),
-            }).then((result) {
+            })
+            .then((result) {
           print("INFO: Database Write Completed");
         });
       }
     }
   }
 
-  updateNotifications () {
-    if(notificationToggle) {
+  updateNotifications() {
+    if (notificationToggle) {
       setState(() {
         notificationToggle = false;
         MyApp.notification = false;
@@ -49,21 +53,24 @@ class SettingsScreenState extends State<SettingsScreen>{
         MyApp.notification = true;
       });
     }
-    if(MyApp.user != null) {
+    if (MyApp.user != null) {
       if (MyApp.pin != null) {
-        var db = MyApp.database.reference().child('settings').child(MyApp.pin).set(
+        var db = MyApp.database.reference().child('settings')
+            .child(MyApp.pin)
+            .set(
             <String, String>{
               "notification": "" + (notificationToggle ? '1' : '0'),
               "vibration": "" + (vibrationToggle ? '1' : '0'),
-            }).then((result) {
+            })
+            .then((result) {
           print("INFO: Database Write Completed");
         });
       }
     }
   }
 
-  Future sendNotification() async{
-    if(MyApp.notification && notificationToggle) {
+  Future sendNotification() async {
+    if (MyApp.notification && notificationToggle) {
       var vibrationPattern = Int64List(4);
       vibrationPattern[0] = 0;
       vibrationPattern[1] = 1000;
@@ -87,6 +94,7 @@ class SettingsScreenState extends State<SettingsScreen>{
       print('Notifications turned off.');
     }
   }
+
   //unsolved bug: on sign out will not push page replacement properly => breaks
 /*  signOut(BuildContext context) async {
     if(MyApp.firebaseAuth != null) {
@@ -103,16 +111,18 @@ class SettingsScreenState extends State<SettingsScreen>{
 
   }*/
 
-  Widget listViewConstructor (BuildContext context) {
+  Widget listViewConstructor(BuildContext context) {
     return ListView(
       children: <Widget>[
         ListTile(
-          title: Text('Toggle Chair Vibration'),
-          trailing: Switch(value: vibrationToggle, onChanged: (value) => updateVibration())
+            title: Text('Toggle Chair Vibration'),
+            trailing: Switch(
+                value: vibrationToggle, onChanged: (value) => updateVibration())
         ),
         ListTile(
           title: Text('Toggle Phone Notifications'),
-         trailing: Switch(value: notificationToggle, onChanged: (value) => updateNotifications()),
+          trailing: Switch(value: notificationToggle,
+              onChanged: (value) => updateNotifications()),
         ),
         ListTile(
           title: Text('Test Notification!'),
@@ -132,7 +142,19 @@ class SettingsScreenState extends State<SettingsScreen>{
         appBar: AppBar(
           title: const Text('This will be the settings page!'),
         ),
-        body: listViewConstructor(context),
+        body: SwipeDetector(
+          child: listViewConstructor(context),
+          onSwipeRight: () =>
+              Navigator.pushReplacementNamed(context, '/DashboardScreen'),
+          swipeConfiguration: SwipeConfiguration(
+              horizontalSwipeMaxHeightThreshold: 50.0,
+              horizontalSwipeMinDisplacement: 10.0,
+              horizontalSwipeMinVelocity: 1.0,
+              verticalSwipeMaxWidthThreshold: 100.0,
+              verticalSwipeMinDisplacement: 50.0,
+              verticalSwipeMinVelocity: 100.0
+          ),
+        )
     );
   }
 }

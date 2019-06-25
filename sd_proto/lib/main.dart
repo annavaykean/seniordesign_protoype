@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'code/dashboard_page.dart';
 import 'code/settings_page.dart';
 import 'code/signUp.dart';
-import 'code/database_test_page.dart';
+//import 'code/database_test_page.dart';
 import 'code/stretches_page.dart';
+import 'code/longTermData.dart';
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
   static FirebaseDatabase database = new FirebaseDatabase();
   static DatabaseReference userDataReference;
   static DatabaseReference userSettingsReference;
-  static DatabaseTestPageState databaseData = new DatabaseTestPageState();
+  //static DatabaseTestPageState databaseData = new DatabaseTestPageState();
   static String pose;
   static bool vibration = true;
   static bool notification = true;
@@ -43,8 +44,9 @@ class MyApp extends StatelessWidget {
         '/SignUp': (BuildContext context) => new SignUpScreen(),
         '/DashboardScreen': (BuildContext context) => new DashboardScreen(),
         '/SettingsScreen' : (BuildContext context) => new SettingsScreen(),
-        '/DatabaseTestPage' : (BuildContext context) => new DatabaseTestPage(),
+       // '/DatabaseTestPage' : (BuildContext context) => new DatabaseTestPage(),
         '/Stretches' : (BuildContext context) => new Stretches(),
+        '/LongTermData': (BuildContext context) => new LongTermData(),
       }
       );
   }
@@ -92,24 +94,34 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   }
 
    signIn(BuildContext context, String email, String password) async {
+    //remove white space
     String emailTrimmed = email.trim();
+    String passwordTrimmed = password.trim();
+
+    //check that form is valid
     if(email != null && password != null) {
       try {
+        //attempt to sign in
         MyApp.user = await MyApp.firebaseAuth.signInWithEmailAndPassword(
-            email: emailTrimmed, password: password);
+            email: emailTrimmed, password: passwordTrimmed);
       } on PlatformException catch (e){
+        //if sign in fails, display error message
           print('INFO: ${e}');
           setState(() {
             errorMessage = "Invalid login. Try again.";
           });
       }
+      //if login is successful, execute if statement
       if(MyApp.user != null) {
         errorMessage = "";
         emailCtrl.clear();
         passwordCtrl.clear();
         print('INFO: ${MyApp.user.email} signed in.');
+
+        //get pin from sharedPreferences
         var recievePin = await getPinNumber();
         print('recieved pin: $recievePin');
+
         if(recievePin != 'invalid') {
           MyApp.pin = recievePin;
           //establish new database session
@@ -139,7 +151,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
           //navigate to homepage and dismiss keyboard
           FocusScope.of(context).requestFocus(new FocusNode());
           print('going to dashboard...');
-          Navigator.of(context).pushReplacementNamed('/DashboardScreen');
+          Navigator.pushReplacementNamed(context,'/DashboardScreen');
         }
       }
     }
