@@ -108,7 +108,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
         //if sign in fails, display error message
           print('INFO: ${e}');
           setState(() {
-            errorMessage = "Invalid login. Try again.";
+            errorMessage = e.message;
           });
       }
       //if login is successful, execute if statement
@@ -173,7 +173,9 @@ class WelcomeScreenState extends State<WelcomeScreen> {
       MyApp.deviceConnection.cancel();
     }
   }*/
-
+  goToSignUp (BuildContext context) {
+    Navigator.pushReplacementNamed(context, '/SignUp');
+  }
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -208,7 +210,8 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 )
               ),
-              Text(errorMessage),
+              Text(errorMessage,
+                  style: TextStyle(color: Colors.red)),
               ButtonTheme(
                 minWidth: 300.0,
                 child:  RaisedButton(
@@ -228,8 +231,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
               FlatButton(
                 child: const Text('Create an account'),
                 splashColor: Colors.blue,
-                onPressed: (){
-                  Navigator.of(context).pushNamed('/SignUp'); },
+                onPressed: () => goToSignUp(context),
               ),
             ]
 

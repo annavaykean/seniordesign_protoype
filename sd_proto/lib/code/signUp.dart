@@ -3,11 +3,20 @@ import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sd_proto/main.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
+import 'package:firebase_database/firebase_database.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
+  @override
+  SignUpScreenState createState() => SignUpScreenState();
+}
+class SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailCtrl = new TextEditingController();
   final TextEditingController passwordCtrl = new TextEditingController();
   final TextEditingController pinCtrl = new TextEditingController();
+  String errorMssg = '';
+  String pinErrorMssg = '';
+  bool pinIsValid = false;
 
   Future<bool> setPinNumber() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -57,27 +66,62 @@ class SignUpScreen extends StatelessWidget {
       }
       //dismiss keyboard
   }
+  verifyPin(String pinCode) {
+    String pin = pinCode.trim();
+    //double check pin is not already in use before creating account
+    var dbQuery = MyApp.database.reference().child('postureData').child(
+        pin);
+    dbQuery.once().then((DataSnapshot snapshot) {
+      if (snapshot.value != null) {
+        print('Pin already in use');
+        pinErrorMssg = 'This pin is unavailable.';
+        pinIsValid = false;
+        setState(() {});
+      } else {
+        print('Pin is now reserved.');
+        pinErrorMssg = '';
+        pinIsValid = true;
+        setState(() {});
+      }
+    });
+  }
 
   Future<String> signUp(BuildContext context, String email, String password, String pin) async {
     String emailTrimmed = email.trim();
     String passwordTrimmed = password.trim();
     //create user account
-    MyApp.user = await MyApp.firebaseAuth.createUserWithEmailAndPassword(
-        email: emailTrimmed, password: passwordTrimmed);
-    //get pin from form to setup database
-    MyApp.pin = pin;
-    //save pin number as shared preferences
-    setPinNumber();
-    print('INFO: account created for ${MyApp.user.uid}');
-    //send initial data points to firebase (the 4 points to control chart shape) and preferences
-    writeInitPointsToDatabase();
-    setupUserPreferences();
+    if(pinIsValid){
+    try {
+      MyApp.user = await MyApp.firebaseAuth.createUserWithEmailAndPassword(
+          email: emailTrimmed, password: passwordTrimmed);
+      errorMssg = '';
+      setState(() {});
+      //get pin from form to setup database
+      MyApp.pin = pin;
+      //save pin number as shared preferences
+      setPinNumber();
+      print('INFO: account created for ${MyApp.user.uid}');
+      //send initial data points to firebase (the 4 points to control chart shape) and preferences
+      writeInitPointsToDatabase();
+      setupUserPreferences();
 
-    //go to dashboard
-    if(MyApp.user.uid != null) {
-      Navigator.pushReplacementNamed(context, '/WelcomeScreen');
+      //go to dashboard
+      if (MyApp.user.uid != null) {
+        Navigator.pushReplacementNamed(context, '/WelcomeScreen');
+      }
+      return MyApp.user.uid;
+      }
+      on PlatformException catch (e) {
+        print(e);
+        errorMssg = e.message;
+        setState(() {});
+      }
+
     }
-    return MyApp.user.uid;
+    else {
+      print('Must verify pin before account creation');
+    }
+
   }
 
   clearForm(BuildContext context) {
@@ -124,14 +168,37 @@ class SignUpScreen extends StatelessWidget {
                     ),
                   )
               ),
-              Container (
-                child: TextField(
-                  controller: pinCtrl,
-                  autofocus: false,
-                  decoration: new InputDecoration(
-                    labelText: 'Pin Code'
-                  ),
+              Row(
+              children: <Widget> [
+                Container (
+                    width: 100.0,
+                    child: TextField(
+                      controller: pinCtrl,
+                      autofocus: false,
+                      decoration: new InputDecoration(
+                          labelText: 'Pin Code'
+                      ),
+                    )
+                ),
+              RaisedButton(
+                child: Text('Verify Pin'),
+                onPressed: () => verifyPin(pinCtrl.text),
+              ),
+              Container(
+                //show check button if pin is verified
+                child: Icon(
+                  Icons.check,
+                  color: pinIsValid ? Colors.green : Colors.white,
                 )
+              )
+              ]),
+              Container(
+                child: Text(errorMssg,
+                       style: TextStyle(color: Colors.red)),
+              ),
+              Container(
+                child: Text(pinErrorMssg,
+                       style: TextStyle(color: Colors.red)),
               ),
               Row(
                 children: <Widget>[
