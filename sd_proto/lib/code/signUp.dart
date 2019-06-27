@@ -181,16 +181,10 @@ class SignUpScreenState extends State<SignUpScreen> {
                     )
                 ),
               RaisedButton(
-                child: Text('Verify Pin'),
+                child: pinIsValid ? Text('Pin Verified!') : Text('Verify Pin'),
+                color: pinIsValid ? Colors.green : null,
                 onPressed: () => verifyPin(pinCtrl.text),
               ),
-              Container(
-                //show check button if pin is verified
-                child: Icon(
-                  Icons.check,
-                  color: pinIsValid ? Colors.green : Colors.white,
-                )
-              )
               ]),
               Container(
                 child: Text(errorMssg,
