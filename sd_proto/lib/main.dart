@@ -34,6 +34,8 @@ class MyApp extends StatelessWidget {
   static bool vibration = true;
   static bool notification = true;
   static FlutterLocalNotificationsPlugin notificationsPlugin;
+
+
   @override
   Widget build(BuildContext context){
     return MaterialApp(
@@ -64,7 +66,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   String errorMessage = '';
 
   initState() {
-    super.initState();
+   // super.initState();
 
      var initializationSettingsAndroid = new AndroidInitializationSettings('@mipmap/ic_launcher');
      var initializationSettingsIOS = new IOSInitializationSettings();
@@ -73,7 +75,71 @@ class WelcomeScreenState extends State<WelcomeScreen> {
      MyApp.notificationsPlugin = new FlutterLocalNotificationsPlugin();
      MyApp.notificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);
 
+    //timer for checking database to determine if notification should be sent
+      print('priming timer!');
+      //check notification settings every 30 seconds
+      const timeCheck = const Duration(seconds: 30);
+      var timer = new Timer.periodic(timeCheck, (timer) {
+        print('timer ran out!');
+        //check firebase to see if notif should be fired
+        if(MyApp.user != null){
+          print('checking if notification is needed');
+          var notifQuery = MyApp.database.reference().child('settings').child(
+              MyApp.pin);
+          notifQuery.once().then((DataSnapshot snapshot) {
+            if (snapshot.value != null) {
+                if(snapshot.value['firePhoneNotif'] != null && snapshot.value['firePhoneNotif'] == '1') {
+                  print('firing notification!');
+                  sendNotification();
+                  //reset flag in firebase
+                  var resetDB = MyApp.database.reference().child('settings')
+                      .child(MyApp.pin)
+                      .set(
+                      <String, String>{
+                        "firePhoneNotif" : "0",
+                        "notification": "" + (MyApp.notification ? '1' : '0'),
+                        "vibration": "" + (MyApp.vibration ? '1' : '0'),
 
+                      })
+                      .then((result) {
+                    print("INFO: Database Write Completed");
+                  });
+
+                  initState();
+                }
+            } else {
+              initState();
+            }
+          });
+        }
+      });
+
+  }
+
+  Future sendNotification() async {
+    if (MyApp.notification) {
+      var vibrationPattern = Int64List(4);
+      vibrationPattern[0] = 0;
+      vibrationPattern[1] = 1000;
+      vibrationPattern[2] = 5000;
+      vibrationPattern[3] = 2000;
+      var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+          'notofication_channel_id', 'Channel Name',
+          'Here we will put the description about the Channel ',
+          vibrationPattern: vibrationPattern,
+          importance: Importance.Max, priority: Priority.High);
+
+      var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+
+      var platformChannelSpecifics = new NotificationDetails(
+          androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+
+      await MyApp.notificationsPlugin.show(
+          0, 'New Post', 'How to Show Notification in flutter',
+          platformChannelSpecifics, payload: 'Default_Sound');
+    } else {
+      print('Notifications turned off.');
+    }
   }
 
   Future<String> getPinNumber() async {

@@ -30,6 +30,7 @@ class SignUpScreenState extends State<SignUpScreen> {
       dbRef.set(<String, String>{
         "notification": "1",
         "vibration": "1",
+        "firePhoneNotif" : "0",
       });
       //update global vars
       MyApp.notification = true;
@@ -69,8 +70,7 @@ class SignUpScreenState extends State<SignUpScreen> {
   verifyPin(String pinCode) {
     String pin = pinCode.trim();
     //double check pin is not already in use before creating account
-    var dbQuery = MyApp.database.reference().child('postureData').child(
-        pin);
+    var dbQuery = MyApp.database.reference().child('usedPins').child(pin);
     dbQuery.once().then((DataSnapshot snapshot) {
       if (snapshot.value != null) {
         print('Pin already in use');
@@ -78,6 +78,12 @@ class SignUpScreenState extends State<SignUpScreen> {
         pinIsValid = false;
         setState(() {});
       } else {
+        MyApp.database.reference().child('usedPins').set(<String, String>{
+          "" + pin : "1",
+        }).then((result) {
+          print(
+              "INFO: Database Write Completed (pin $pin has been reserved)");
+        });
         print('Pin is now reserved.');
         pinErrorMssg = '';
         pinIsValid = true;
@@ -120,6 +126,8 @@ class SignUpScreenState extends State<SignUpScreen> {
     }
     else {
       print('Must verify pin before account creation');
+      pinErrorMssg = "Must verify pin before creating account!";
+      setState(() {});
     }
 
   }
