@@ -124,7 +124,17 @@ class LongTermData extends StatelessWidget {
     return [
       new charts.Series<GraphData, int> (
         id: 'Posture',
-        colorFn:(_, __) => charts.MaterialPalette.blue.shadeDefault,
+       // colorFn:(_, __) => charts.MaterialPalette.blue.shadeDefault,
+        colorFn: (GraphData point, _) {
+          DateTime dataTime = DateTime.parse(point.created_at);
+          if(dataTime.year == 2001) {
+            print("i should be invisible!");
+            return charts.MaterialPalette.white;
+          } else {
+            print("I am a valid data point");
+            return charts.MaterialPalette.blue.shadeDefault;
+          }
+        },
         domainFn: (GraphData dataPoint, _) => dataPoint.cogX,
         measureFn: (GraphData dataPoint, _) => dataPoint.cogY,
         data: data,

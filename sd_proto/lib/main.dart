@@ -135,7 +135,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
           androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 
       await MyApp.notificationsPlugin.show(
-          0, 'New Post', 'How to Show Notification in flutter',
+          0, 'Smart Chair', 'Posture check!',
           platformChannelSpecifics, payload: 'Default_Sound');
     } else {
       print('Notifications turned off.');

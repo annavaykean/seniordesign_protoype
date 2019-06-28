@@ -143,7 +143,7 @@ class SignUpScreenState extends State<SignUpScreen> {
     if(pinCtrl.text != null) {
       pinCtrl.clear();
     }
-    Navigator.popUntil(context, ModalRoute.withName('/'));
+    Navigator.pushReplacementNamed(context, '/WelcomeScreen');
   }
 
   @override

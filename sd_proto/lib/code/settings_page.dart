@@ -95,21 +95,6 @@ class SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  //unsolved bug: on sign out will not push page replacement properly => breaks
-/*  signOut(BuildContext context) async {
-    if(MyApp.firebaseAuth != null) {
-      await MyApp.firebaseAuth.signOut();
-    }
-    if(MyApp.deviceConnection != null) {
-      await MyApp.deviceConnection.cancel();
-    }
-    if(MyApp.user != null) {
-      MyApp.user = null;
-    }
-    print('exiting app');
-    Navigator.of(context).pushReplacementNamed('/WelcomeScreen');
-
-  }*/
 
   Widget listViewConstructor(BuildContext context) {
     return ListView(
@@ -140,7 +125,7 @@ class SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: AppBar(
-          title: const Text('This will be the settings page!'),
+          title: const Text('Settings'),
         ),
         body: SwipeDetector(
           child: listViewConstructor(context),
