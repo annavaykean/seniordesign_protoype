@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'dart:math';
 import 'package:swipedetector/swipedetector.dart';
 class DashboardScreen extends StatelessWidget {
-  //List<GraphData> data = MyApp.postureDataList;
 
   List<GraphData> data = null;
   List<charts.Series<GraphData, int>> series;
@@ -65,7 +64,7 @@ class DashboardScreen extends StatelessWidget {
   readFromDatabase(){
     print('hit');
     List list = [];
-    var userReference = MyApp.database.reference().child('postureData').child('0000');
+    var userReference = MyApp.database.reference().child('postureData').child(MyApp.pin);
     userReference.once().then((DataSnapshot snapshot) {
       print('DATA: ${snapshot.value}');
       for(var value in snapshot.value.values) {
@@ -92,8 +91,9 @@ class DashboardScreen extends StatelessWidget {
   }
 
   void reload(BuildContext context) {
+    MyApp.postureDataList == null;
     //reload chart with fresh data
-    if(MyApp.postureDataList == null) {
+   // if(MyApp.postureDataList == null) {
       print('pdL is null');
       //pull fresh data from database
      //  MyApp.databaseData.readFromDatabase();
@@ -103,10 +103,10 @@ class DashboardScreen extends StatelessWidget {
         series = fetchGraphData();
         buildChart();
         print(data);
-    } else {
-      print('pdl is not null');
-      buildChart();
-    }
+  //  } else {
+  //    print('pdl is not null');
+  //    buildChart();
+  //  }
     Navigator.of(context).pushReplacementNamed('/DashboardScreen');
   }
 
@@ -171,8 +171,13 @@ class DashboardScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
-                child: buildChart(),
-              ),
+                child: Stack(
+                  alignment: const Alignment(1, 1),
+                  children: [
+                  //  Image.asset("assets/seat.jpg"),
+                    buildChart(),
+                ]
+        )),
               RaisedButton(
                 child: Text('I am experiencing back pain!'),
                 onPressed: () => displayStretchPage(context),

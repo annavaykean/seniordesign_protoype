@@ -12,6 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 void main(){
   runApp(MyApp());
 }
@@ -76,14 +77,14 @@ class WelcomeScreenState extends State<WelcomeScreen> {
      MyApp.notificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);
 
     //timer for checking database to determine if notification should be sent
-      print('priming timer!');
+   //   print('priming timer!');
       //check notification settings every 30 seconds
       const timeCheck = const Duration(seconds: 30);
       var timer = new Timer.periodic(timeCheck, (timer) {
-        print('timer ran out!');
+    //    print('timer ran out!');
         //check firebase to see if notif should be fired
         if(MyApp.user != null){
-          print('checking if notification is needed');
+       //   print('checking if notification is needed');
           var notifQuery = MyApp.database.reference().child('settings').child(
               MyApp.pin);
           notifQuery.once().then((DataSnapshot snapshot) {
@@ -210,7 +211,6 @@ class WelcomeScreenState extends State<WelcomeScreen> {
               //add parsed data to list as a Posture object
               list.add(new Posture(xInt, yInt, created_at));
             }
-
             //update global posture data list with fresh data.
             MyApp.postureDataList = list;
           });
@@ -227,21 +227,10 @@ class WelcomeScreenState extends State<WelcomeScreen> {
     }
   }
 
-/*  Future<void> signOut() async {
-    if(MyApp.firebaseAuth != null) {
-      return MyApp.firebaseAuth.signOut();
-    }
-    if(MyApp.user != null) {
-      MyApp.user = null;
-    }
-    Navigator.of(context).pushNamed('/WelcomeScreen');
-    if(MyApp.deviceConnection != null) {
-      MyApp.deviceConnection.cancel();
-    }
-  }*/
   goToSignUp (BuildContext context) {
     Navigator.pushReplacementNamed(context, '/SignUp');
   }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -300,7 +289,6 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                 onPressed: () => goToSignUp(context),
               ),
             ]
-
         ))
     );
   }
@@ -311,8 +299,4 @@ class Posture {
   int cogY;
   String created_at;
   Posture(this.cogX, this.cogY, this.created_at);
-
 }
-
-
-

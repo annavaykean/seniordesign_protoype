@@ -41,7 +41,7 @@ class LongTermData extends StatelessWidget {
   }
   readFromDatabase(){
     List list = [];
-    var userReference = MyApp.database.reference().child('postureData').child('0000');
+    var userReference = MyApp.database.reference().child('postureData').child(MyApp.pin);
     userReference.once().then((DataSnapshot snapshot) {
       print('DATA: ${snapshot.value}');
       for(var value in snapshot.value.values) {
@@ -67,7 +67,7 @@ class LongTermData extends StatelessWidget {
 
   void reload(BuildContext context) {
     //reload chart with fresh data
-    if(MyApp.postureDataList == null) {
+  //  if(MyApp.postureDataList == null) {
       print('pdL is null');
       //pull fresh data from database
      // MyApp.databaseData.readFromDatabase();
@@ -76,10 +76,10 @@ class LongTermData extends StatelessWidget {
       series = fetchGraphData();
       buildChart();
       print(data);
-    } else {
-      print('pdl is not null');
-      buildChart();
-    }
+  //  } else {
+   //   print('pdl is not null');
+    //  buildChart();
+ //   }
     Navigator.of(context).pushReplacementNamed('/LongTermData');
   }
 
