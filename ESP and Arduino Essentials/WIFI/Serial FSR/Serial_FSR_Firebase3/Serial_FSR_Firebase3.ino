@@ -105,10 +105,11 @@ void loop()
     //  Serial.print("HOUR: ");
     //  Serial.println(timeStamp);
   }
-
+  if(fsrReading != 0) {
   Firebase.setInt("postureData/1212/" + formattedDate + "/cogX", fsrReading);
   Firebase.setInt("postureData/1212/" + formattedDate + "/cogY", 0);
   Firebase.setString("postureData/1212/" + formattedDate + "/created_at", formattedDate);
+  }
   
   delay(1000);
 }

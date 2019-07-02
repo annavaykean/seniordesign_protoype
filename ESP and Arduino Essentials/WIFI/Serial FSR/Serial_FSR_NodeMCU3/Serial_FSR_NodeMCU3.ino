@@ -9,6 +9,7 @@ SoftwareSerial s(D6,D5);    // (RX, TX) to receive and transmit
                             // s represents the transfer comm
 int cogX;             // Sensor data reading
 int cogY;
+
 //long count = millis();
 
 // ******************* Setting conditions for connection ******************* 
@@ -24,32 +25,26 @@ void setup()
 
 void loop() 
 {
-//  s.write("s");
-////  Serial.print("Analog reading = ");
-////  Serial.println(fsrReading);
-//
-//  // Setting the s.read will reset values
-////  fsrReading = s.read();
-//
-//  if (s.available())
-//  {
-//
-//    // Show the Sensor readings
-//    // Serial Monitor inside loop read values along with Arduino
-//    Serial.print("Sensor Reading: ");
-//    Serial.println(cogX);
-//    // Setting the s.read inside does NOT reset values
-//    cogX = s.read();
-//  }
-//  
-//  delay(1000);
+  s.write("s");
 
-  byte n = s.available();
-  if (n != 0)
+  if (s.available())
   {
-    char x = s.read();
-    Serial.print(x);
+    cogX = s.read();
+    // Show the Sensor readings
+    // Serial Monitor inside loop read values along with Arduino
+    Serial.print("Sensor Reading: ");
+    Serial.println(cogX);
+    // Setting the s.read inside does NOT reset values
   }
+  
+  delay(1000);
+
+//  byte n = s.available();
+//  if (n != 0)
+//  {
+//    char x = s.read();
+//    Serial.print(x);
+//  }
 
   // https://forum.arduino.cc/index.php?topic=605324.0
 }
