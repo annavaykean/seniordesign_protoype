@@ -35,7 +35,7 @@ void setup()
 
 void loop() 
 {
-  fireStatus = Firebase.getString("settings/0000/vibration");                                      // get ld status input from firebase
+  fireStatus = Firebase.getString("settings/1212/vibration");                                      // get ld status input from firebase
   if (fireStatus == "ON" || fireStatus == "on" || fireStatus == "1") 
   {                                                          // compare the input of led status received from firebase
     Serial.println("Led Turned ON");                         
