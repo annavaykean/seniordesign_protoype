@@ -29,9 +29,8 @@ class SettingsScreenState extends State<SettingsScreen> {
       if (MyApp.pin != null) {
         var db = MyApp.database.reference().child('settings')
             .child(MyApp.pin)
-            .set(
+            .update(
             <String, String>{
-              "notification": "" + (notificationToggle ? '1' : '0'),
               "vibration": "" + (vibrationToggle ? '1' : '0'),
             })
             .then((result) {
@@ -57,10 +56,9 @@ class SettingsScreenState extends State<SettingsScreen> {
       if (MyApp.pin != null) {
         var db = MyApp.database.reference().child('settings')
             .child(MyApp.pin)
-            .set(
+            .update(
             <String, String>{
               "notification": "" + (notificationToggle ? '1' : '0'),
-              "vibration": "" + (vibrationToggle ? '1' : '0'),
             })
             .then((result) {
           print("INFO: Database Write Completed");

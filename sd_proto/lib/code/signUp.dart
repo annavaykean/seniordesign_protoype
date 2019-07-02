@@ -17,6 +17,27 @@ class SignUpScreenState extends State<SignUpScreen> {
   String errorMssg = '';
   String pinErrorMssg = '';
   bool pinIsValid = false;
+  String verifiedPin = '';
+
+  checkPinUpdate() {
+    if(pinIsValid) {
+      //determine if user has deleted pin after verifying
+      if (pinCtrl.text != verifiedPin) {
+        //reset verify button
+        pinIsValid = false;
+       // verifiedPin = '';
+        //remove reservation from firebase
+        MyApp.database.reference().child('usedPins').update(<String, String>{
+          "" + verifiedPin: "0",
+        }).then((result) {
+          print(
+              "INFO: Database Write Completed (pin ${verifiedPin} has been released)");
+        });
+        verifiedPin = '';
+        setState(() {});
+      }
+    }
+  }
 
   Future<bool> setPinNumber() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -40,8 +61,8 @@ class SignUpScreenState extends State<SignUpScreen> {
   writeInitPointsToDatabase() {
     //writes inital 4 values to firebase database to control shape of chart (so that(0,0) is center)
     //order of coords: FL (Quadrant 2), FR (Q1), RL (Q3), RR (Q4)
-      List initCogX = ['-100', '100', '-100', '100'];
-      List initCogY = ['100', '100', '-100', '-100'];
+      List initCogX = ['-200', '200', '-200', '200'];
+      List initCogY = ['200', '200', '-200', '-200'];
 
       if(MyApp.user != null){
         MyApp.userDataReference = MyApp.database.reference().child('postureData').child(MyApp.pin);
@@ -53,7 +74,6 @@ class SignUpScreenState extends State<SignUpScreen> {
           //YYYYMMDDTHHMMSS
           String created = '20010101T00000' + counter.toString();
           counter++;
-       //  Timer timer = new Timer(const Duration(milliseconds: 1000), (){
             MyApp.userDataReference.child(created).set(<String, String>{
               "cogX": "" + initCogX[i],
               "cogY": "" + initCogY[i],
@@ -72,13 +92,13 @@ class SignUpScreenState extends State<SignUpScreen> {
     //double check pin is not already in use before creating account
     var dbQuery = MyApp.database.reference().child('usedPins').child(pin);
     dbQuery.once().then((DataSnapshot snapshot) {
-      if (snapshot.value != null) {
+      if (snapshot.value != null || snapshot.value == '1') {
         print('Pin already in use');
         pinErrorMssg = 'This pin is unavailable.';
         pinIsValid = false;
         setState(() {});
       } else {
-        MyApp.database.reference().child('usedPins').set(<String, String>{
+        MyApp.database.reference().child('usedPins').update(<String, String>{
           "" + pin : "1",
         }).then((result) {
           print(
@@ -87,6 +107,7 @@ class SignUpScreenState extends State<SignUpScreen> {
         print('Pin is now reserved.');
         pinErrorMssg = '';
         pinIsValid = true;
+        verifiedPin = pin;
         setState(() {});
       }
     });
@@ -182,6 +203,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                     width: 100.0,
                     child: TextField(
                       controller: pinCtrl,
+                      onChanged: checkPinUpdate(),
                       autofocus: false,
                       decoration: new InputDecoration(
                           labelText: 'Pin Code'

@@ -89,23 +89,19 @@ class WelcomeScreenState extends State<WelcomeScreen> {
               MyApp.pin);
           notifQuery.once().then((DataSnapshot snapshot) {
             if (snapshot.value != null) {
-                if(snapshot.value['firePhoneNotif'] != null && snapshot.value['firePhoneNotif'] == '1') {
+                if(snapshot.value['firePhoneNotif'] != null && snapshot.value['firePhoneNotif'] != '0') {
                   print('firing notification!');
-                  sendNotification();
+                  sendNotification(snapshot.value['firePhoneNotif']);
                   //reset flag in firebase
                   var resetDB = MyApp.database.reference().child('settings')
                       .child(MyApp.pin)
-                      .set(
+                      .update(
                       <String, String>{
                         "firePhoneNotif" : "0",
-                        "notification": "" + (MyApp.notification ? '1' : '0'),
-                        "vibration": "" + (MyApp.vibration ? '1' : '0'),
-
                       })
                       .then((result) {
                     print("INFO: Database Write Completed");
                   });
-
                   initState();
                 }
             } else {
@@ -117,7 +113,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
 
   }
 
-  Future sendNotification() async {
+  Future sendNotification(String feedback) async {
     if (MyApp.notification) {
       var vibrationPattern = Int64List(4);
       vibrationPattern[0] = 0;
@@ -136,7 +132,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
           androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 
       await MyApp.notificationsPlugin.show(
-          0, 'Smart Chair', 'Posture check!',
+          0, 'Smart Chair', feedback,
           platformChannelSpecifics, payload: 'Default_Sound');
     } else {
       print('Notifications turned off.');

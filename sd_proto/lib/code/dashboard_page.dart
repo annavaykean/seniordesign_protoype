@@ -44,7 +44,7 @@ class DashboardScreen extends StatelessWidget {
         //  String dataT = freshData.created_at.substring(0, 7) + 'T' + freshData.created_at.substring(9);
         //  print(dataT);
           DateTime dataTime = DateTime.parse(freshData.created_at);
-          if(((now.year == dataTime.year) && (now.month == dataTime.month) && (now.day == dataTime.day))
+          if(((now.year == dataTime.year) && (now.month == dataTime.month) && (now.day <= dataTime.day))
           || (dataTime.year == 2001)) {
             data.add(freshData);
             print('added freshData to data list');
@@ -69,14 +69,15 @@ class DashboardScreen extends StatelessWidget {
       print('DATA: ${snapshot.value}');
       for(var value in snapshot.value.values) {
         //was previously experiencing errors on parsing from json. Fixed by converting data to string then to int.
-        var cogX = value['cogX'].toString();
-        var xInt = int.parse(cogX);
-        var cogY = value['cogY'].toString();
-        var yInt = int.parse(cogY);
+        var cogX = value['cogX'];//.toString();
+     //   var xInt = int.parse(cogX);
+        var cogY = value['cogY'];//.toString();
+    //    var yInt = int.parse(cogY);
         var created_at = value['created_at'].toString();
 
         //add parsed data to list as a Posture object
-        list.add(new GraphData(xInt, yInt, created_at));
+   //     list.add(new GraphData(xInt, yInt, created_at));
+          list.add(new GraphData(cogX, cogY, created_at));
       }
       print('exited for loop');
       //update global posture data list with fresh data.
