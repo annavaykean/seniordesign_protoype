@@ -1,0 +1,10 @@
+Thien Firebase
+
+Host:	nodemcu-efc0a.firebaseio.com
+Auth:	qmlxD6fh7ZhaVC2pt3v1Qou6kFz8bVgdPXQMbfYa
+
+
+Annavay Firebase
+
+Host:	sd-proto.firebaseio.com
+Auth:	JHX8oWlHBy0OV2NSvrnziX9hJ297ypRT5OAxuitY
