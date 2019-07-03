@@ -29,22 +29,25 @@ void loop()
   if (s.available() > 0)
   { 
     byte minus = s.read();
-    if(minus == '-')
+    Serial.print("received: ");
+    Serial.println(minus);
+    if(minus == 45)
     {
       negative = true;
     }
-    else if(minus >= '0' && minus <= '9')
+    else if(minus >= 48 && minus <= 57)
     {
       value *= 10;
-      value += minus - '0';
+      value += minus - 48;
     }
-    if(negative)
+    else if(negative && minus == 59)
     {
       value *= -1;
       negative = false;
+      Serial.println(value);
+      value = 0;
     }
-    
-    Serial.println(minus);
+      
     
 //    cogX = s.read();
 //    cogY = s.read();
