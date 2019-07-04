@@ -10,7 +10,6 @@ SoftwareSerial s(D6,D5);    // (RX, TX) to receive and transmit
 signed int cogX;            
 signed int cogY;
 boolean negative = false;
-int value = 0;
 
 // ******************* Setting conditions for connection ******************* 
 
@@ -25,40 +24,62 @@ void setup()
 
 void loop() 
 {
-//  s.write("s");
   if (s.available() > 0)
   { 
-    byte minus = s.read();
-    Serial.print("received: ");
-    Serial.println(minus);
-    if(minus == 45)
+    cogX = 0;
+    cogY = 0;
+    negative = false;
+    for(int i=0;i<2;i++) 
     {
+    signed int value = 0;
+    Serial.println("START");
+    //reset cogX cogY vals
+    negative = false;
+   
+    //get char
+    byte recieved = s.read();
+    Serial.print("RECIEVED: ");
+    Serial.println(recieved);
+    while(recieved != 59)
+    {
+    if(recieved == 45)
+    {
+   //   Serial.println("NEGATIVE VALUE DETECTED");
       negative = true;
     }
-    else if(minus >= 48 && minus <= 57)
+    else if(recieved >= 48 && recieved <= 57)
     {
+   //   Serial.println("PROCESSING INTEGER...");
       value *= 10;
-      value += minus - 48;
+      value += recieved - 48;
     }
-    else if(negative && minus == 59)
+    recieved = s.read();
+    Serial.print("RECIEVED: ");
+    Serial.println(recieved);
+    }
+    if(negative && recieved == 59)
     {
       value *= -1;
       negative = false;
-      Serial.println(value);
-      value = 0;
     }
-      
-    
-//    cogX = s.read();
-//    cogY = s.read();
-    
-//    Serial.print("CogX: ");
-//    Serial.print(cogX);
-//    Serial.print("\t");
-//    Serial.print("CogY: ");
-//    Serial.print(cogY);
-//    Serial.println();
+
+    if(cogX == 0){
+      cogX = value;
+      Serial.print("CogX: ");
+      Serial.println(cogX);
+    } else if(cogX != 0 && cogY == 0){
+      cogY = value;
+      Serial.print("CogY: ");
+      Serial.println(cogY);
+    } else {
+      Serial.print("Error");
+    }
+    //reset
   }
+  
+  }
+
+  //send cogX cogY to firebase
   
   delay(1000);
 }
