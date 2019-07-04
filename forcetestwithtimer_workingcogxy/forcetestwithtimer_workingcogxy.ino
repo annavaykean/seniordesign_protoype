@@ -89,27 +89,88 @@ Serial.begin(9600);
 
 //timer compare interrupt service routine
 ISR(TIMER1_COMPA_vect){
-  
-
-  
-
-char x[]  = {'-', '1', '0','\0'};
-
+    char toSendX[5];
+    char toSendY[5];
+    signed int temp;
+    signed int number;
+    signed int x;
+    signed int y;
+signed int cogx = ((x1*(FR)+x2*(FL)+x3*(BL)+x4*(BR))/(4));
 signed int cogy = ((y1*(FR)+y2*(FL)+y3*(BL)+y4*(BR))/(4));
 
  //leaning forward 
   if(((FL)>=100)&&((FR)>=100)&&(count>=8854)){ //mod to work with one sensor put back FR for chair testing
-    //Serial.print("Leaning Forward: ");
-    //Serial.print((FR));
-   // Serial.print("\t");
-   // Serial.println((FL));
-   // Serial.println(toSend);
-    //Serial.print(cogy);
-    //s.write(toSend);
-   // s.write(cogy);
     
-   }
+  
+ /////////////////////////////////////////////////////////////////////////////////////  
+   x = cogx;
+   y = cogy;
+   
+
+if(x<0){
+  toSendX[0] = '-';
+  toSendX[4] = ';';
+  x *= -1;
+}
+
+ else{
+    toSendX[0] = '0';
+    toSendX[4] = ';';
+  }
+    for( int i=3 ; i>=1;i--){
+      toSendX[i]=(char)((x%10) + 48);
+      x = x/10;
+    }
+    
+s.flush();    //clear buffer
+     // Serial.println();
+ //     Serial.println(toSend);
+     
+    Serial.print("X: ");
+  for(int i=0;i<5;i++){
+          
+           Serial.print(toSendX[i]);
+           s.write(toSendX[i]);
+
+              }
+   Serial.println();
+
+
+
+
+
+if(y<0){
+  toSendY[0] = '-';
+  toSendY[4] = ';';
+  y *= -1;
+}
+
+ else{
+    toSendY[0] = '0';
+    toSendY[4] = ';';
+  }
+    for( int i=3 ; i>=1;i--){
+      toSendY[i]=(char)((y%10) + 48);
+      y = y/10;
+    }
+    
+s.flush();    //clear buffer
+     // Serial.println();
+ //     Serial.println(toSend);
+  
+     Serial.print("Y: ");
+  for(int i=0;i<5;i++){
+           Serial.print(toSendY[i]);
+           s.write(toSendY[i]);
+    }
+    Serial.println();
+
+  }
+
+   
   //leaning backward
+
+  
   else if(((BR)>=150) && ((BL)>=150)&& (count>=8885)){
     Serial.print("Leaning Backward: ");
     Serial.print((BR));
@@ -155,66 +216,15 @@ void loop() {
  SL = analogRead(A6);
  SR = analogRead(A7);
 
-//this code is for sending negative values as characters -->needs to be written as a function
-//*********************************************************************************************************************************************************************************
-signed int cogx = -136;
-//((x1*(FR)+x2*(FL)+x3*(BL)+x4*(BR))/(4));
 
-char toSend[5];
-signed int temp = cogx;
-
-if(cogx<0){
-//Serial.print("HIT");
-  toSend[0] = '-';
-  toSend[4] = ';';
-  temp *= -1;
-}
- else{
-    toSend[0] = '0';
-
-  }
-    for( int i=3 ; i>=1;i--){
-      //Serial.print("HIT");
-      toSend[i]=(char)((temp%10) + 48);
-      temp = temp/10;
-      //Serial.print("At index " + i);
-    }
-    for(int i=0;i<5;i++){
-            Serial.println(toSend[i]);
-            s.write(toSend[i]);
-    }
-s.flush();
-     // Serial.println();
-
- //     Serial.println(toSend);
- //     s.write(toSend);
-      delay(5000);
-
-     if((((FR)>=100)|((FL)>=50)|((BR)>=100)|((BL)>=100))){  //CHANGE TO SMALL SENSORS ?
+if((((FR)>=100)|((FL)>=50)|((BR)>=100)|((BL)>=100))){  //CHANGE TO SMALL SENSORS ?
     count ++;
 
    
   }
     else{
       count = 0;
-  
-    }
-//*******************************************************************************************************************************************************************************8
 
- /*   
-  Serial.print(analogRead(FL));
-    Serial.print("\t");
-    Serial.print(analogRead(BL));
-    Serial.print("\t");
-    Serial.print(analogRead(FR));
-    Serial.print("\t");
-    Serial.print(analogRead(BR));
-   Serial.println();
-
-   Serial.print(cogx);
-Serial.print("\t");
-Serial.print(cogy);
-Serial.println();
-   */
+ }
 
 }
