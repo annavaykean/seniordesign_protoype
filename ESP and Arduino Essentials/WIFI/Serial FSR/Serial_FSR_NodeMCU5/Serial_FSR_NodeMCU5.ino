@@ -136,11 +136,13 @@ void loop()
       formattedDate = timeClient.getFormattedDate();
       Serial.println(formattedDate);
   }
-
-  //send cogX cogY to firebase
-  Firebase.setInt("postureData/1212/" + formattedDate + "/cogX", cogX);
+  
+  if(cogX != 0 && cogY != 0)
+  {
+    //send cogX cogY to firebase
+    Firebase.setInt("postureData/1212/" + formattedDate + "/cogX", cogX);
     Firebase.setInt("postureData/1212/" + formattedDate + "/cogY", cogY);
     Firebase.setString("postureData/1212/" + formattedDate + "/created_at", formattedDate);
-  
+  }
   delay(1000);
 }
