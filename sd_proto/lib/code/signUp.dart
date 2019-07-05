@@ -19,7 +19,7 @@ class SignUpScreenState extends State<SignUpScreen> {
   bool pinIsValid = false;
   String verifiedPin = '';
 
-  checkPinUpdate() {
+/*  checkPinUpdate() {
     if(pinIsValid) {
       //determine if user has deleted pin after verifying
       if (pinCtrl.text != verifiedPin) {
@@ -37,7 +37,7 @@ class SignUpScreenState extends State<SignUpScreen> {
         setState(() {});
       }
     }
-  }
+  }*/
 
   Future<bool> setPinNumber() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -167,6 +167,10 @@ class SignUpScreenState extends State<SignUpScreen> {
     Navigator.pushReplacementNamed(context, '/WelcomeScreen');
   }
 
+  doNothing() {
+    return;
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -203,6 +207,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                     width: 100.0,
                     child: TextField(
                       controller: pinCtrl,
+                      enabled: !pinIsValid ? true : false,
                       onChanged: checkPinUpdate(),
                       autofocus: false,
                       decoration: new InputDecoration(
@@ -213,7 +218,7 @@ class SignUpScreenState extends State<SignUpScreen> {
               RaisedButton(
                 child: pinIsValid ? Text('Pin Verified!') : Text('Verify Pin'),
                 color: pinIsValid ? Colors.green : null,
-                onPressed: () => verifyPin(pinCtrl.text),
+                onPressed: () => !pinIsValid? verifyPin(pinCtrl.text) : doNothing(),
               ),
               ]),
               Container(
