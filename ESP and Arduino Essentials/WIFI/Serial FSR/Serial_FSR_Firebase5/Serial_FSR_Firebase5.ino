@@ -1,5 +1,5 @@
-// Sending Data Between Arduino and NodeMCU to Firebase
-// NodeMCU to Firebase Code
+// Sending Data Between Arduino and NodeMCU
+// Firebase Code
 
 // ************************* Headers and Libraries *************************
 
@@ -7,15 +7,15 @@
 #include <FirebaseArduino.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
-//#include <String.h>
 
+#include <String.h>
 #include <SoftwareSerial.h>
 SoftwareSerial s(D6,D5);    // (RX, TX) to receive and transmit
                             // Connect 5->D5 & 6->D6
                             // s represents the transfer comm
-boolean negative = false;
 signed int cogX;            
 signed int cogY;
+boolean negative = false;
 
 // *********************** Connection to the Network *********************** 
 
@@ -39,11 +39,9 @@ String timeStamp;
 
 void setup() 
 {
-  // *************** Connection between Arduino and NodeMCU ***************
-  s.begin(115200);        // Receive and Trasmit
-                          // The Higher the baud rate the more responsive
-  Serial.begin(9600);     // Serial Monitor
-  // *************** Connection between Arduino and NodeMCU ***************
+  s.begin(115200);          // Receive and Trasmit
+                            // The Higher the baud rate the more responsive
+  Serial.begin(9600);       // Serial Monitor
 
   // connect to wifi.
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -71,78 +69,64 @@ void setup()
   timeClient.setTimeOffset(-14400);
 }
 
-// ******************** Sending values to the Database ********************* 
+// ****************** Analog Readings coming from Arduino ****************** 
 
 void loop() 
 {
-  // *************** Sensor Values from Arduino and NodeMCU ***************
-//  s.write("s");
-
-  if (s.available()>0)
-  {  
-//    // Setting the s.read inside does NOT reset values
-//    fsrReading = s.read();
-//    // Show the Sensor readings
-//    Serial.print("Sensor Reading: ");
-//    Serial.println(fsrReading);
-
+  if (s.available() > 0)
+  { 
     cogX = 0;
     cogY = 0;
     negative = false;
     for(int i=0;i<2;i++) 
     {
-      signed int value = 0;
-      Serial.println("START");
-      //reset cogX cogY vals
-      negative = false;
-     
-      //get char
-      byte recieved = s.read();
-      Serial.print("RECIEVED: ");
-      Serial.println(recieved);
-      while(recieved != 59)
-      {
-        if(recieved == 45)
-      {
-     //   Serial.println("NEGATIVE VALUE DETECTED");
-        negative = true;
-      }
-      else if(recieved >= 48 && recieved <= 57)
-      {
-     //   Serial.println("PROCESSING INTEGER...");
-        value *= 10;
-        value += recieved - 48;
-      }
-      recieved = s.read();
-      Serial.print("RECIEVED: ");
-      Serial.println(recieved);
-      }
-      if(negative && recieved == 59)
-      {
-        value *= -1;
-        negative = false;
-      }
-  
-      if(cogX == 0)
-      {
-        cogX = value;
-        Serial.print("CogX: ");
-        Serial.println(cogX);
-      } 
-      else if(cogX != 0 && cogY == 0)
-      {
-        cogY = value;
-        Serial.print("CogY: ");
-        Serial.println(cogY);
-      } 
-      else 
-      {
-        Serial.print("Error");
-      }
-    
+    signed int value = 0;
+    Serial.println("START");
+    //reset cogX cogY vals
+    negative = false;
+   
+    //get char
+    byte recieved = s.read();
+    Serial.print("RECIEVED: ");
+    Serial.println(recieved);
+    while(recieved != 59)
+    {
+    if(recieved == 45)
+    {
+   //   Serial.println("NEGATIVE VALUE DETECTED");
+      negative = true;
     }
-    
-    while(!timeClient.update()) 
+    else if(recieved >= 48 && recieved <= 57)
+    {
+   //   Serial.println("PROCESSING INTEGER...");
+      value *= 10;
+      value += recieved - 48;
+    }
+    recieved = s.read();
+    Serial.print("RECIEVED: ");
+    Serial.println(recieved);
+    }
+    if(negative && recieved == 59)
+    {
+      value *= -1;
+      negative = false;
+    }
+
+    if(cogX == 0){
+      cogX = value;
+      Serial.print("CogX: ");
+      Serial.println(cogX);
+    } else if(cogX != 0 && cogY == 0){
+      cogY = value;
+      Serial.print("CogY: ");
+      Serial.println(cogY);
+    } else {
+      Serial.print("Error");
+    }
+    //reset
+  }
+
+  while(!timeClient.update()) 
     {
       timeClient.forceUpdate();
     }
@@ -153,12 +137,12 @@ void loop()
       Serial.println(formattedDate);
   }
   
-  if(cogX != 0 && cogY != 0) 
+  if(cogX != 0 && cogY != 0)
   {
+    //send cogX cogY to firebase
     Firebase.setInt("postureData/1212/" + formattedDate + "/cogX", cogX);
     Firebase.setInt("postureData/1212/" + formattedDate + "/cogY", cogY);
     Firebase.setString("postureData/1212/" + formattedDate + "/created_at", formattedDate);
   }
-  
   delay(1000);
 }

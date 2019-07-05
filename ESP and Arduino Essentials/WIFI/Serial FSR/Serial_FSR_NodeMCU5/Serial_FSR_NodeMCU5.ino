@@ -80,51 +80,71 @@ void loop()
     negative = false;
     for(int i=0;i<2;i++) 
     {
-    signed int value = 0;
-    Serial.println("START");
-    //reset cogX cogY vals
-    negative = false;
-   
-    //get char
-    byte recieved = s.read();
-    Serial.print("RECIEVED: ");
-    Serial.println(recieved);
-    while(recieved != 59)
-    {
-    if(recieved == 45)
-    {
-   //   Serial.println("NEGATIVE VALUE DETECTED");
-      negative = true;
-    }
-    else if(recieved >= 48 && recieved <= 57)
-    {
-   //   Serial.println("PROCESSING INTEGER...");
-      value *= 10;
-      value += recieved - 48;
-    }
-    recieved = s.read();
-    Serial.print("RECIEVED: ");
-    Serial.println(recieved);
-    }
-    if(negative && recieved == 59)
-    {
-      value *= -1;
+      signed int value = 0;
+      //reset cogX cogY vals
       negative = false;
+     
+      //get char
+      byte recieved = s.read();
+      Serial.print("RECIEVED: ");
+      Serial.println(recieved);
+      
+      //check for bad Ascii
+      if(recieved == 255){
+        Serial.print("Error1");
+        break;
+      }
+      
+      //process char
+      while(recieved != 'x' && recieved != 'y')
+      {
+        //check if value is negative
+        if(recieved == 45)
+        {
+          negative = true;
+        }
+        //check for valid numerical value
+        else if(recieved >= 48 && recieved <= 57)
+        {
+          value *= 10;
+          value += recieved - 48;
+        }
+        //if null terminator ';', process negative flag
+         else if(negative && recieved == 59)
+        {
+          value *= -1;
+          negative = false;
+        }
+        recieved = s.read();
+        Serial.print("RECIEVED: ");
+        Serial.println(recieved);
+              
+      //check for bad Ascii
+      if(recieved == 255){
+        Serial.println("Error2");
+        break;
+      }
+      
+      }
+      //if 'x' recieved, save value to cogX variable
+      if(recieved == 120){
+        //assign to cogX
+        cogX = value;
+      }
+      //if 'y' recieved, save value to cogY variable
+      else if(recieved == 121){
+        //assign to cogY
+        cogY = value;
+      }
     }
-
-    if(cogX == 0){
-      cogX = value;
-      Serial.print("CogX: ");
-      Serial.println(cogX);
-    } else if(cogX != 0 && cogY == 0){
-      cogY = value;
-      Serial.print("CogY: ");
-      Serial.println(cogY);
-    } else {
-      Serial.print("Error");
-    }
-    //reset
-  }
+    //print out coords
+    Serial.println();
+    Serial.print("(");
+    Serial.print(cogX);
+    Serial.print(", ");
+    Serial.print(cogY);
+    Serial.println(")");
+ 
 
   while(!timeClient.update()) 
     {
@@ -135,6 +155,7 @@ void loop()
       // We need to extract date and time
       formattedDate = timeClient.getFormattedDate();
       Serial.println(formattedDate);
+      
   }
   
   if(cogX != 0 && cogY != 0)
@@ -144,5 +165,6 @@ void loop()
     Firebase.setInt("postureData/1212/" + formattedDate + "/cogY", cogY);
     Firebase.setString("postureData/1212/" + formattedDate + "/created_at", formattedDate);
   }
+  
   delay(1000);
 }
