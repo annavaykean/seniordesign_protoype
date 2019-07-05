@@ -91,8 +91,8 @@ Serial.begin(9600);
 ISR(TIMER1_COMPA_vect){
 
   
-    char toSendX[5];
-    char toSendY[5];
+    char toSendX[6];
+    char toSendY[6];
     signed int temp;
     signed int number;
     signed int x;
@@ -112,12 +112,14 @@ signed int cogy = ((y1*(FR)+y2*(FL)+y3*(BL)+y4*(BR))/(4));
 if(x<0){
   toSendX[0] = '-';
   toSendX[4] = ';';
+  toSendX[5] = 'x';
   x *= -1;
 }
 
  else{
     toSendX[0] = '0';
     toSendX[4] = ';';
+    toSendX[5] = 'x';
   }
     for( int i=3 ; i>=1;i--){
       toSendX[i]=(char)((x%10) + 48);
@@ -129,7 +131,7 @@ s.flush();    //clear buffer
  //     Serial.println(toSend);
      
     Serial.print("X: ");
-  for(int i=0;i<5;i++){
+  for(int i=0;i<=5;i++){
           
            Serial.print(toSendX[i]);
            s.write(toSendX[i]);
@@ -144,12 +146,14 @@ s.flush();    //clear buffer
 if(y<0){
   toSendY[0] = '-';
   toSendY[4] = ';';
+  toSendY[5] = 'y';
   y *= -1;
 }
 
  else{
     toSendY[0] = '0';
     toSendY[4] = ';';
+    toSendY[5] = 'y';
   }
     for( int i=3 ; i>=1;i--){
       toSendY[i]=(char)((y%10) + 48);
@@ -161,7 +165,7 @@ s.flush();    //clear buffer
  //     Serial.println(toSend);
   
      Serial.print("Y: ");
-  for(int i=0;i<5;i++){
+  for(int i=0;i<=5;i++){
            Serial.print(toSendY[i]);
            s.write(toSendY[i]);
     }
@@ -173,7 +177,7 @@ s.flush();    //clear buffer
   //leaning backward
 
   
-  else if(((BR)>=100) && ((BL)>=100)&& (count>=8885)){
+  else if(((BR)>=100) && ((BL)>=100)&& (count>=2000)){
 //    Serial.print("Leaning Backward: ");
 //    Serial.print((BR));
 //    Serial.print("\t");
@@ -188,12 +192,14 @@ x = cogx;
 if(x<0){
   toSendX[0] = '-';
   toSendX[4] = ';';
+  toSendX[5] = 'x';
   x *= -1;
 }
 
  else{
     toSendX[0] = '0';
     toSendX[4] = ';';
+    toSendX[5] = 'x';
   }
     for( int i=3 ; i>=1;i--){
       toSendX[i]=(char)((x%10) + 48);
@@ -205,7 +211,7 @@ s.flush();    //clear buffer
  //     Serial.println(toSend);
      
     Serial.print("X: ");
-  for(int i=0;i<5;i++){
+  for(int i=0;i<=5;i++){
           
            Serial.print(toSendX[i]);
            s.write(toSendX[i]);
@@ -220,12 +226,14 @@ s.flush();    //clear buffer
 if(y<0){
   toSendY[0] = '-';
   toSendY[4] = ';';
+  toSendY[5] = 'y';
   y *= -1;
 }
 
  else{
     toSendY[0] = '0';
     toSendY[4] = ';';
+    toSendY[5] = 'y';
   }
     for( int i=3 ; i>=1;i--){
       toSendY[i]=(char)((y%10) + 48);
@@ -237,7 +245,7 @@ s.flush();    //clear buffer
  //     Serial.println(toSend);
   
      Serial.print("Y: ");
-  for(int i=0;i<5;i++){
+  for(int i=0;i<=5;i++){
            Serial.print(toSendY[i]);
            s.write(toSendY[i]);
     }
@@ -246,7 +254,7 @@ s.flush();    //clear buffer
 
     }
     //leaning left
-      else if(((FL)>=100) && ((BL)>=100)&& (count>=8885)){
+      else if(((FL)>=100) && ((BL)>=100)&& (count>=2000)){
 //    Serial.print("Leaning Left: ");
 //    Serial.print((FL));
 //    Serial.print("\t");
@@ -260,12 +268,14 @@ x = cogx;
 if(x<0){
   toSendX[0] = '-';
   toSendX[4] = ';';
+  toSendX[5] = 'x';
   x *= -1;
 }
 
  else{
     toSendX[0] = '0';
     toSendX[4] = ';';
+    toSendX[5] = 'x';
   }
     for( int i=3 ; i>=1;i--){
       toSendX[i]=(char)((x%10) + 48);
@@ -277,7 +287,7 @@ s.flush();    //clear buffer
  //     Serial.println(toSend);
      
     Serial.print("X: ");
-  for(int i=0;i<5;i++){
+  for(int i=0;i<=5;i++){
           
            Serial.print(toSendX[i]);
            s.write(toSendX[i]);
@@ -292,12 +302,14 @@ s.flush();    //clear buffer
 if(y<0){
   toSendY[0] = '-';
   toSendY[4] = ';';
+  toSendY[5] = 'y';
   y *= -1;
 }
 
  else{
     toSendY[0] = '0';
     toSendY[4] = ';';
+    toSendY[5] = 'y';
   }
     for( int i=3 ; i>=1;i--){
       toSendY[i]=(char)((y%10) + 48);
@@ -309,7 +321,7 @@ s.flush();    //clear buffer
  //     Serial.println(toSend);
   
      Serial.print("Y: ");
-  for(int i=0;i<5;i++){
+  for(int i=0;i<=5;i++){
            Serial.print(toSendY[i]);
            s.write(toSendY[i]);
     }
@@ -319,7 +331,7 @@ s.flush();    //clear buffer
         }
     //leaning right
     
-    else if(((BR)>=100) && ((FR)>=100) &&(count>=8885)){
+    else if(((BR)>=100) && ((FR)>=100) &&(count>=2000)){
 //    Serial.print("Leaning Right: ");
 //    Serial.print((FR));
 //    Serial.print("\t");
@@ -332,12 +344,14 @@ s.flush();    //clear buffer
 if(x<0){
   toSendX[0] = '-';
   toSendX[4] = ';';
+  toSendX[5] = 'x';
   x *= -1;
 }
 
  else{
     toSendX[0] = '0';
     toSendX[4] = ';';
+    toSendX[5] = 'x';
   }
     for( int i=3 ; i>=1;i--){
       toSendX[i]=(char)((x%10) + 48);
@@ -349,7 +363,7 @@ s.flush();    //clear buffer
  //     Serial.println(toSend);
      
     Serial.print("X: ");
-  for(int i=0;i<5;i++){
+  for(int i=0;i<=5;i++){
           
            Serial.print(toSendX[i]);
            s.write(toSendX[i]);
@@ -364,12 +378,14 @@ s.flush();    //clear buffer
 if(y<0){
   toSendY[0] = '-';
   toSendY[4] = ';';
+  toSendY[5] = 'y';
   y *= -1;
 }
 
  else{
     toSendY[0] = '0';
     toSendY[4] = ';';
+    toSendY[5] = 'y';
   }
     for( int i=3 ; i>=1;i--){
       toSendY[i]=(char)((y%10) + 48);
@@ -381,7 +397,7 @@ s.flush();    //clear buffer
  //     Serial.println(toSend);
   
      Serial.print("Y: ");
-  for(int i=0;i<5;i++){
+  for(int i=0;i<=5;i++){
            Serial.print(toSendY[i]);
            s.write(toSendY[i]);
     }
