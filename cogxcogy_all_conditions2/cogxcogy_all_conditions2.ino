@@ -11,7 +11,6 @@ long count = millis();
 
 //define variables
 
-
 int FR ;
 int FL ;
 int BR ;
@@ -90,7 +89,8 @@ Serial.begin(9600);
 //timer compare interrupt service routine
 ISR(TIMER1_COMPA_vect){
 
-  
+  pinMode(3,OUTPUT);    //WHITE LED --> LEFT
+  pinMode(4,OUTPUT);    //BLUE LED --> RIGHT
     char toSendX[6];
     char toSendY[6];
     signed int temp;
@@ -108,6 +108,8 @@ signed int cogy = ((y1*(FR)+y2*(FL)+y3*(BL)+y4*(BR))/(4));
    x = cogx;
    y = cogy;
    
+digitalWrite(4, LOW);
+digitalWrite(3, LOW);
 
 if(x<0){
   toSendX[0] = '-';
@@ -187,7 +189,9 @@ s.flush();    //clear buffer
  
 x = cogx;
    y = cogy;
-   
+
+digitalWrite(4, LOW);  
+digitalWrite(3, LOW);
 
 if(x<0){
   toSendX[0] = '-';
@@ -263,7 +267,12 @@ s.flush();    //clear buffer
 
 x = cogx;
    y = cogy;
-   
+
+
+digitalWrite(4, LOW);
+digitalWrite(3, HIGH);
+
+
 
 if(x<0){
   toSendX[0] = '-';
@@ -295,10 +304,6 @@ s.flush();    //clear buffer
               }
    Serial.println();
 
-
-
-
-
 if(y<0){
   toSendY[0] = '-';
   toSendY[4] = ';';
@@ -314,6 +319,7 @@ if(y<0){
     for( int i=3 ; i>=1;i--){
       toSendY[i]=(char)((y%10) + 48);
       y = y/10;
+    
     }
     
 s.flush();    //clear buffer
@@ -326,20 +332,24 @@ s.flush();    //clear buffer
            s.write(toSendY[i]);
     }
     Serial.println();
+    
 
 
         }
     //leaning right
     
     else if(((BR)>=100) && ((FR)>=100) &&(count>=2000)){
-//    Serial.print("Leaning Right: ");
-//    Serial.print((FR));
-//    Serial.print("\t");
-//    Serial.print((BR));
-//    Serial.println();
+
   x = cogx;
    y = cogy;
-   
+
+digitalWrite(3, LOW);
+digitalWrite(4,HIGH);
+delay(500);
+//digitalWrite(4, LOW);
+
+
+
 
 if(x<0){
   toSendX[0] = '-';
@@ -405,8 +415,10 @@ s.flush();    //clear buffer
 
   
   
-      
+
       }
+ 
+ 
   }
 
   
@@ -424,7 +436,13 @@ void loop() {
  SR = analogRead(A7);
 
 
-if((((FR)>=100)|((FL)>=50)|((BR)>=100)|((BL)>=100))){  //CHANGE TO SMALL SENSORS ?
+
+//digitalWrite(3, !LOW);
+//delay(10);
+//digitalWrite(4, !digitalRead(4));
+//delay(10);
+
+if((((FR)>=100)|((FL)>=100)|((BR)>=100)|((BL)>=100))){  //CHANGE TO SMALL SENSORS ?
     count ++;
 
    
@@ -432,6 +450,7 @@ if((((FR)>=100)|((FL)>=50)|((BR)>=100)|((BL)>=100))){  //CHANGE TO SMALL SENSORS
     else{
       count = 0;
 
+\
  }
 
 }
