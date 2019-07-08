@@ -67,49 +67,82 @@ class WelcomeScreenState extends State<WelcomeScreen> {
   String errorMessage = '';
 
   initState() {
-   // super.initState();
+    // super.initState();
 
-     var initializationSettingsAndroid = new AndroidInitializationSettings('@mipmap/ic_launcher');
-     var initializationSettingsIOS = new IOSInitializationSettings();
-     var initializationSettings = new InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
+    var initializationSettingsAndroid = new AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOS = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
 
-     MyApp.notificationsPlugin = new FlutterLocalNotificationsPlugin();
-     MyApp.notificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);
+    MyApp.notificationsPlugin = new FlutterLocalNotificationsPlugin();
+    MyApp.notificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);
 
     //timer for checking database to determine if notification should be sent
-   //   print('priming timer!');
-      //check notification settings every 30 seconds
-      const timeCheck = const Duration(seconds: 30);
-      var timer = new Timer.periodic(timeCheck, (timer) {
-    //    print('timer ran out!');
-        //check firebase to see if notif should be fired
-        if(MyApp.user != null){
-       //   print('checking if notification is needed');
-          var notifQuery = MyApp.database.reference().child('settings').child(
-              MyApp.pin);
-          notifQuery.once().then((DataSnapshot snapshot) {
-            if (snapshot.value != null) {
-                if(snapshot.value['firePhoneNotif'] != null && snapshot.value['firePhoneNotif'] != '0') {
-                  print('firing notification!');
-                  sendNotification(snapshot.value['firePhoneNotif']);
-                  //reset flag in firebase
-                  var resetDB = MyApp.database.reference().child('settings')
-                      .child(MyApp.pin)
-                      .update(
-                      <String, String>{
-                        "firePhoneNotif" : "0",
-                      })
-                      .then((result) {
-                    print("INFO: Database Write Completed");
-                  });
-                  initState();
-                }
-            } else {
+    //   print('priming timer!');
+    //check notification settings every 30 seconds
+    const timeCheck = const Duration(seconds: 30);
+    var timer = new Timer.periodic(timeCheck, (timer) {
+      //    print('timer ran out!');
+      //check firebase to see if notif should be fired
+      if(MyApp.user != null){
+        //   print('checking if notification is needed');
+        var notifQuery = MyApp.database.reference().child('settings').child(
+            MyApp.pin);
+        notifQuery.once().then((DataSnapshot snapshot) {
+          if (snapshot.value != null) {
+            if(snapshot.value['firePhoneNotif'] != null && snapshot.value['firePhoneNotif'] != '0') {
+              print('firing notification!');
+              sendNotification(snapshot.value['firePhoneNotif']);
+              //reset flag in firebase
+              var resetDB = MyApp.database.reference().child('settings')
+                  .child(MyApp.pin)
+                  .update(
+                  <String, String>{
+                    "firePhoneNotif" : "0",
+                  })
+                  .then((result) {
+                print("INFO: Database Write Completed");
+              });
+           //   initState();
+            }
+          } /*else {
+            initState();
+          }*/
+        });
+      }
+    });
+
+    //remind user to get up every 90 mins
+    const getUpCheck = const Duration(minutes: 5);
+    var timer2 = new Timer.periodic(getUpCheck, (timer2) {
+      //    print('timer ran out!');
+      //check firebase to see if notif should be fired
+      if(MyApp.user != null){
+        //   print('checking if notification is needed');
+        var notifQuery = MyApp.database.reference().child('settings').child(
+            MyApp.pin);
+        notifQuery.once().then((DataSnapshot snapshot) {
+          if (snapshot.value != null) {
+            if(snapshot.value['getUp'] == '1') {
+              print('firing notification!');
+              sendNotification("Take a break from sitting!");
+              //reset flag in firebase
+              var resetDB = MyApp.database.reference().child('settings')
+                  .child(MyApp.pin)
+                  .update(
+                  <String, String>{
+                    "getUp" : "0"
+                  })
+                  .then((result) {
+                print("INFO: Database Write Completed");
+              });
               initState();
             }
-          });
-        }
-      });
+          } else {
+            initState();
+          }
+        });
+      }
+    });
 
   }
 

@@ -52,6 +52,7 @@ class SignUpScreenState extends State<SignUpScreen> {
         "notification": "1",
         "vibration": "1",
         "firePhoneNotif" : "0",
+        "getUp" : "0",
       });
       //update global vars
       MyApp.notification = true;
@@ -208,7 +209,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                     child: TextField(
                       controller: pinCtrl,
                       enabled: !pinIsValid ? true : false,
-                      onChanged: checkPinUpdate(),
+                   //   onChanged: checkPinUpdate(),
                       autofocus: false,
                       decoration: new InputDecoration(
                           labelText: 'Pin Code'
@@ -216,7 +217,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                     )
                 ),
               RaisedButton(
-                child: pinIsValid ? Text('Pin Verified!') : Text('Verify Pin'),
+                child: pinIsValid? Text('Pin Verified!') : Text('Verify Pin'),
                 color: pinIsValid ? Colors.green : null,
                 onPressed: () => !pinIsValid? verifyPin(pinCtrl.text) : doNothing(),
               ),
