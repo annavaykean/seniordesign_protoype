@@ -78,6 +78,7 @@ void loop()
     cogX = 0;
     cogY = 0;
     negative = false;
+	byte recieved;
     for(int i=0;i<2;i++) 
     {
 	cogX = 0;
@@ -87,7 +88,8 @@ void loop()
 	for(int j = 0;j<7;j++){
 		
       //get initial +/- char
-      byte recieved = s.read();
+	  recieved = null;
+      recieved = s.read();
       Serial.print("RECIEVED: ");
       Serial.println(recieved);
       
@@ -96,31 +98,31 @@ void loop()
 			Serial.print("Error1");
 			break;
 		}
-	  if(recieved == 45)
+	  else if(recieved == '-')
 		{
 		  negative = true;
 		}
 		//check for valid numerical value
-		else if(recieved >= 48 && recieved <= 57)
+		else if(recieved >= '0' && recieved <= '9')
 		{
 		  value *= 10;
-		  value += recieved - 48;
+		  value += recieved - '0';
 		}
 		//if null terminator ';', process negative flag
-		 else if(negative && recieved == 59)
+		 else if(negative && recieved == ';')
 		{
 		  value *= -1;
 		  negative = false;
 		}
 	}
-	byte recieved = s.read();	 
+	recieved = s.read();	 
 	//if 'x' recieved, save value to cogX variable
-      if(recieved == 120){
+      if(recieved == 'x'){
         //assign to cogX
         cogX = value;
       }
       //if 'y' recieved, save value to cogY variable
-      else if(recieved == 121){
+      else if(recieved == 'y'){
         //assign to cogY
         cogY = value;
       }
