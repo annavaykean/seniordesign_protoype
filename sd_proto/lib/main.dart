@@ -238,6 +238,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
               var yInt = int.parse(cogY);
               var created_at = value['created_at'].toString();
               //add parsed data to list as a Posture object
+              print("Adding (" + xInt.toString() + ", " + yInt.toString() + ", " + created_at.toString() + ")\n");
               list.add(new Posture(xInt, yInt, created_at));
             }
             //update global posture data list with fresh data.
