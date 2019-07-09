@@ -43,7 +43,7 @@ volatile int SR ;
 
 void setup() {
 
-  s.begin(115200);
+  s.begin(9600);
   // put your setup code here, to run once:
 
 //initialize timer 1
@@ -135,7 +135,7 @@ s.flush();    //clear buffer
      
     Serial.print("X: ");
   for(int i=0;i<=5;i++){
-          
+          delay(20000);
            Serial.print(toSendX[i]);
            s.write(toSendX[i]);
 
@@ -170,338 +170,255 @@ s.flush();    //clear buffer
      Serial.print("Y: ");
   for(int i=0;i<=5;i++){
            Serial.print(toSendY[i]);
+           delay(20000);
            s.write(toSendY[i]);
     }
     Serial.println();
-
+               delay(20000);
   }
 
    
   //leaning backward
 
   
-  else if(((BR)>=100) && ((BL)>=100)&& (count>=8854)){
- 
-x = cogx;
-   y = cogy;
-
-//(4, LOW);  
-//(3, LOW);
-
-if(x<0){
-  toSendX[0] = '-';
-  toSendX[4] = ';';
-  toSendX[5] = 'x';
-  x *= -1;
-}
-
- else{
-    toSendX[0] = '0';
-    toSendX[4] = ';';
-    toSendX[5] = 'x';
-  }
-    for( int i=3 ; i>=1;i--){
-      toSendX[i]=(char)((x%10) + 48);
-      x = x/10;
-    }
-    
-s.flush();    //clear buffer
-     // Serial.println();
- //     Serial.println(toSend);
-     
-    Serial.print("X: ");
-  for(int i=0;i<=5;i++){
-          
-           Serial.print(toSendX[i]);
-           s.write(toSendX[i]);
-
-              }
-   Serial.println();
-
-
-
-
-
-if(y<0){
-  toSendY[0] = '-';
-  toSendY[4] = ';';
-  toSendY[5] = 'y';
-  y *= -1;
-}
-
- else{
-    toSendY[0] = '0';
-    toSendY[4] = ';';
-    toSendY[5] = 'y';
-  }
-    for( int i=3 ; i>=1;i--){
-      toSendY[i]=(char)((y%10) + 48);
-      y = y/10;
-    }
-    
-s.flush();    //clear buffer
-     // Serial.println();
- //     Serial.println(toSend);
-  
-     Serial.print("Y: ");
-  for(int i=0;i<=5;i++){
-           Serial.print(toSendY[i]);
-           s.write(toSendY[i]);
-    }
-    Serial.println();
-
-
-    }
-    
-    //leaning left
-      else if(((FL)>=100) && ((BL)>=100)&& (count>=8854)){
-//    Serial.print("Leaning Left: ");
-//    Serial.print((FL));
-//    Serial.print("\t");
-//    Serial.print((BL));
+//  else if(((BR)>=100) && ((BL)>=100)&& (count>=8854)){
+// 
+//x = cogx;
+//   y = cogy;
+//
+////(4, LOW);  
+////(3, LOW);
+//
+//if(x<0){
+//  toSendX[0] = '-';
+//  toSendX[4] = ';';
+//  toSendX[5] = 'x';
+//  x *= -1;
+//}
+//
+// else{
+//    toSendX[0] = '0';
+//    toSendX[4] = ';';
+//    toSendX[5] = 'x';
+//  }
+//    for( int i=3 ; i>=1;i--){
+//      toSendX[i]=(char)((x%10) + 48);
+//      x = x/10;
+//    }
+//    
+//s.flush();    //clear buffer
+//     // Serial.println();
+// //     Serial.println(toSend);
+//     
+//    Serial.print("X: ");
+//  for(int i=0;i<=5;i++){
+//          
+//           Serial.print(toSendX[i]);
+//           s.write(toSendX[i]);
+//
+//              }
+//   Serial.println();
+//
+//
+//
+//
+//
+//if(y<0){
+//  toSendY[0] = '-';
+//  toSendY[4] = ';';
+//  toSendY[5] = 'y';
+//  y *= -1;
+//}
+//
+// else{
+//    toSendY[0] = '0';
+//    toSendY[4] = ';';
+//    toSendY[5] = 'y';
+//  }
+//    for( int i=3 ; i>=1;i--){
+//      toSendY[i]=(char)((y%10) + 48);
+//      y = y/10;
+//    }
+//    
+//s.flush();    //clear buffer
+//     // Serial.println();
+// //     Serial.println(toSend);
+//  
+//     Serial.print("Y: ");
+//  for(int i=0;i<=5;i++){
+//           Serial.print(toSendY[i]);
+//           s.write(toSendY[i]);
+//    }
 //    Serial.println();
-
-x = cogx;
-   y = cogy;
-
-
-//(4, LOW);
-//(3, HIGH);
-//delay(500);
-
-
-if(x<0){
-  toSendX[0] = '-';
-  toSendX[4] = ';';
-  toSendX[5] = 'x';
-  x *= -1;
-}
-
- else{
-    toSendX[0] = '0';
-    toSendX[4] = ';';
-    toSendX[5] = 'x';
-  }
-    for( int i=3 ; i>=1;i--){
-      toSendX[i]=(char)((x%10) + 48);
-      x = x/10;
-    }
-    
-s.flush();    //clear buffer
-     // Serial.println();
- //     Serial.println(toSend);
-     
-    Serial.print("X: ");
-  for(int i=0;i<=5;i++){
-          
-           Serial.print(toSendX[i]);
-           s.write(toSendX[i]);
-
-              }
-   Serial.println();
-
-if(y<0){
-  toSendY[0] = '-';
-  toSendY[4] = ';';
-  toSendY[5] = 'y';
-  y *= -1;
-}
-
- else{
-    toSendY[0] = '0';
-    toSendY[4] = ';';
-    toSendY[5] = 'y';
-  }
-    for( int i=3 ; i>=1;i--){
-      toSendY[i]=(char)((y%10) + 48);
-      y = y/10;
-    
-    }
-    
-s.flush();    //clear buffer
-     // Serial.println();
- //     Serial.println(toSend);
-  
-     Serial.print("Y: ");
-  for(int i=0;i<=5;i++){
-           Serial.print(toSendY[i]);
-           s.write(toSendY[i]);
-    }
-    Serial.println();
-    
-
-
-        }
-
-        
-    //leaning right
-    
-    else if(((BR)>=100) && ((FR)>=100) &&(count>=8854)){
-
-  x = cogx;
-  y = cogy;
-
-//(3, LOW);
-//(4,HIGH);
-//delay(500);
+//
+//
+//    }
+//    
+//    //leaning left
+//      else if(((FL)>=100) && ((BL)>=100)&& (count>=8854)){
+////    Serial.print("Leaning Left: ");
+////    Serial.print((FL));
+////    Serial.print("\t");
+////    Serial.print((BL));
+////    Serial.println();
+//
+//x = cogx;
+//   y = cogy;
+//
+//
 ////(4, LOW);
-
-
-
-
-if(x<0){
-  toSendX[0] = '-';
-  toSendX[4] = ';';
-  toSendX[5] = 'x';
-  x *= -1;
-}
-
- else{
-    toSendX[0] = '0';
-    toSendX[4] = ';';
-    toSendX[5] = 'x';
-  }
-    for( int i=3 ; i>=1;i--){
-      toSendX[i]=(char)((x%10) + 48);
-            x = x/10;
-    }
-    
-s.flush();    //clear buffer
-     // Serial.println();
- //     Serial.println(toSend);
-     
-    Serial.print("X: ");
-  for(int i=0;i<=5;i++){
-          
-           Serial.print(toSendX[i]);
-           s.write(toSendX[i]);
-
-              }
-   Serial.println();
-
-
-
-
-
-if(y<0){
-  toSendY[0] = '-';
-  toSendY[4] = ';';
-  toSendY[5] = 'y';
-  y *= -1;
-}
-
- else{
-    toSendY[0] = '0';
-    toSendY[4] = ';';
-    toSendY[5] = 'y';
-  }
-    for( int i=3 ; i>=1;i--){
-      toSendY[i]=(char)((y%10) + 48);
-      y = y/10;
-    }
-    
-s.flush();    //clear buffer
-     // Serial.println();
- //     Serial.println(toSend);
-  
-     Serial.print("Y: ");
-  for(int i=0;i<=5;i++){
-           Serial.print(toSendY[i]);
-           s.write(toSendY[i]);
-    }
-    Serial.println();
-
-  
-  
-
-      }
-
-      else if(FR<=10 && BR <=10 && BL<=10 && FL <=10){
-        
-
-  x = 0;
-  y = 0;
-
-//(3, LOW);
-//(4,HIGH);
-//delay(500);
-////(4, LOW);
-
-
-
-
-if(x<0){
-  toSendX[0] = '-';
-  toSendX[4] = ';';
-  toSendX[5] = 'x';
-  x *= -1;
-}
-
- else{
-    toSendX[0] = '0';
-    toSendX[4] = ';';
-    toSendX[5] = 'x';
-  }
-    for( int i=3 ; i>=1;i--){
-      toSendX[i]=(char)((x%10) + 48);
-            x = x/10;
-    }
-    
-s.flush();    //clear buffer
-     // Serial.println();
- //     Serial.println(toSend);
-     
-    Serial.print("X: ");
-  for(int i=0;i<=5;i++){
-          
-           Serial.print(toSendX[i]);
-           s.write(toSendX[i]);
-
-              }
-   Serial.println();
-
-
-
-
-
-if(y<0){
-  toSendY[0] = '-';
-  toSendY[4] = ';';
-  toSendY[5] = 'y';
-  y *= -1;
-}
-
- else{
-    toSendY[0] = '0';
-    toSendY[4] = ';';
-    toSendY[5] = 'y';
-  }
-    for( int i=3 ; i>=1;i--){
-      toSendY[i]=(char)((y%10) + 48);
-      y = y/10;
-    }
-    
-s.flush();    //clear buffer
-     // Serial.println();
- //     Serial.println(toSend);
-  
-     Serial.print("Y: ");
-  for(int i=0;i<=5;i++){
-           Serial.print(toSendY[i]);
-           s.write(toSendY[i]);
-    }
-    Serial.println();
-
-  
-  
-
-      }
-
-
-        
-        }
+////(3, HIGH);
+////delay(500);
+//
+//
+//if(x<0){
+//  toSendX[0] = '-';
+//  toSendX[4] = ';';
+//  toSendX[5] = 'x';
+//  x *= -1;
+//}
+//
+// else{
+//    toSendX[0] = '0';
+//    toSendX[4] = ';';
+//    toSendX[5] = 'x';
+//  }
+//    for( int i=3 ; i>=1;i--){
+//      toSendX[i]=(char)((x%10) + 48);
+//      x = x/10;
+//    }
+//    
+//s.flush();    //clear buffer
+//     // Serial.println();
+// //     Serial.println(toSend);
+//     
+//    Serial.print("X: ");
+//  for(int i=0;i<=5;i++){
+//          
+//           Serial.print(toSendX[i]);
+//           s.write(toSendX[i]);
+//
+//              }
+//   Serial.println();
+//
+//if(y<0){
+//  toSendY[0] = '-';
+//  toSendY[4] = ';';
+//  toSendY[5] = 'y';
+//  y *= -1;
+//}
+//
+// else{
+//    toSendY[0] = '0';
+//    toSendY[4] = ';';
+//    toSendY[5] = 'y';
+//  }
+//    for( int i=3 ; i>=1;i--){
+//      toSendY[i]=(char)((y%10) + 48);
+//      y = y/10;
+//    
+//    }
+//    
+//s.flush();    //clear buffer
+//     // Serial.println();
+// //     Serial.println(toSend);
+//  
+//     Serial.print("Y: ");
+//  for(int i=0;i<=5;i++){
+//           Serial.print(toSendY[i]);
+//           s.write(toSendY[i]);
+//    }
+//    Serial.println();
+//    
+//
+//
+//        }
+//
+//        
+//    //leaning right
+//    
+//    else if(((BR)>=100) && ((FR)>=100) &&(count>=8854)){
+//
+//  x = cogx;
+//  y = cogy;
+//
+////(3, LOW);
+////(4,HIGH);
+////delay(500);
+//////(4, LOW);
+//
+//
+//
+//
+//if(x<0){
+//  toSendX[0] = '-';
+//  toSendX[4] = ';';
+//  toSendX[5] = 'x';
+//  x *= -1;
+//}
+//
+// else{
+//    toSendX[0] = '0';
+//    toSendX[4] = ';';
+//    toSendX[5] = 'x';
+//  }
+//    for( int i=3 ; i>=1;i--){
+//      toSendX[i]=(char)((x%10) + 48);
+//            x = x/10;
+//    }
+//    
+//s.flush();    //clear buffer
+//     // Serial.println();
+// //     Serial.println(toSend);
+//     
+//    Serial.print("X: ");
+//  for(int i=0;i<=5;i++){
+//          
+//           Serial.print(toSendX[i]);
+//           s.write(toSendX[i]);
+//
+//              }
+//   Serial.println();
+//
+//
+//
+//
+//
+//if(y<0){
+//  toSendY[0] = '-';
+//  toSendY[4] = ';';
+//  toSendY[5] = 'y';
+//  y *= -1;
+//}
+//
+// else{
+//    toSendY[0] = '0';
+//    toSendY[4] = ';';
+//    toSendY[5] = 'y';
+//  }
+//    for( int i=3 ; i>=1;i--){
+//      toSendY[i]=(char)((y%10) + 48);
+//      y = y/10;
+//    }
+//    
+//s.flush();    //clear buffer
+//     // Serial.println();
+// //     Serial.println(toSend);
+//  
+//     Serial.print("Y: ");
+//  for(int i=0;i<=5;i++){
+//           Serial.print(toSendY[i]);
+//           s.write(toSendY[i]);
+//    }
+//    Serial.println();
+//
+//  
+//  
+//
+//      }
+// 
  
- 
+  }
 
   
 void loop() {
