@@ -69,15 +69,15 @@ class DashboardScreen extends StatelessWidget {
       print('DATA: ${snapshot.value}');
       for(var value in snapshot.value.values) {
         //was previously experiencing errors on parsing from json. Fixed by converting data to string then to int.
-        var cogX = value['cogX'];//.toString();
-     //   var xInt = int.parse(cogX);
-        var cogY = value['cogY'];//.toString();
-    //    var yInt = int.parse(cogY);
+        var cogX = value['cogX'].toString();
+        var xInt = int.parse(cogX);
+        var cogY = value['cogY'].toString();
+        var yInt = int.parse(cogY);
         var created_at = value['created_at'].toString();
-
+        print("Adding (" + xInt.toString() + ", " + yInt.toString() + ", " + created_at.toString() + ")\n");
         //add parsed data to list as a Posture object
-   //     list.add(new GraphData(xInt, yInt, created_at));
-          list.add(new GraphData(cogX, cogY, created_at));
+        list.add(new GraphData(xInt, yInt, created_at));
+  //        list.add(new GraphData(cogX, cogY, created_at));
       }
       print('exited for loop');
       //update global posture data list with fresh data.
