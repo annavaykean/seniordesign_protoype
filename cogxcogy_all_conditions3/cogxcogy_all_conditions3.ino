@@ -135,7 +135,7 @@ s.flush();    //clear buffer
      
     Serial.print("X: ");
   for(int i=0;i<=5;i++){
-          delay(20000);
+        //  delay(20000);
            Serial.print(toSendX[i]);
            s.write(toSendX[i]);
 
@@ -170,11 +170,13 @@ s.flush();    //clear buffer
      Serial.print("Y: ");
   for(int i=0;i<=5;i++){
            Serial.print(toSendY[i]);
-           delay(20000);
+          // delay(20000);
            s.write(toSendY[i]);
     }
     Serial.println();
-               delay(20000);
+         //      delay(20000);
+
+         count = 0;
   }
 
    
