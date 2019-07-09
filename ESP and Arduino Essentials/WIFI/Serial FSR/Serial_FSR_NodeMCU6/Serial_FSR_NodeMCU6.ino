@@ -39,7 +39,7 @@ String timeStamp;
 
 void setup() 
 {
-  s.begin(115200);          // Receive and Trasmit
+  s.begin(9600);          // Receive and Trasmit
                             // The Higher the baud rate the more responsive
   Serial.begin(9600);       // Serial Monitor
 
@@ -73,7 +73,7 @@ void setup()
 
 void loop() 
 {
-  if (s.available())
+  if (s.available() > 6)
   { 
     cogX = 0;
     cogY = 0;
@@ -88,14 +88,28 @@ void loop()
       byte recieved = s.read();
       
       //check for bad Ascii
-      if(recieved < 45 || recieved > 121)
-      {
-        Serial.print("Error : " + recieved);
-        
-      }else {
-        Serial.print("RECIEVED1: ");
-        Serial.println(recieved);
-      }
+//      if(recieved < 45 || recieved > 121)
+//      {
+//        Serial.print("Error : " + recieved);
+//        
+//      }else {
+//        Serial.print("RECIEVED1: ");
+//        if(recieved >= 48 && recieved <= 57){
+//          Serial.println(recieved - 48);
+//        }         
+//        else if(recieved == 45) {
+//          Serial.println('-');
+//          }
+//          else if(recieved == 59) {
+//            Serial.println(';');
+//            }
+//            else if(recieved == 'x' or 'y'){
+//              Serial.println(recieved == 'x'? 'x' : 'y');
+//            }
+//          else {
+//        Serial.println(recieved);
+//        }     
+//        }
       
       //process char
       while(recieved != 'x' && recieved != 'y')
@@ -117,16 +131,36 @@ void loop()
           value *= -1;
           negative = false;
         }
+        else if(recieved == 59){
+          //do nothing
+        }
+        else {
+          Serial.println("Invalid");
+        }
         recieved = s.read();
               
       //check for bad Ascii
-      if(recieved < 45  || recieved > 121)
-      {
-        Serial.println("Error: " + recieved);
-      } else {
-        Serial.print("RECIEVED2: ");
-        Serial.println(recieved);
-      }
+//      if(recieved < 45  || recieved > 121)
+//      {
+//        Serial.println("Error: " + recieved);
+//      } else {
+//        Serial.print("RECIEVED2: ");
+//        if(recieved >= 48 && recieved <= 57){
+//          Serial.println(recieved - 48);
+//        }
+//        else if(recieved == 45) {
+//          Serial.println('-');
+//          }
+//          else if(recieved == 59) {
+//            Serial.println(';');
+//            }
+//            else if(recieved == 'x' or 'y'){
+//              Serial.println(recieved == 'x'? 'x' : 'y');
+//            }
+//          else {
+//        Serial.println(recieved);
+//        }
+//      }
       
       }
       //if 'x' recieved, save value to cogX variable
@@ -148,7 +182,7 @@ void loop()
     // End of for loop
 
     
-    s.write("test");
+//    s.write("test");
     //print out coords
     Serial.println();
     Serial.print("(");
@@ -165,18 +199,22 @@ void loop()
       // The formattedDate comes with the following format:
       // 2018-05-28T16:00:13Z
       // We need to extract date and time
-      formattedDate = timeClient.getFormattedDate();
-  //    Serial.println(formattedDate);
       
+      formattedDate = timeClient.getFormattedDate();
+      Serial.println(formattedDate);
+      
+
   }
   // End of if statement for transfer data
 
   
   if(cogX != 0 && cogY != 0)
   {
+    signed int x = cogX;
+    signed int y = cogY;
     //send cogX cogY to firebase
-    Firebase.setInt("postureData/1212/" + formattedDate + "/cogX", cogX);
-    Firebase.setInt("postureData/1212/" + formattedDate + "/cogY", cogY);
+    Firebase.setInt("postureData/1212/" + formattedDate + "/cogX", x);
+    Firebase.setInt("postureData/1212/" + formattedDate + "/cogY", y);
     Firebase.setString("postureData/1212/" + formattedDate + "/created_at", formattedDate);
   }
   
