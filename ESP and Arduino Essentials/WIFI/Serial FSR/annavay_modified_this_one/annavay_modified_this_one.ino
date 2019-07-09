@@ -15,7 +15,6 @@ SoftwareSerial s(D6,D5);    // (RX, TX) to receive and transmit
                             // s represents the transfer comm
 signed int cogX;            
 signed int cogY;
-signed int value = 0;
 boolean negative = false;
 
 // *********************** Connection to the Network *********************** 
@@ -76,68 +75,85 @@ void loop()
 {
   if (s.available() > 0)
   { 
-    //read value from input buffer
-    byte recieved = s.read();
-    
-    //process value according to flags
-     if(recieved == 45){
-        //read a negative sign
-        negative = true;
-      }
-     else if(recieved >=48 && recieved <= 57){
-        //read a numerical value
-        value *= 10;
-        value += recieved - 48;
-        }
-     else if(recieved == 59){
-        if(negative){
-            value *= -1;
-            negative = false; //reset flag
-          }
-      }
-     else if(recieved == 120 || recieved == 121){
-        //read an x or y
-        if(recieved == 120) {
-          cogX = value;
-          value = 0;
-          }
-        if(recieved == 121){
-          cogY = value;
-          value = 0;
-        }
-    }
-    
-
-    if(cogX != 0 && cogY != 0)
+    cogX = 0;
+    cogY = 0;
+    negative = false;
+	byte recieved;
+    for(int i=0;i<2;i++) 
     {
-    //print out coords
+	cogX = 0;
+	cogY = 0;
+	negative = false;
+	signed int value = 0;
+	for(int j = 0;j<7;j++){
+		
+      //get initial +/- char
+      recieved = s.read();
+      Serial.print("RECIEVED: ");
+      Serial.println(recieved);
+      
+      //check for bad Ascii
+      if(recieved == 255){
+			Serial.print("Error1");
+			break;
+		}
+	  else if(recieved == '-')
+		{
+		  negative = true;
+		}
+		//check for valid numerical value
+		else if(recieved >= '0' && recieved <= '9')
+		{
+		  value *= 10;
+		  value += recieved - '0';
+		}
+		//if null terminator ';', process negative flag
+		 else if(negative && recieved == ';')
+		{
+		  value *= -1;
+		  negative = false;
+		}
+	}
+	recieved = s.read();	 
+	//if 'x' recieved, save value to cogX variable
+      if(recieved == 'x'){
+        //assign to cogX
+        cogX = value;
+      }
+      //if 'y' recieved, save value to cogY variable
+      else if(recieved == 'y'){
+        //assign to cogY
+        cogY = value;
+      }
+    }
+    //print out coords to console
     Serial.println();
     Serial.print("(");
     Serial.print(cogX);
     Serial.print(", ");
     Serial.print(cogY);
     Serial.println(")");
-    
+ 
 
-    while(!timeClient.update()) 
+  while(!timeClient.update()) 
     {
       timeClient.forceUpdate();
     }
-      // 2018-05-28T16:00:13Z
-     formattedDate = timeClient.getFormattedDate();
-  //   Serial.println(formattedDate);
+      // Format: 2018-05-28T16:00:13Z
+      formattedDate = timeClient.getFormattedDate();
+   //   Serial.println(formattedDate);
       
-    signed int x = cogX;
-    cogX = 0;
-    signed int y = cogY;
-    cogY = 0;
+  if(cogX != 0 && cogY != 0)
+  {
     //send cogX cogY to firebase
-    Firebase.setInt("postureData/1212/" + formattedDate + "/cogX", x);
-    Firebase.setInt("postureData/1212/" + formattedDate + "/cogY", y);
+    Firebase.setInt("postureData/1212/" + formattedDate + "/cogX", cogX);
+    Firebase.setInt("postureData/1212/" + formattedDate + "/cogY", cogY);
     Firebase.setString("postureData/1212/" + formattedDate + "/created_at", formattedDate);
-
   }
   
- // delay(1000);
-}
+  delay(1000);
+  
+  }
+  
+
 }
