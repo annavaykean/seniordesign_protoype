@@ -1,8 +1,8 @@
 #include <ESP8266WiFi.h>                                                
 #include <FirebaseArduino.h>                                             
 
-#define FIREBASE_HOST   "sd-proto.firebaseio.com"                         
-#define FIREBASE_AUTH   "JHX8oWlHBy0OV2NSvrnziX9hJ297ypRT5OAxuitY"                    
+#define FIREBASE_HOST   "nodemcu-efc0a.firebaseio.com"                         
+#define FIREBASE_AUTH   "qmlxD6fh7ZhaVC2pt3v1Qou6kFz8bVgdPXQMbfYa"                    
 #define WIFI_SSID       "The Bomb Galaxy"                                         
 #define WIFI_PASSWORD   "phuong3648"                                 
 
@@ -10,15 +10,15 @@
 SoftwareSerial toUno(D6, D5); //Rx, Tx
 
 String fireStatus = ""; 
-int vibrator = D3;
+int led = D3;
 
 void setup()
 {
   toUno.begin(9600);
   Serial.begin(9600);
-  delay(1000);
-  pinMode(LED_BUILTIN, OUTPUT);      
-  pinMode(led, OUTPUT);  
+//  delay(1000);
+//  pinMode(LED_BUILTIN, OUTPUT);      
+//  pinMode(led, OUTPUT);  
 
   // connect to wifi.
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -36,32 +36,37 @@ void setup()
   Serial.print("IP Address is : ");
   Serial.println(WiFi.localIP());    
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
-  Firebase.setString("settings/0000/vibration", "1");  
+  Firebase.setString("settings/1212/vibration", "1");  
 }
 
 void loop()
 {
-  fireStatus = Firebase.getString("settings/0000/vibration");
-  toUno.write("toUno");
+  fireStatus = Firebase.getString("settings/1212/vibration");
+//  toUno.write("toUno");
 
-  if (fireStatus == "ON" || fireStatus == "on" || fireStatus == "1") 
-  {                                                  // compare the input of led status received from firebase
+  if (fireStatus == "1")
+  {
+    // compare the input of led status received from firebase
     Serial.println("Led Turned ON");                         
-    digitalWrite(LED_BUILTIN, LOW);                                                  // make bultin led ON
-    digitalWrite(led, HIGH);                                                         // make external led ON
+//    digitalWrite(LED_BUILTIN, LOW);           // make bultin led ON
+//    digitalWrite(led, HIGH);                  // make external led ON
+//    toUno.write(fireStatus);
   } 
-  else if (fireStatus == "OFF" || fireStatus == "off" || fireStatus == "0") 
-  {                                                  // compare the input of led status received from firebase
+  else if (fireStatus == "0")
+  {
+    // compare the input of led status received from firebase
     Serial.println("Led Turned OFF");
-    digitalWrite(LED_BUILTIN, HIGH);                                               // make bultin led OFF
-    digitalWrite(led, LOW);                                                         // make external led OFF
+//    digitalWrite(LED_BUILTIN, HIGH);          // make bultin led OFF
+//    digitalWrite(led, LOW);                   // make external led OFF
+//    toUno.write(fireStatus);
   }
   else 
   {
     Serial.println("Wrong Credential! Please send ON/OFF");
   }
   
-  toUno.println("From the ESP8266");
+//  toUno.println("From the ESP8266");
+  toUno.write(fireStatus);
   
   delay(1000);
 }
