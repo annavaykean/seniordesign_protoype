@@ -2,12 +2,13 @@
 
 #include <SoftwareSerial.h>
 #include <String.h>
-SoftwareSerial s(3,4);
+SoftwareSerial s(5,6);
 
 
 //****************************
 
 long count = millis();
+long timer = millis();
 
 //define variables
 
@@ -118,13 +119,14 @@ if (s.available())
       
     
      pinMode(11, OUTPUT);            // make external led ON
+    analogWrite(11,0);
     }
   
     else if (turnOnLED == 0)
     {
       Serial.println("LED Turned OFF");
       //digitalWrite(LED_BUILTIN, HIGH);    // make bultin led OFF
-      pinMode(11, INPUT);             // make external led OFF
+     pinMode(11,INPUT);             // make external led OFF
     }
   
     else
@@ -136,12 +138,21 @@ if (s.available())
 
  //leaning forward 
   if(((FL)>=100)&&((FR)>=100)&&(count>=8854)){ 
-    
+ 
+Serial.println(FR);
+Serial.println(FL);
+Serial.println(BR);
+Serial.println(BL);
+//analogWrite(11,0);
   
    x = cogx;
    y = cogy;
+//Serial.println("ATTEMPT");
 
-digitalWrite(11,HIGH);
+analogWrite(11,150);    //turn on
+//for(int a = 0; a<=5000;a++){}
+//analogWrite(11,0);
+
   
 if(x<0){
   toSendX[0] = '-';
@@ -172,7 +183,6 @@ s.flush();    //clear buffer
 
               }
    Serial.println();
-
 
 
 
@@ -210,8 +220,7 @@ s.flush();    //clear buffer
         count = 0;
   }
   
-//
-//   
+
 //  //leaning backward
 //
 //  
