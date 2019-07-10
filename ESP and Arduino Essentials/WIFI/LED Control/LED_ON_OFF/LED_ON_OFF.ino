@@ -33,12 +33,12 @@ void setup()
   Serial.print("IP Address is : ");
   Serial.println(WiFi.localIP());                       //print local IP address
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);         // connect to firebase
-  Firebase.setString("settings/0000/vibration", "1");   //send initial string of led status
+  Firebase.setString("settings/1212/vibration", "1");   //send initial string of led status
 }
 
 void loop() 
 {
-  fireStatus = Firebase.getString("settings/0000/vibration");   // get ld status input from firebase
+  fireStatus = Firebase.getString("settings/1212/vibration");   // get ld status input from firebase
   
   if (fireStatus == "ON" || fireStatus == "on" || fireStatus == "1") 
   {                                                          
