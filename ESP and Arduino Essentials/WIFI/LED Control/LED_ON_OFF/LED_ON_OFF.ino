@@ -1,8 +1,8 @@
 #include <ESP8266WiFi.h>          // esp8266 library
 #include <FirebaseArduino.h>      // firebase library
 
-#define FIREBASE_HOST   "nodemcu-efc0a.firebaseio.com"                  // the project name address from firebase id
-#define FIREBASE_AUTH   "qmlxD6fh7ZhaVC2pt3v1Qou6kFz8bVgdPXQMbfYa"      // the secret key generated from firebase
+#define FIREBASE_HOST   "sd-proto.firebaseio.com"                  // the project name address from firebase id
+#define FIREBASE_AUTH   "JHX8oWlHBy0OV2NSvrnziX9hJ297ypRT5OAxuitY"      // the secret key generated from firebase
 #define WIFI_SSID       "The Bomb Galaxy"                               // input your home or public wifi name 
 #define WIFI_PASSWORD   "phuong3648"                                    //password of wifi ssid
 
