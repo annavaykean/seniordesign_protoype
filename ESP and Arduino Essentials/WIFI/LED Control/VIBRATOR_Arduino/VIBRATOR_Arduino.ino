@@ -15,12 +15,15 @@ void setup()
 
 void loop()
 {
+  //Serial.println("LOOP");
   if (s.available())
   {
+    Serial.println("START");
 //    char inChar = s.read();
 //    Serial.print(inChar);
         byte val = s.read();
         int turnOnVibrator = val - 48;
+        Serial.println(val);
     
     if (turnOnVibrator == 1)
     {
