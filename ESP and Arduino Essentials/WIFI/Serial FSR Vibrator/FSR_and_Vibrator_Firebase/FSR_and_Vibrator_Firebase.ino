@@ -17,7 +17,6 @@
 
 #include <SoftwareSerial.h>
 SoftwareSerial s(D6, D5); //Rx, Tx
-//SoftwareSerial s2(D8, D7); //Rx, Tx
 
 // *************************** Center of Gravity *************************** 
 
@@ -164,39 +163,70 @@ void loop()
 //   delay(1000);
 
 
-    // ****************** Vibration Module Activation ******************
-    // ******************* Inside the FSR Statement *******************
-    fireStatus = Firebase.getString("settings/1212/vibration");
+//    // ****************** Vibration Module Activation ******************
+//    // ******************* Inside the FSR Statement *******************
+//    fireStatus = Firebase.getString("settings/1212/vibration");
+//    
+//    if (fireStatus == "1")
+//    {
+//      // compare the input of led status received from firebase
+//      Serial.print("VIBRATOR Turned ON\t");       
+//      Serial.println("Value: " + fireStatus);                  
+//      digitalWrite(LED_BUILTIN, LOW);           // make bultin led ON
+////      digitalWrite(VIBRATOR, HIGH);             // make external led ON
+//      s.write("1");
+//    } 
+//    
+//    else if (fireStatus == "0")
+//    {
+//      // compare the input of led status received from firebase
+//      Serial.print("VIBRATOR Turned OFF\t");
+//      Serial.println("Value: " + fireStatus);
+//      digitalWrite(LED_BUILTIN, HIGH);          // make bultin led OFF
+////      digitalWrite(VIBRATOR, LOW);              // make external led OFF
+//      s.write("0");
+//    }
+//    
+//    else 
+//    {
+//      Serial.println("Wrong Credential! Please send ON/OFF");
+//    }
+//    delay(500);
     
-    if (fireStatus == "1")
-    {
-      // compare the input of led status received from firebase
-      Serial.print("VIBRATOR Turned ON\t");       
-      Serial.println("Value: " + fireStatus);                  
-      digitalWrite(LED_BUILTIN, LOW);           // make bultin led ON
-//      digitalWrite(VIBRATOR, HIGH);             // make external led ON
-      s.write("1");
-    } 
-    
-    else if (fireStatus == "0")
-    {
-      // compare the input of led status received from firebase
-      Serial.print("VIBRATOR Turned OFF\t");
-      Serial.println("Value: " + fireStatus);
-      digitalWrite(LED_BUILTIN, HIGH);          // make bultin led OFF
-//      digitalWrite(VIBRATOR, LOW);              // make external led OFF
-      s.write("0");
-    }
-    
-    else 
-    {
-      Serial.println("Wrong Credential! Please send ON/OFF");
-    }
-    delay(1000);
-
   }
   // The end of the s.available
 
+
+  // ****************** Vibration Module Activation ******************
+  // ******************* Outside the FSR Statement *******************
+  fireStatus = Firebase.getString("settings/1212/vibration");
+    
+  if (fireStatus == "1")
+  {
+    // compare the input of led status received from firebase
+    Serial.print("VIBRATOR Turned ON\t");       
+    Serial.println("Value: " + fireStatus);                  
+    digitalWrite(LED_BUILTIN, LOW);           // make bultin led ON
+//    digitalWrite(VIBRATOR, HIGH);             // make external led ON
+    s.write("1");
+  } 
+    
+  else if (fireStatus == "0")
+  {
+    // compare the input of led status received from firebase
+    Serial.print("VIBRATOR Turned OFF\t");
+    Serial.println("Value: " + fireStatus);
+    digitalWrite(LED_BUILTIN, HIGH);          // make bultin led OFF
+//    digitalWrite(VIBRATOR, LOW);              // make external led OFF
+    s.write("0");
+  }
+    
+  else 
+  {
+    Serial.println("Wrong Credential! Please send ON/OFF");
+  }
+  delay(500);
+  
 
   // Conclusion of the code print statement into serial communication
   // Once sensor code starts sending data, vibration statement starts
