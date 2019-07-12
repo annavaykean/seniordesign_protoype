@@ -47,7 +47,7 @@ class DashboardScreen extends StatelessWidget {
           if(((now.year == dataTime.year) && (now.month == dataTime.month) && (now.day <= dataTime.day))
           || (dataTime.year == 2001)) {
             data.add(freshData);
-            print('added freshData to data list');
+            print('added freshData to data list' + freshData.cogX.toString());
           }
         }
         else {
@@ -70,13 +70,22 @@ class DashboardScreen extends StatelessWidget {
       for(var value in snapshot.value.values) {
         //was previously experiencing errors on parsing from json. Fixed by converting data to string then to int.
         var cogX = value['cogX'].toString();
-        var xInt = int.parse(cogX);
+        var xInt = null;
+        var yInt = null;
+        if(cogX != 'null') {
+           xInt = int.parse(cogX);
+        }
         var cogY = value['cogY'].toString();
-        var yInt = int.parse(cogY);
+        if(cogY != 'null') {
+           yInt = int.parse(cogY);
+        }
         var created_at = value['created_at'].toString();
-        print("Adding (" + xInt.toString() + ", " + yInt.toString() + ", " + created_at.toString() + ")\n");
-        //add parsed data to list as a Posture object
-        list.add(new GraphData(xInt, yInt, created_at));
+        if(xInt != null && yInt != null && created_at != null) {
+          print("Adding (" + xInt.toString() + ", " + yInt.toString() + ", " +
+              created_at.toString() + ")\n");
+          //add parsed data to list as a Posture object
+          list.add(new GraphData(xInt, yInt, created_at));
+        }
   //        list.add(new GraphData(cogX, cogY, created_at));
       }
       print('exited for loop');
@@ -93,6 +102,8 @@ class DashboardScreen extends StatelessWidget {
 
   void reload(BuildContext context) {
     MyApp.postureDataList == null;
+  //  data = null;
+  //  series = null;
     //reload chart with fresh data
    // if(MyApp.postureDataList == null) {
       print('pdL is null');
@@ -209,7 +220,7 @@ class DashboardScreen extends StatelessWidget {
         colorFn: (GraphData point, _) {
           DateTime dataTime = DateTime.parse(point.created_at);
           if(dataTime.year == 2001) {
-            print("i should be invisible!");
+            print( dataTime.toString() + "i should be invisible!");
             return charts.MaterialPalette.white;
           } else {
             print("I am a valid data point");
