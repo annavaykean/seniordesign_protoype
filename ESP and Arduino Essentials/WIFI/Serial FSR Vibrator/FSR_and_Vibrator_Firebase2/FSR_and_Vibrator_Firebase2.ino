@@ -140,7 +140,7 @@ void loop()
     }
     
     // Gather the data from Sensor to print values
-    if(cogX != 0 && cogY != 0)
+    if((cogX != 0 && cogY != 0) && (cogX < 500 && cogX > -500 && cogY < 500 && cogY > -500))
     {
       //print out coords
       Serial.println();
