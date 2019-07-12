@@ -29,7 +29,7 @@ boolean negative = false;
 // ********************* Vibration Avtication Commands ********************* 
 
 String fireStatus = ""; 
-int VIBRATOR = D3;
+//int VIBRATOR = D3;
 
 // *************************** Timestamp for FSR *************************** 
 
@@ -50,7 +50,7 @@ void setup()
   Serial.begin(9600);
   delay(1000);
   pinMode(LED_BUILTIN, OUTPUT);      
-  pinMode(VIBRATOR, OUTPUT);  
+//  pinMode(VIBRATOR, OUTPUT);  
 
   // connect to wifi.
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -79,6 +79,8 @@ void setup()
   // GMT -1 = -3600
   // GMT 0 = 0
   timeClient.setTimeOffset(-14400);
+  // Offset the timestamp by due to incorrect time reading
+  // -14400 is by seconds, meaning 5 hours in seconds
 }
 
 // ****************** Analog Readings coming from Arduino ******************
@@ -129,7 +131,7 @@ void loop()
       }
     }
     
-
+    // Gather the data from Sensor to print values
     if(cogX != 0 && cogY != 0)
     {
       //print out coords
@@ -140,7 +142,7 @@ void loop()
       Serial.print(cogY);
       Serial.println(")");
     
-
+      // Timestamp of the sensor data
       while(!timeClient.update()) 
       {
         timeClient.forceUpdate();
@@ -172,7 +174,7 @@ void loop()
       Serial.print("VIBRATOR Turned ON\t");       
       Serial.println("Value: " + fireStatus);                  
       digitalWrite(LED_BUILTIN, LOW);           // make bultin led ON
-      digitalWrite(VIBRATOR, HIGH);             // make external led ON
+//      digitalWrite(VIBRATOR, HIGH);             // make external led ON
       s.write("1");
     } 
     
@@ -182,7 +184,7 @@ void loop()
       Serial.print("VIBRATOR Turned OFF\t");
       Serial.println("Value: " + fireStatus);
       digitalWrite(LED_BUILTIN, HIGH);          // make bultin led OFF
-      digitalWrite(VIBRATOR, LOW);              // make external led OFF
+//      digitalWrite(VIBRATOR, LOW);              // make external led OFF
       s.write("0");
     }
     
@@ -192,41 +194,12 @@ void loop()
     }
     delay(1000);
 
+  }
+  // The end of the s.available
 
-    
-  }// The end of the s.available
 
-
-  // ****************** Vibration Module Activation ******************
-  // ******************* Outside the FSR Statement *******************
-//  fireStatus = Firebase.getString("settings/1212/vibration");
-//
-//  if (fireStatus == "1")
-//  {
-//    // compare the input of led status received from firebase
-//    Serial.print("VIBRATOR Turned ON\t");       
-//    Serial.println("Value: " + fireStatus);                  
-//    digitalWrite(LED_BUILTIN, LOW);           // make bultin led ON
-//    digitalWrite(VIBRATOR, HIGH);             // make external led ON
-//    s.write("1");
-//  } 
-//  
-//  else if (fireStatus == "0")
-//  {
-//    // compare the input of led status received from firebase
-//    Serial.print("VIBRATOR Turned OFF\t");
-//    Serial.println("Value: " + fireStatus);
-//    digitalWrite(LED_BUILTIN, HIGH);          // make bultin led OFF
-//    digitalWrite(VIBRATOR, LOW);              // make external led OFF
-//    s.write("0");
-//  }
-//  
-//  else 
-//  {
-//    Serial.println("Wrong Credential! Please send ON/OFF");
-//  }
-//  
-//  delay(1000);
-
+  // Conclusion of the code print statement into serial communication
+  // Once sensor code starts sending data, vibration statement starts
+  // Proper baud rate is important to match the readings from Arduino
 
 }
