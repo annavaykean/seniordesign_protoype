@@ -105,7 +105,7 @@ signed int cogy = ((y1*(FR)+y2*(FL)+y3*(BL)+y4*(BR))/(4));
 
 
 
-if (s.available())
+if (s.available()>0)
   {
 //    char inChar = s.read();
 //    Serial.print(inChar);
