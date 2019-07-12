@@ -46,7 +46,7 @@ String timeStamp;
 
 void setup()
 {
-  s.begin(115200);
+  s.begin(57600);
   Serial.begin(9600);
   delay(1000);
   pinMode(LED_BUILTIN, OUTPUT);      
@@ -164,37 +164,37 @@ void loop()
 
     // ****************** Vibration Module Activation ******************
     // ******************* Inside the FSR Statement *******************
-//    fireStatus = Firebase.getString("settings/1212/vibration");
-//    
-//    if (fireStatus == "1")
-//    {
-//      // compare the input of led status received from firebase
-//      Serial.print("VIBRATOR Turned ON\t");       
-//      Serial.println("Value: " + fireStatus);                  
-//      digitalWrite(LED_BUILTIN, LOW);           // make bultin led ON
-//      digitalWrite(VIBRATOR, HIGH);             // make external led ON
-//      s.write("1");
-//    } 
-//    
-//    else if (fireStatus == "0")
-//    {
-//      // compare the input of led status received from firebase
-//      Serial.print("VIBRATOR Turned OFF\t");
-//      Serial.println("Value: " + fireStatus);
-//      digitalWrite(LED_BUILTIN, HIGH);          // make bultin led OFF
-//      digitalWrite(VIBRATOR, LOW);              // make external led OFF
-//      s.write("0");
-//    }
-//    
-//    else 
-//    {
-//      Serial.println("Wrong Credential! Please send ON/OFF");
-//    }
-//    delay(1000);
+    fireStatus = Firebase.getString("settings/1212/vibration");
+    
+    if (fireStatus == "1")
+    {
+      // compare the input of led status received from firebase
+      Serial.print("VIBRATOR Turned ON\t");       
+      Serial.println("Value: " + fireStatus);                  
+      digitalWrite(LED_BUILTIN, LOW);           // make bultin led ON
+      digitalWrite(VIBRATOR, HIGH);             // make external led ON
+      s.write("1");
+    } 
+    
+    else if (fireStatus == "0")
+    {
+      // compare the input of led status received from firebase
+      Serial.print("VIBRATOR Turned OFF\t");
+      Serial.println("Value: " + fireStatus);
+      digitalWrite(LED_BUILTIN, HIGH);          // make bultin led OFF
+      digitalWrite(VIBRATOR, LOW);              // make external led OFF
+      s.write("0");
+    }
+    
+    else 
+    {
+      Serial.println("Wrong Credential! Please send ON/OFF");
+    }
+    delay(1000);
 
 
-    // The end of the s.available
-  }
+    
+  }// The end of the s.available
 
 
   // ****************** Vibration Module Activation ******************
