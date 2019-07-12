@@ -8,7 +8,6 @@ SoftwareSerial s(5,6);
 //****************************
 
 long count = millis();
-long timer = millis();
 
 //define variables
 
@@ -44,7 +43,7 @@ volatile int SR ;
 
 void setup() {
 
-  s.begin(57600);
+  s.begin(115200);
   // put your setup code here, to run once:
 
 //initialize timer 1
@@ -99,69 +98,18 @@ signed int y8= 0;
     signed int number;
     signed int x;
     signed int y;
-    unsigned int vibeSet;
+    
 signed int cogx = ((x1*(FR)+x2*(FL)+x3*(BL)+x4*(BR))/(4));
 signed int cogy = ((y1*(FR)+y2*(FL)+y3*(BL)+y4*(BR))/(4));
 
 
-
-if (s.available())
-  {
-//    char inChar = s.read();
-//    Serial.print(inChar);
-        byte val = s.read();
-      Serial.println("RECIEVE");
-       volatile int turnOnLED = val - 48;
-      if (turnOnLED == 1)
-    {
-      Serial.println("LED Turned ON");
-      digitalWrite(LED_BUILTIN, LOW);     // make bultin led ON
-      
-    
-    pinMode(11, OUTPUT);            // make external led ON
-    analogWrite(11,0);
-    vibeSet = 1;
-    }
-  
-    else if (turnOnLED == 0)
-    {
-      Serial.println("LED Turned OFF");
-      //digitalWrite(LED_BUILTIN, HIGH);    // make bultin led OFF
-     pinMode(11,INPUT);             // make external led OFF
-     vibeSet = 0;
-  }
-  
-    else
-    {
-      Serial.println("Wrong Credential! Please send ON/OFF");
-    }
-   
-  }
-
  //leaning forward 
-  if(((FL)>=10)&&((FR)>=10)&&(count>=8854)){ //change back to 100
-     
- 
-Serial.println(FR);
-Serial.println(FL);
-Serial.println(BR);
-Serial.println(BL);
-Serial.println(vibeSet);
-//analogWrite(11,0);
+  if(((FL)>=100)&&((FR)>=100)&&(count>=8854)){ 
+    
   
    x = cogx;
    y = cogy;
-   if(vibeSet == 1){
-    analogWrite(11,140);
-    }
-    else if(vibeSet == 0){
-      analogWrite(11,0);
-      }
-//Serial.println("ATTEMPT");
 
-//analogWrite(11,150);    //turn on
-////for(int a = 0; a<=5000;a++){}
-////analogWrite(11,0);
 
   
 if(x<0){
@@ -187,12 +135,13 @@ s.flush();    //clear buffer
      
     Serial.print("X: ");
   for(int i=0;i<=5;i++){
-        
+        //  delay(20000);
            Serial.print(toSendX[i]);
            s.write(toSendX[i]);
 
               }
    Serial.println();
+
 
 
 
@@ -215,6 +164,8 @@ if(y<0){
     }
     
 s.flush();    //clear buffer
+     // Serial.println();
+ //     Serial.println(toSend);
   
      Serial.print("Y: ");
   for(int i=0;i<=5;i++){
@@ -223,11 +174,13 @@ s.flush();    //clear buffer
            s.write(toSendY[i]);
     }
     Serial.println();
-        
-                count = 0;
+         //      delay(20000);
+
+        count = 0;
   }
   
-
+//
+//   
 //  //leaning backward
 //
 //  
@@ -495,8 +448,7 @@ void loop() {
  SL = analogRead(A6);
  SR = analogRead(A7);
 
- pinMode(3,OUTPUT);
-pinMode(11,OUTPUT);
+
 
 
 
@@ -514,8 +466,8 @@ pinMode(11,OUTPUT);
 
 
 
-if((((FR)>=10)|((FL)>=10)|((BR)>=10)|((BL)>=10))){  //CHANGE back to 100 from 10
-  count ++;
+if((((FR)>=100)|((FL)>=100)|((BR)>=100)|((BL)>=100))){  //CHANGE TO SMALL SENSORS ?
+    count ++;
   
    
   }
