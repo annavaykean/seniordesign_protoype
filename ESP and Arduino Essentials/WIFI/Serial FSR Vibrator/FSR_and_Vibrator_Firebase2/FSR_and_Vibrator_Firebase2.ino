@@ -130,8 +130,17 @@ void loop()
       }
     }
     
+    else if(recieved == '*')
+    {
+      //bad data sent, dismiss current value
+      value = 0;
+      cogX = 0;
+      cogY = 0;
+      Serial.println("User got up");
+    }
+    
     // Gather the data from Sensor to print values
-    if(cogX != 0 && cogY != 0)
+    if((cogX != 0 && cogY != 0) && (cogX < 500 && cogX > -500 && cogY < 500 && cogY > -500))
     {
       //print out coords
       Serial.println();

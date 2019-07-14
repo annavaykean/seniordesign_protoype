@@ -51,9 +51,10 @@ class LongTermData extends StatelessWidget {
         var cogY = value['cogY'].toString();
         var yInt = int.parse(cogY);
         var created_at = value['created_at'].toString();
-
-        //add parsed data to list as a Posture object
-        list.add(new GraphData(xInt, yInt, created_at));
+        if(xInt != null && yInt != null && created_at != null) {
+          //add parsed data to list as a Posture object
+          list.add(new GraphData(xInt, yInt, created_at));
+        }
       }
       //update global posture data list with fresh data.
       MyApp.postureDataList = list;

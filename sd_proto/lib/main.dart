@@ -222,7 +222,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
           MyApp.pin = recievePin;
           //establish new database session
           //save data offline until connection is reestablished
-          MyApp.database.setPersistenceEnabled(true);
+          MyApp.database.setPersistenceEnabled(false);
           MyApp.database.setPersistenceCacheSizeBytes(10000000);
           //get reference to user's document within database
           MyApp.userDataReference =
@@ -233,13 +233,22 @@ class WelcomeScreenState extends State<WelcomeScreen> {
             for (var value in snapshot.value.values) {
               //was previously experiencing errors on parsing from json. Fixed by converting data to string then to int.
               var cogX = value['cogX'].toString();
-              var xInt = int.parse(cogX);
+              var xInt;
+              var yInt;
+              if(cogX != 'null') {
+                xInt = int.parse(cogX);
+              }
               var cogY = value['cogY'].toString();
-              var yInt = int.parse(cogY);
+              if(cogY != 'null') {
+                yInt = int.parse(cogY);
+              }
               var created_at = value['created_at'].toString();
               //add parsed data to list as a Posture object
-              print("Adding (" + xInt.toString() + ", " + yInt.toString() + ", " + created_at.toString() + ")\n");
-              list.add(new Posture(xInt, yInt, created_at));
+              if(xInt != null && yInt != null && created_at != null) {
+                print("Adding (" + xInt.toString() + ", " + yInt.toString() +
+                    ", " + created_at.toString() + ")\n");
+                list.add(new Posture(xInt, yInt, created_at));
+              }
             }
             //update global posture data list with fresh data.
             MyApp.postureDataList = list;
