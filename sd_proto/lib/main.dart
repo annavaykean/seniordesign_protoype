@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
   static DatabaseReference userSettingsReference;
   //static DatabaseTestPageState databaseData = new DatabaseTestPageState();
   static String pose;
+  static String poseLabel;
   static bool vibration = true;
   static bool notification = true;
   static FlutterLocalNotificationsPlugin notificationsPlugin;
@@ -221,7 +222,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
         if(recievePin != 'invalid') {
           MyApp.pin = recievePin;
           //establish new database session
-          //save data offline until connection is reestablished
+          //save data offline until connection is reestablished - disabled due to problem caused regarding updating chart without wifi
           MyApp.database.setPersistenceEnabled(false);
           MyApp.database.setPersistenceCacheSizeBytes(10000000);
           //get reference to user's document within database

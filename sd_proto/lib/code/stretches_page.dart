@@ -7,16 +7,12 @@ class Stretches extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: AppBar(
-          title: const Text('Try this pose!'),
+          title: Text(MyApp.poseLabel),
         ),
-        body: Column(
-          children: <Widget>[
-            //Image.asset('assets/cat-cow.jpg'),
-            Container(
-              child: Image.asset(MyApp.pose),
-            ),
-            Text('Pose above'),
-          ],
+        body: Center(
+              child: Container(
+                child: Image.asset(MyApp.pose),
+              ),
         )
     );
   }

@@ -149,7 +149,7 @@ class DashboardScreen extends StatelessWidget {
 
   displayStretchPage(BuildContext context) {
     List imageURLs = ['cat-cow.jpg', 'thread-the-needle.jpg', 'supine-twist.jpg', 'arm-across-chest.jpg', 'childs-pose.jpg', 'eagle-arms.jpg', 'sphinx-pose.jpg'];
-
+    List labels = ['Cat-Cow Pose', 'Thread The Needle' , 'Supine Twist', 'Arm Across Chest Pose', 'Child\'s Pose', 'Eagle Arms Pose', 'Sphinx Pose'];
     //generate random number to select index of image
     var random = new Random();
     int scaledRandom = random.nextInt((imageURLs.length) - 0);
@@ -157,6 +157,7 @@ class DashboardScreen extends StatelessWidget {
     //return image to display
     if (scaledRandom >= 0 && scaledRandom < imageURLs.length) {
       MyApp.pose = 'assets/' + imageURLs[scaledRandom];
+      MyApp.poseLabel = labels[scaledRandom];
       Navigator.pushNamed(context, '/Stretches');
     }
   }
