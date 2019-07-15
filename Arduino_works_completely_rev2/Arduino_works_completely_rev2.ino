@@ -2,7 +2,7 @@
 
 #include <SoftwareSerial.h>
 #include <String.h>
-SoftwareSerial s(14,15);  //pins 3 and 4 on rev2 pcb change to 5 6 on rev3
+SoftwareSerial s(14,15);  //TX3/RX3 ON current design 
 
 //****************************
 long count = millis();
@@ -73,21 +73,18 @@ signed int x1= 5;
 signed int x2= -5.5;
 signed int x3= -2;
 signed int x4= 1.5;
-signed int x5= 0; 
-signed int x6= 0;
-signed int x7= 0; 
-signed int x8= 0;
 
 signed int y1= 2.5;
 signed int y2= 2.5;
 signed int y3= -2.5;
 signed int y4= -2.5;
-signed int y5= 0;
-signed int y6= 0; 
-signed int y7= 0;
-signed int y8= 0; 
+ 
 
-
+//Scaling factor for smaller FSR's
+signed int x5= 6.5;   //right --> goes with SR
+signed int x6= -6.5;  //left --> goes with SL
+signed int y5= 6.5;   //forward --> goes with SF
+signed int y6= -6.5;  //backward --> goes with SB
   
 char toSendX[6];
 char toSendY[6];
@@ -96,9 +93,8 @@ signed int number;
 signed int x;
 signed int y;
 unsigned int vibeSet;
-signed int cogx = ((x1*(FR)+x2*(FL)+x3*(BL)+x4*(BR))/(4));
-signed int cogy = ((y1*(FR)+y2*(FL)+y3*(BL)+y4*(BR))/(4));
-
+signed int cogx = ((x1*(FR)+x2*(FL)+x3*(BL)+x4*(BR)+x5*(SR) +x6*(SL))/(6));
+signed int cogy = ((y1*(FR)+y2*(FL)+y3*(BL)+y4*(BR)+y5(SF)+y6(SB))/(6));
 
 
 if (s.available())    //check if serial is available
