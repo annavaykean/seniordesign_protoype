@@ -1,23 +1,24 @@
 #include <avr/interrupt.h>
+
 #include <SoftwareSerial.h>
 #include <String.h>
-SoftwareSerial s(14,15);  //TX3/RX3 ON current design 
+SoftwareSerial s(5,6);  //pins 3 and 4 on rev2 pcb change to 5 6 on rev3
 
 //****************************
 long count = millis();
 
 //define variables
 //Large Sensors
-volatile int FR ;
-volatile int FL ;
-volatile int BR ;
-volatile int BL ;
+volatile int FR ;   //A0
+volatile int FL ;   //A1
+volatile int BR ;   //A2
+volatile int BL ;   //A3
 
 //Small Sensors
-volatile int SF ;
-volatile int SB ;
-volatile int SL ;
-volatile int SR ;
+volatile int SF ;   //A4
+volatile int SB ;   //A5
+volatile int SL ;   //A6
+volatile int SR ;   //A7
 
 
 volatile int userUp = 0;
@@ -41,7 +42,7 @@ volatile int userUp = 0;
 
 void setup() {
 
-  s.begin(57600);
+ s.begin(57600); //baud rate cannot go above 57600 b/c pwm will not work for vibrate module
   // put your setup code here, to run once:
 
 //initialize timer 1
@@ -72,18 +73,18 @@ signed int x1= 5;
 signed int x2= -5.5;
 signed int x3= -2;
 signed int x4= 1.5;
+signed int x6= -6.5; 
+signed int x8= 6.5;
 
 signed int y1= 2.5;
 signed int y2= 2.5;
 signed int y3= -2.5;
 signed int y4= -2.5;
- 
+signed int y5= 6;
+signed int y7= -6; 
 
-//Scaling factor for smaller FSR's
-signed int x5= 6.5;   //right --> goes with SR
-signed int x6= -6.5;  //left --> goes with SL
-signed int y5= 6.5;   //forward --> goes with SF
-signed int y6= -6.5;  //backward --> goes with SB
+
+
   
 char toSendX[6];
 char toSendY[6];
@@ -94,6 +95,7 @@ signed int y;
 unsigned int vibeSet;
 signed int cogx = ((x1*(FR)+x2*(FL)+x3*(BL)+x4*(BR))/(4));
 signed int cogy = ((y1*(FR)+y2*(FL)+y3*(BL)+y4*(BR))/(4));
+
 
 
 if (s.available()>0)    //check if serial is available
@@ -108,8 +110,9 @@ if (s.available()>0)    //check if serial is available
       digitalWrite(LED_BUILTIN, HIGH);     // make bultin led ON
       
     pinMode(2, OUTPUT);            // make external led ON
-    digitalWrite(12,LOW);
-    analogWrite(2,0);
+    pinMode(3,OUTPUT);
+        analogWrite(2,0);   //left vibrate
+        analogWrite(3,0);   //right vibrate
     vibeSet = 1;
     }
   
@@ -117,7 +120,8 @@ if (s.available()>0)    //check if serial is available
     {
       Serial.println("LED Turned OFF");
       digitalWrite(LED_BUILTIN, LOW);    // make bultin led OFF
-     pinMode(2,INPUT);             // make external led OFF
+     pinMode(2,INPUT);             // disable vibrate
+     pinMode(3,INPUT);              //disable vibrate
      vibeSet = 0;
   }
   
@@ -142,16 +146,7 @@ Serial.println(vibeSet);
    x = cogx;
    y = cogy;
    
-   if(vibeSet == 1){
-    analogWrite(2,140);
-    digitalWrite(12,HIGH);  //testing pcbrev2 without vibrate
-    }
-    else if(vibeSet == 0){
-      analogWrite(2,0);
-      digitalWrite(12,LOW); //testing pcbrev2 without vibrate
-      }
-
- 
+   
 if(x<0){
   toSendX[0] = '-';
   toSendX[4] = ';';
@@ -227,13 +222,7 @@ Serial.println(vibeSet);
    userUp = 0; 
    x = cogx;
    y = cogy;
-   if(vibeSet == 1){
-    analogWrite(11,140);
-    }
-    else if(vibeSet == 0){
-      analogWrite(11,0);
-      }
-
+  
  
 if(x<0){
   toSendX[0] = '-';
@@ -308,13 +297,13 @@ Serial.println(vibeSet);
    userUp = 0; 
    x = cogx;
    y = cogy;
-   if(vibeSet == 1){
-    analogWrite(11,140);
-    }
-    else if(vibeSet == 0){
-      analogWrite(11,0);
-      }
 
+     if(vibeSet == 1){
+    analogWrite(2,140);
+        }
+    else if(vibeSet == 0){
+      analogWrite(2,0);
+           }
  
 if(x<0){
   toSendX[0] = '-';
@@ -388,13 +377,13 @@ Serial.println(vibeSet);
   
    x = cogx;
    y = cogy;
-   if(vibeSet == 1){
-    analogWrite(11,140);
-    }
+   
+ if(vibeSet == 1){
+    analogWrite(3,140);
+        }
     else if(vibeSet == 0){
-      analogWrite(11,0);
-      }
-
+      analogWrite(3,0);
+           }
  
 if(x<0){
   toSendX[0] = '-';
@@ -474,26 +463,27 @@ s.flush();    //clear buffer
 
  SF = analogRead(A4);
  SB = analogRead(A5);
- SL = analogRead(A7);
- SR = analogRead(A6);
+ SL = analogRead(A6);
+ SR = analogRead(A7);
+ 
 //USE TO SEE IF SENSORS ARE OUTPUTTING AS EXPECTED
 
 //Serial.println(FL);
 //Serial.println(FR);
 //Serial.println(BL);
 //Serial.println(BR);
-//Serial.println(SF);
-//Serial.println(SB);
-//Serial.println(SR);
-//Serial.println(SL);
+Serial.println(SF);
+Serial.println(SB);
 
 
 if((((FR)>=20)|((FL)>=20)|((BR)>=20)|((BL)>=20))){  //CHANGE back to 100 from 10
   count ++;
-     
+  
+   
   }
     else{
       count = 0;
+      
 
  }
 
