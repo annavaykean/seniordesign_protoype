@@ -468,12 +468,12 @@ s.flush();    //clear buffer
  
 //USE TO SEE IF SENSORS ARE OUTPUTTING AS EXPECTED
 
-//Serial.println(FL);
 //Serial.println(FR);
+//Serial.println(FL);
 //Serial.println(BL);
 //Serial.println(BR);
-Serial.println(SF);
-Serial.println(SB);
+//Serial.println(SF);
+//Serial.println(SB);
 
 
 if((((FR)>=20)|((FL)>=20)|((BR)>=20)|((BL)>=20))){  //CHANGE back to 100 from 10
