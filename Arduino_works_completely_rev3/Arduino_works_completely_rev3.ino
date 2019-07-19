@@ -93,7 +93,7 @@ signed int number;
 signed int x;
 signed int y;
 signed int cogx = ((x1*(FR)+x2*(FL)+x3*(BL)+x4*(BR))/(4));
-signed int cogy = ((y1*(FR)+y5*(FL)+y3*(BL)+y4*(BR))/(4));
+signed int cogy = ((y1*(FR)+y2*(FL)+y3*(BL)+y4*(BR))/(4));
 
 
 
@@ -104,6 +104,7 @@ if (s.available()>0)    //check if serial is available
         byte val = s.read();    //read value from esp, store in val
       Serial.println("RECIEVE");  //confirm code is running
        volatile int turnOnLED = val - 48;   //offset by 48 to recieve 1 or 0
+       volatile byte getUP = val;
       if (turnOnLED == 1) 
     {
       Serial.println("LED Turned ON");
@@ -131,9 +132,13 @@ if (s.available()>0)    //check if serial is available
     {
       Serial.println("Wrong Credential! Please send ON/OFF");
     }
-   
-  }
 
+if(getUP == '@'){
+  Serial.print(val);
+  analogWrite(2,150);
+  analogWrite(3,150);
+    }
+  }
  //leaning forward 
   if(((FL)>=100)&&((FR)>=100)&&(count>=8854)){ //change back to 100
      
@@ -178,8 +183,6 @@ s.flush();    //clear buffer
 
               }
    Serial.println();
-
-
 
 if(y<0){
   toSendY[0] = '-';
