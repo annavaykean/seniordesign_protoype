@@ -2,7 +2,7 @@
 
 #include <SoftwareSerial.h>
 #include <String.h>
-SoftwareSerial s(5,6);  //pins 3 and 4 on rev2 pcb change to 5 6 on rev3
+SoftwareSerial s(51,52);  //pins 3 and 4 on rev2 pcb change to 5 6 on rev3
 
 //****************************
 long count = millis();
@@ -20,7 +20,7 @@ volatile int SB ;   //A5
 volatile int SL ;   //A6
 volatile int SR ;   //A7
 
-
+volatile unsigned int vibeSet;
 volatile int userUp = 0;
 // x & y points
 
@@ -92,15 +92,15 @@ signed int temp;
 signed int number;
 signed int x;
 signed int y;
-unsigned int vibeSet;
 signed int cogx = ((x1*(FR)+x2*(FL)+x3*(BL)+x4*(BR))/(4));
-signed int cogy = ((y1*(FR)+y2*(FL)+y3*(BL)+y4*(BR))/(4));
+signed int cogy = ((y1*(FR)+y5*(FL)+y3*(BL)+y4*(BR))/(4));
 
 
 
 if (s.available()>0)    //check if serial is available
   {
     Serial.print("Available");
+  
         byte val = s.read();    //read value from esp, store in val
       Serial.println("RECIEVE");  //confirm code is running
        volatile int turnOnLED = val - 48;   //offset by 48 to recieve 1 or 0
@@ -114,15 +114,17 @@ if (s.available()>0)    //check if serial is available
         analogWrite(2,0);   //left vibrate
         analogWrite(3,0);   //right vibrate
     vibeSet = 1;
+    s.flush();
     }
   
-    else if (turnOnLED == 0)
+    else if(turnOnLED == 0)
     {
       Serial.println("LED Turned OFF");
       digitalWrite(LED_BUILTIN, LOW);    // make bultin led OFF
      pinMode(2,INPUT);             // disable vibrate
      pinMode(3,INPUT);              //disable vibrate
      vibeSet = 0;
+     s.flush();
   }
   
     else
@@ -465,7 +467,8 @@ s.flush();    //clear buffer
  SB = analogRead(A5);
  SL = analogRead(A6);
  SR = analogRead(A7);
- 
+
+  
 //USE TO SEE IF SENSORS ARE OUTPUTTING AS EXPECTED
 
 //Serial.println(FR);
