@@ -24,7 +24,6 @@ signed int cogX;
 signed int cogY;
 signed int value = 0;
 boolean negative = false;
-
 // ********************* Vibration Avtication Commands ********************* 
 
 String fireStatus = ""; 
@@ -41,6 +40,36 @@ String formattedDate;
 String dayStamp;
 String timeStamp;
 
+
+// ****************** Setting the Interrupt Statement ******************
+
+#define my_delay 3      // Interrupt time in seconds
+                        // Every 10 sec multiple (n x 10)
+#define timer0_preload 80000000
+                        // Arbitraty value, this is set to 80MHz
+                        // to achieve 1 sec delay/timer time out
+volatile int vib;
+volatile int count;
+
+void inline interruptVibrator();
+
+//void inline interruptVibrator (void)
+//{
+//  if (count == 30000)
+//  {
+//    // Interrupt functions available on pin D0-D8
+//    // Attached Interrupt does not work on D0/D18
+//    vib = (vib == 1)? 0 : 1;
+//    digitalWrite(LED_BUILTIN, vib);
+//    timer0_write(ESP.getCycleCount() + timer0_preload * my_delay);
+//    s.write('@');
+//    Firebase.setString("settings/1212/getUp", "1");
+//  
+//    count = 0;
+//  }
+//
+//}
+
 // ******************* Setting conditions for connection ******************* 
 
 void setup()
@@ -52,8 +81,9 @@ void setup()
   Serial.begin(9600);
   delay(1000);
   pinMode(LED_BUILTIN, OUTPUT);      
-//  pinMode(VIBRATOR, OUTPUT);  
+//  pinMode(VIBRATOR, OUTPUT);
 
+ 
   // connect to wifi.
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.print("connecting to ");
@@ -83,15 +113,43 @@ void setup()
   timeClient.setTimeOffset(-14400);
   // Offset the timestamp by due to incorrect time reading
   // -14400 is by seconds, meaning 5 hours in seconds
+
+   // Interrupt
+  noInterrupts();
+  timer0_isr_init();
+  timer0_attachInterrupt(interruptVibrator);
+  timer0_write(ESP.getCycleCount() + timer0_preload * my_delay);
+  interrupts();
+
 }
+
+void inline interruptVibrator(void)
+{
+  if (count == 30000)
+  {
+    // Interrupt functions available on pin D0-D8
+    // Attached Interrupt does not work on D0/D18
+    vib = (vib == 1)? 0 : 1;
+    digitalWrite(LED_BUILTIN, vib);
+    timer0_write(ESP.getCycleCount() + timer0_preload * my_delay);
+    s.write('@');
+    Firebase.setString("settings/1212/getUp", "1");
+  
+    count = 0;
+  }
+
+}
+
 
 // ****************** Analog Readings coming from Arduino ******************
 
 void loop()
 {
+  count = 0;
   // ****************** FSR Reading Data ******************
   if (s.available() > 0)
   { 
+    count++;
     //read value from input buffer
     byte recieved = s.read();
     
@@ -237,11 +295,12 @@ void loop()
   {
     Serial.println("Wrong Credential! Please send ON/OFF");
   }
+   
   delay(500);
   
 
   // Conclusion of the code print statement into serial communication
   // Once sensor code starts sending data, vibration statement starts
   // Proper baud rate is important to match the readings from Arduino
-
+  
 }
