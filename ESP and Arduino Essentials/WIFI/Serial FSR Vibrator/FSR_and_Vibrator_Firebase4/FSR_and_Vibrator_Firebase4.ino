@@ -12,8 +12,8 @@
 
 #define FIREBASE_HOST   "sd-proto.firebaseio.com"                         
 #define FIREBASE_AUTH   "JHX8oWlHBy0OV2NSvrnziX9hJ297ypRT5OAxuitY"                    
-#define WIFI_SSID       "The Bomb Galaxy"                                         
-#define WIFI_PASSWORD   "phuong3648"                                 
+#define WIFI_SSID       "Rudy"                                         
+#define WIFI_PASSWORD   "pleasework"                                 
 
 #include <SoftwareSerial.h>
 SoftwareSerial s(D6, D5); //Rx, Tx
@@ -94,7 +94,15 @@ void loop()
   { 
     //read value from input buffer
     byte recieved = s.read();
-    
+//    Serial.print("Check value: ");
+//    Serial.println(recieved);
+
+    if(recieved == '@')
+    {
+      //send get up flag to firebase
+      Firebase.setString("settings/1212/getUp", "1");
+      Serial.println("Get Up Notification");
+    }
     //process value according to flags
     if(recieved == 45)
     {
@@ -140,6 +148,7 @@ void loop()
       cogX = 0;
       cogY = 0;
       Serial.println("User got up");
+      s.flush();
     }
     
     // Gather the data from Sensor to print values
@@ -170,40 +179,11 @@ void loop()
       Firebase.setInt("postureData/1212/" + formattedDate + "/cogX", x);
       Firebase.setInt("postureData/1212/" + formattedDate + "/cogY", y);
       Firebase.setString("postureData/1212/" + formattedDate + "/created_at", formattedDate);
+//      s.flush();
 
     }
-//   delay(1000);
-
-
-//    // ****************** Vibration Module Activation ******************
-//    // ******************* Inside the FSR Statement *******************
-//    fireStatus = Firebase.getString("settings/1212/vibration");
-//    
-//    if (fireStatus == "1")
-//    {
-//      // compare the input of led status received from firebase
-//      Serial.print("VIBRATOR Turned ON\t");       
-//      Serial.println("Value: " + fireStatus);                  
-//      digitalWrite(LED_BUILTIN, LOW);           // make bultin led ON
-////      digitalWrite(VIBRATOR, HIGH);             // make external led ON
-//      s.write("1");
-//    } 
-//    
-//    else if (fireStatus == "0")
-//    {
-//      // compare the input of led status received from firebase
-//      Serial.print("VIBRATOR Turned OFF\t");
-//      Serial.println("Value: " + fireStatus);
-//      digitalWrite(LED_BUILTIN, HIGH);          // make bultin led OFF
-////      digitalWrite(VIBRATOR, LOW);              // make external led OFF
-//      s.write("0");
-//    }
-//    
-//    else 
-//    {
-//      Serial.println("Wrong Credential! Please send ON/OFF");
-//    }
-//    delay(500);
+    
+//    delay(1000);
     
   }
   // The end of the s.available
