@@ -62,8 +62,8 @@ class SignUpScreenState extends State<SignUpScreen> {
   writeInitPointsToDatabase() {
     //writes inital 4 values to firebase database to control shape of chart (so that(0,0) is center)
     //order of coords: FL (Quadrant 2), FR (Q1), RL (Q3), RR (Q4)
-      List initCogX = ['-150', '150', '-150', '150'];
-      List initCogY = ['150', '150', '-150', '-150'];
+      List initCogX = ['-200', '200', '-200', '200'];
+      List initCogY = ['200', '200', '-200', '-200'];
 
       if(MyApp.user != null){
         MyApp.userDataReference = MyApp.database.reference().child('postureData').child(MyApp.pin);
