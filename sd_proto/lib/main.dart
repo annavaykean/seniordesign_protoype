@@ -92,7 +92,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
           if (snapshot.value != null) {
             if(snapshot.value['firePhoneNotif'] != null && snapshot.value['firePhoneNotif'] != '0') {
               print('firing notification!');
-              sendNotification(snapshot.value['firePhoneNotif']);
+              sendNotification("Posture Check! It appears that you are leaning!");
               //reset flag in firebase
               var resetDB = MyApp.database.reference().child('settings')
                   .child(MyApp.pin)
@@ -113,7 +113,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
     });
 
     //remind user to get up every 90 mins
-    const getUpCheck = const Duration(minutes: 5);
+    const getUpCheck = const Duration(seconds: 30);
     var timer2 = new Timer.periodic(getUpCheck, (timer2) {
       //    print('timer ran out!');
       //check firebase to see if notif should be fired
