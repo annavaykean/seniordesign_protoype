@@ -106,10 +106,6 @@ class SettingsScreenState extends State<SettingsScreen> {
           title: Text('Toggle Phone Notifications'),
           trailing: Switch(value: notificationToggle,
               onChanged: (value) => updateNotifications()),
-        ),
-        ListTile(
-          title: Text('Test Notification!'),
-          onTap: () => sendNotification(),
         )
 /*        ListTile(
           title: Text('Sign Out'),
