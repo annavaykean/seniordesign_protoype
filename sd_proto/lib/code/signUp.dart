@@ -51,7 +51,6 @@ class SignUpScreenState extends State<SignUpScreen> {
       dbRef.set(<String, String>{
         "notification": "1",
         "vibration": "1",
-        "firePhoneNotif" : "0",
         "getUp" : "0",
       });
       //update global vars
