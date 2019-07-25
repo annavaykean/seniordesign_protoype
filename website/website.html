@@ -25,6 +25,7 @@
 	nav {
 	float:left;
 	width: 30%;
+	height: 1500px;
 	background: #d1d1e0;
 	padding: 20px;
 	}
@@ -65,25 +66,36 @@
 	padding: 0;
 	}
 	
+	.teamImgCol {
+	width: 20%;
+	padding: 10px;
+	}
+	
+	.hrForTitle{
+	width: 45%;
+	}
+	
 </style>
 </head>
 <body>
 <header>Smart Chair
-<hr/>
+<hr class="hrForTitle"/>
 <p style="font-size:20px">Senior Design Summer 2019</p>
 </header>
 <section>
 	<nav>
 		<ul>
-			<li style="text-decoration:bold;">Senior Design 1</li>
+			<li style="text-decoration:bold;"><b>Senior Design 1</b></li>
+			<br/>
 			<ul>
-			<li><a href="#">Initial Project Documentation</a></li>
-			<li><a href="#">Senior Design 1 Final Document</a></li>
+			<li><a href="paperwork/sd1/divideAndConquer.pdf" target="_blank">Initial Project Documentation</a></li>
+			<li><a href="paperwork/sd1/finalDocument.pdf" target="_blank">Senior Design 1 Final Document</a></li>
 			</ul>
-			<li>Senior Design 2</li>
+			<li><b><br/>Senior Design 2</b></li>
+			<br />
 			<ul>
-			<li><a href="#">Critical Design Review</a></li>
-			<li><a href="#">Conference Paper</a></li>
+			<li><a href="paperwork/sd2/cdr.pptx" target="_blank">Critical Design Review</a></li>
+			<li><a href="paperwork/sd2/conferencePaper.pdf" target="_blank">Conference Paper</a></li>
 			<li><a href="#">Senior Design 2 Final Presentation</a></li>
 			<li><a href="#">Senior Design 2 Final Document</a></li>
 			<li><a href="https://github.com/annavaykean/seniordesign_protoype" target="_blank">Github</a></li>
@@ -99,16 +111,24 @@
 		monitors how long the user sits and reminds them to get up at a regular interval. The device
 		also monitors the user’s posture and provides feedback. The smart chair pairs with an application
 		on the user’s phone to provide feedback and reminders. </p>
-		 
+		
+		<table>
+		<tr>
+		<td><img src="assets/pcb5.jpg" style="max-width:100%;max-height:100%"/></td>
+		<td><img src="assets/chairBase2.jpg" style="max-width:100%;max-height:100%"/></td>
+		<td><img src="assets/enclosure.jpg" style="max-width:100%;max-height:100%"/></td>
+		
+		</tr>
+		</table>
 		 <hr/>
 		 <h4> Meet the Team </h4>
 		 <table>
 			<tr>
-			<td>
-			<!-- Img goes here -->
+			<td class="teamImgCol">
+			<img src="assets/mack2.jpg" style="max-width:70%;max-height:70%" />
 			</td>
 			<td>
-			<p style="font-size:12px;float:left;">Mackenson Jean is a senior at University 
+			<p style="font-size:12px;float:left;"><b>Mackenson Jean</b> is a senior at University 
 			of Central Florida and will receive his 
 			Bachelor of Science in Electrical Engineering
 			in August of 2019. He hopes to focus on power 
@@ -116,22 +136,22 @@
 			</td>
 			</tr>
 			<tr>
-			<td>
-			<!-- Img goes here -->
+			<td class="teamImgCol">
+			<img src="assets/annavay2.jpg" style="max-width:70%;max-height:70%" />
 			</td>
 			<td>
-			<p style="float:left;font-size:12px">Annavay Kean is a senior in Computer Engineering
+			<p style="float:left;font-size:12px"><b>Annavay Kean</b> is a senior in Computer Engineering
 			at the University of Central Florida. She will be receiving her Bachelor of Science
 			in Computer Engineering in August 2019. She will be working as a software engineer 
 			for Jacobs’ after graduation.</p>
 			</td>
 			</tr>
 			<tr>
-			<td>
-			<img src="assets/thien.jpg" style="max-width:50%;max-height:50%" />
+			<td class="teamImgCol">
+			<img src="assets/thien.jpg" style="max-width:70%;max-height:70%" />
 			</td>
 			<td>
-			<p style="float:left;font-size:12px">Thien Nguyen is a senior at the University of
+			<p style="float:left;font-size:12px"><b>Thien Nguyen</b> is a senior at the University of
 			Central Florida and will receive his Bachelor of
 			Science in Computer Engineering in August 2019. 
 			He plans to pursue  a career in the field of Embedded
@@ -140,17 +160,26 @@
 			</td>
 			</tr>
 			<tr>
-			<td>
-			<img src="assets/rudy.jpg" style="max-width:70%;max-height:70%" />
+			<td class="teamImgCol">
+			<img src="assets/rudy2.jpg" style="max-width:70%;max-height:70%" />
 			</td>
 			<td>
-			<p style="float:left;font-size:12px">Bonarine Ramjas, a senior at the University of  Central Florida,
+			<p style="float:left;font-size:12px"><b>Bonarine Ramjas</b>, a senior at the University of  Central Florida,
 			will receive his Bachelor of Science in Electrical Engineering in August of 2019. His professional 
 			interests include RF engineering and Control Systems. Currently, he is an Applications Engineer
-			for MtronPTI. </p>
+			for MtronPTI.</p>
 			</td>
 			<tr>
 		 </table>
+		 <hr />
+		 <h4>Contact Us</h4>
+		 <p style="font-size:12px">If you have any questions or concerns regarding this project, the team members can be reached via email.</p>
+		 <p style="font-size:12px">Mackenson Jean (Power System) - <a href="mailto:jeanmackenson3@gmail?Subject=Senior%20Design%20Project">jeanmackenson3@gmail.com</a></p>
+	
+		 <p style="font-size:12px">Annavay Kean (Mobile Application and Database) - <a href="mailto:annavaykean1@gmail?Subject=Senior%20Design%20Project">annavaykean1@gmail.com</a></p>
+		 <p style="font-size:12px">Thien Nguyen (System Communication) - <a href="mailto:thienphuonghoangnguyen@gmail?Subject=Senior%20Design%20Project">thienphuonghoangnguyen@gmail.com</a></p>
+		 <p style="font-size:12px">Bonarine Ramjas (Embedded Systems and Hardware Design) - <a href="mailto:bonarine.ramjas@gmail?Subject=Senior%20Design%20Project">bonarine.ramjas@gmail.com</a></p>
+
 	</article>
 </section>
 <footer>
