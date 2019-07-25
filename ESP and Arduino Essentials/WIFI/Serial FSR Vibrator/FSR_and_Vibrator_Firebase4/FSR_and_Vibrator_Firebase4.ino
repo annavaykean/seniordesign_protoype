@@ -12,8 +12,8 @@
 
 #define FIREBASE_HOST   "sd-proto.firebaseio.com"                         
 #define FIREBASE_AUTH   "JHX8oWlHBy0OV2NSvrnziX9hJ297ypRT5OAxuitY"                    
-#define WIFI_SSID       "Rudy"                                         
-#define WIFI_PASSWORD   "pleasework"                                 
+#define WIFI_SSID       "The Bomb Galaxy"                                         
+#define WIFI_PASSWORD   "phuong3648"                                 
 
 #include <SoftwareSerial.h>
 SoftwareSerial s(D6, D5); //Rx, Tx
@@ -103,6 +103,10 @@ void loop()
       Firebase.setString("settings/1212/getUp", "1");
       Serial.println("Get Up Notification");
     }
+//    else
+//    {
+//      Firebase.setString("settings/1212/getUp", "0");
+//    }
     //process value according to flags
     if(recieved == 45)
     {
@@ -171,15 +175,14 @@ void loop()
         formattedDate = timeClient.getFormattedDate();
 //       Serial.println(formattedDate);
         
-      signed int x = cogX;
+      signed int x = cogX + 10;
       cogX = 0;
-      signed int y = cogY;
+      signed int y = cogY + 10;
       cogY = 0;
-      //send cogX cogY to firebase
+      // Send cogX cogY to firebase
       Firebase.setInt("postureData/1212/" + formattedDate + "/cogX", x);
       Firebase.setInt("postureData/1212/" + formattedDate + "/cogY", y);
       Firebase.setString("postureData/1212/" + formattedDate + "/created_at", formattedDate);
-//      s.flush();
 
     }
     
@@ -199,7 +202,6 @@ void loop()
     Serial.print("VIBRATOR Turned ON\t");       
     Serial.println("Value: " + fireStatus);                  
     digitalWrite(LED_BUILTIN, LOW);           // make bultin led ON
-//    digitalWrite(VIBRATOR, HIGH);             // make external led ON
     s.write("1");
   } 
     
@@ -209,10 +211,9 @@ void loop()
     Serial.print("VIBRATOR Turned OFF\t");
     Serial.println("Value: " + fireStatus);
     digitalWrite(LED_BUILTIN, HIGH);          // make bultin led OFF
-//    digitalWrite(VIBRATOR, LOW);              // make external led OFF
     s.write("0");
   }
-    
+  
   else 
   {
     Serial.println("Wrong Credential! Please send ON/OFF");
