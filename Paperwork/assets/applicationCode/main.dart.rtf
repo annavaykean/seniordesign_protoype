@@ -1,0 +1,322 @@
+{\rtf1\ansi\deff0\deftab480
+
+{\fonttbl
+{\f000 Courier New;}
+{\f001 Courier New;}
+}
+
+{\colortbl
+\red000\green000\blue000;
+\red255\green255\blue255;
+\red000\green000\blue000;
+\red255\green255\blue255;
+}
+
+\f0\fs20\cb3\cf2 \highlight1\cf0 import 'package:flutter/material.dart';\par
+import 'code/dashboard_page.dart';\par
+import 'code/settings_page.dart';\par
+import 'code/signUp.dart';\par
+//import 'code/database_test_page.dart';\par
+import 'code/stretches_page.dart';\par
+import 'code/longTermData.dart';\par
+import 'dart:async';\par
+import 'dart:typed_data';\par
+import 'package:shared_preferences/shared_preferences.dart';\par
+import 'package:firebase_auth/firebase_auth.dart';\par
+import 'package:firebase_database/firebase_database.dart';\par
+import 'package:flutter/services.dart';\par
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';\par
+\par
+void main()\{\par
+  runApp(MyApp());\par
+\}\par
+\par
+class MyApp extends StatelessWidget \{\par
+  //global access to firebase connection information and user settings\par
+\par
+  static FirebaseAuth firebaseAuth = FirebaseAuth.instance;\par
+  static FirebaseUser user;\par
+  static StreamSubscription deviceConnection = null;\par
+  static List postureDataList = null;\par
+  static String pin;\par
+  static String prefsPin = 'pinNum';\par
+  //global access to database connection\par
+  static FirebaseDatabase database = new FirebaseDatabase();\par
+  static DatabaseReference userDataReference;\par
+  static DatabaseReference userSettingsReference;\par
+  //static DatabaseTestPageState databaseData = new DatabaseTestPageState();\par
+  static String pose;\par
+  static String poseLabel;\par
+  static bool vibration = true;\par
+  static bool notification = true;\par
+  static FlutterLocalNotificationsPlugin notificationsPlugin;\par
+\par
+\par
+  @override\par
+  Widget build(BuildContext context)\{\par
+    return MaterialApp(\par
+      title: 'Testing Sign In with Firebase',\par
+      home: new WelcomeScreen(),\par
+      routes: <String, WidgetBuilder> \{\par
+        '/WelcomeScreen': (BuildContext context) => new WelcomeScreen(),\par
+        '/SignUp': (BuildContext context) => new SignUpScreen(),\par
+        '/DashboardScreen': (BuildContext context) => new DashboardScreen(),\par
+        '/SettingsScreen' : (BuildContext context) => new SettingsScreen(),\par
+       // '/DatabaseTestPage' : (BuildContext context) => new DatabaseTestPage(),\par
+        '/Stretches' : (BuildContext context) => new Stretches(),\par
+        '/LongTermData': (BuildContext context) => new LongTermData(),\par
+      \}\par
+      );\par
+  \}\par
+\}\par
+class WelcomeScreen extends StatefulWidget\{\par
+  @override\par
+  WelcomeScreenState createState() => WelcomeScreenState();\par
+\}\par
+class WelcomeScreenState extends State<WelcomeScreen> \{\par
+\par
+  final TextEditingController emailCtrl = new TextEditingController();\par
+  final TextEditingController passwordCtrl = new TextEditingController();\par
+  bool validEmail = false;\par
+  bool validPass = false;\par
+  String errorMessage = '';\par
+\par
+  initState() \{\par
+    // super.initState();\par
+\par
+    var initializationSettingsAndroid = new AndroidInitializationSettings('@mipmap/ic_launcher');\par
+    var initializationSettingsIOS = new IOSInitializationSettings();\par
+    var initializationSettings = new InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);\par
+\par
+    MyApp.notificationsPlugin = new FlutterLocalNotificationsPlugin();\par
+    MyApp.notificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);\par
+\par
+    //remind user to get up every x minutes\par
+    const getUpCheck = const Duration(seconds: 30);\par
+    var timer = new Timer.periodic(getUpCheck, (timer2) \{\par
+      //    print('timer ran out!');\par
+      //check firebase to see if notif should be fired\par
+      if(MyApp.user != null)\{\par
+        //   print('checking if notification is needed');\par
+        var notifQuery = MyApp.database.reference().child('settings').child(\par
+            MyApp.pin);\par
+        notifQuery.once().then((DataSnapshot snapshot) \{\par
+          if (snapshot.value != null) \{\par
+            if(snapshot.value['getUp'] == '1') \{\par
+              print('firing notification!');\par
+              sendNotification("Take a break from sitting!");\par
+              //reset flag in firebase\par
+              var resetDB = MyApp.database.reference().child('settings')\par
+                  .child(MyApp.pin)\par
+                  .update(\par
+                  <String, String>\{\par
+                    "getUp" : "0"\par
+                  \})\par
+                  .then((result) \{\par
+                print("INFO: Database Write Completed");\par
+              \});\par
+              initState();\par
+            \}\par
+          \} else \{\par
+            initState();\par
+          \}\par
+        \});\par
+      \}\par
+    \});\par
+\par
+  \}\par
+\par
+  Future sendNotification(String feedback) async \{\par
+    if (MyApp.notification) \{\par
+      var vibrationPattern = Int64List(4);\par
+      vibrationPattern[0] = 0;\par
+      vibrationPattern[1] = 1000;\par
+      vibrationPattern[2] = 5000;\par
+      vibrationPattern[3] = 2000;\par
+      var androidPlatformChannelSpecifics = new AndroidNotificationDetails(\par
+          'notofication_channel_id', 'Channel Name',\par
+          'Here we will put the description about the Channel ',\par
+          vibrationPattern: vibrationPattern,\par
+          importance: Importance.Max, priority: Priority.High);\par
+\par
+      var iOSPlatformChannelSpecifics = new IOSNotificationDetails();\par
+\par
+      var platformChannelSpecifics = new NotificationDetails(\par
+          androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);\par
+\par
+      await MyApp.notificationsPlugin.show(\par
+          0, 'Smart Chair', feedback,\par
+          platformChannelSpecifics, payload: 'Default_Sound');\par
+    \} else \{\par
+      print('Notifications turned off.');\par
+    \}\par
+  \}\par
+\par
+  Future<String> getPinNumber() async \{\par
+    final SharedPreferences prefs =  await SharedPreferences.getInstance();\par
+    print('fetching pin number...');\par
+    return prefs.getString(MyApp.prefsPin)?? 'invalid';\par
+  \}\par
+\par
+\par
+  Future onSelectNotification(String payload) async \{\par
+    showDialog(\par
+        context: context,\par
+        builder: (_) => new AlertDialog(\par
+          title: const Text('Here is your payload'),\par
+          content: new Text('Payload: $payload'),\par
+        )\par
+    );\par
+  \}\par
+\par
+   signIn(BuildContext context, String email, String password) async \{\par
+    //remove white space\par
+    String emailTrimmed = email.trim();\par
+    String passwordTrimmed = password.trim();\par
+\par
+    //check that form is valid\par
+    if(email != null && password != null) \{\par
+      try \{\par
+        //attempt to sign in\par
+        MyApp.user = await MyApp.firebaseAuth.signInWithEmailAndPassword(\par
+            email: emailTrimmed, password: passwordTrimmed);\par
+      \} on PlatformException catch (e)\{\par
+        //if sign in fails, display error message\par
+          print('INFO: $\{e\}');\par
+          setState(() \{\par
+            errorMessage = e.message;\par
+          \});\par
+      \}\par
+      //if login is successful, execute if statement\par
+      if(MyApp.user != null) \{\par
+        errorMessage = "";\par
+        emailCtrl.clear();\par
+        passwordCtrl.clear();\par
+        print('INFO: $\{MyApp.user.email\} signed in.');\par
+\par
+        //get pin from sharedPreferences\par
+        var recievePin = await getPinNumber();\par
+        print('recieved pin: $recievePin');\par
+\par
+        if(recievePin != 'invalid') \{\par
+          MyApp.pin = recievePin;\par
+          //establish new database session\par
+          //save data offline until connection is reestablished - disabled due to problem caused regarding updating chart without wifi\par
+          MyApp.database.setPersistenceEnabled(false);\par
+          MyApp.database.setPersistenceCacheSizeBytes(10000000);\par
+          //get reference to user's document within database\par
+          MyApp.userDataReference =\par
+              MyApp.database.reference().child('postureData').child(recievePin);\par
+          //pull posture data\par
+          MyApp.userDataReference.once().then((DataSnapshot snapshot) \{\par
+            List list = [];\par
+            for (var value in snapshot.value.values) \{\par
+              //was previously experiencing errors on parsing from json. Fixed by converting data to string then to int.\par
+              var cogX = value['cogX'].toString();\par
+              var xInt;\par
+              var yInt;\par
+              if(cogX != 'null') \{\par
+                xInt = int.parse(cogX);\par
+              \}\par
+              var cogY = value['cogY'].toString();\par
+              if(cogY != 'null') \{\par
+                yInt = int.parse(cogY);\par
+              \}\par
+              var created_at = value['created_at'].toString();\par
+              //add parsed data to list as a Posture object\par
+              if(xInt != null && yInt != null && created_at != null) \{\par
+                print("Adding (" + xInt.toString() + ", " + yInt.toString() +\par
+                    ", " + created_at.toString() + ")\\n");\par
+                list.add(new Posture(xInt, yInt, created_at));\par
+              \}\par
+            \}\par
+            //update global posture data list with fresh data.\par
+            MyApp.postureDataList = list;\par
+          \});\par
+          //navigate to homepage and dismiss keyboard\par
+          FocusScope.of(context).requestFocus(new FocusNode());\par
+          print('going to dashboard...');\par
+          Navigator.pushReplacementNamed(context,'/DashboardScreen');\par
+        \}\par
+      \}\par
+    \}\par
+    else\{\par
+      errorMessage = 'Invalid login. Try again.';\par
+      print('Must input email and password to sign in');\par
+    \}\par
+  \}\par
+\par
+  goToSignUp (BuildContext context) \{\par
+    Navigator.pushReplacementNamed(context, '/SignUp');\par
+  \}\par
+\par
+  @override\par
+  Widget build(BuildContext context) \{\par
+    return new Scaffold(\par
+        appBar: AppBar(\par
+          title: const Text('Welcome to Smart Chair!'),\par
+        ),\par
+        body: Center(\par
+        child: Column(\par
+          mainAxisAlignment: MainAxisAlignment.center,\par
+          crossAxisAlignment: CrossAxisAlignment.center,\par
+            children: <Widget> [\par
+              Container(\par
+                width: 300,\par
+                child: TextField(\par
+                  controller: emailCtrl,\par
+                  autofocus: false,\par
+                  decoration: new InputDecoration(\par
+                    labelText: 'Email',\par
+                    errorText: validEmail ? 'Required Field' : null,\par
+                  ),\par
+                )\par
+              ),\par
+              Container(\par
+                width: 300,\par
+                child: TextField(\par
+                  controller: passwordCtrl,\par
+                  autofocus: false,\par
+                  obscureText: true,\par
+                  decoration: new InputDecoration(\par
+                    labelText: 'Password',\par
+                    errorText: validPass ? 'Required Field' : null,\par
+                  ),\par
+                )\par
+              ),\par
+              Text(errorMessage,\par
+                  style: TextStyle(color: Colors.red)),\par
+              ButtonTheme(\par
+                minWidth: 300.0,\par
+                child:  RaisedButton(\par
+                    child: const Text('Sign In'),\par
+                    color: Colors.blue,\par
+                    textColor: Colors.white,\par
+                    splashColor: Colors.purple,\par
+                    onPressed: () \{\par
+                      setState(()\{\par
+                        emailCtrl.text.isEmpty ? validEmail = true : validEmail = false;\par
+                        passwordCtrl.text.isEmpty ? validPass = true : validPass = false;\par
+                      \});\par
+                      signIn(context, emailCtrl.text, passwordCtrl.text);\par
+                    \}\par
+                ),\par
+              ),\par
+              FlatButton(\par
+                child: const Text('Create an account'),\par
+                splashColor: Colors.blue,\par
+                onPressed: () => goToSignUp(context),\par
+              ),\par
+            ]\par
+        ))\par
+    );\par
+  \}\par
+\}\par
+\par
+class Posture \{\par
+  int cogX;\par
+  int cogY;\par
+  String created_at;\par
+  Posture(this.cogX, this.cogY, this.created_at);\par
+\}\par
+}
